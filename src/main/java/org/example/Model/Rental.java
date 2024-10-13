@@ -2,24 +2,45 @@ package org.example.Model;
 
 import java.time.LocalDateTime;
 import java.time.Duration;
-import org.example.Model.clients.Client;
 
+import com.sun.istack.NotNull;
+import jakarta.persistence.*;
+import org.example.Model.clients.Client;
+@Entity
+@Table(name = "Rental")
 public class Rental {
-    private int rentalID;
+
+    @jakarta.persistence.Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "Id", unique = true, nullable = false)
+    private Long Id;  // Change to String for UUID
+
+
+    @ManyToOne
+    @JoinColumn(name = "client_id", referencedColumnName = "Id")
     private Client client;
+
+
+    @ManyToOne
+    @JoinColumn
+    @NotNull
     private Bike bike;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private float totalCost;
 
     // Konstruktor
-    public Rental(int rentalID, Client client, Bike bike, LocalDateTime startTime) {
-        this.rentalID = rentalID;
+    public Rental( Client client, Bike bike, LocalDateTime startTime) {
+
         this.client = client;
         this.bike = bike;
         this.startTime = startTime;
         this.endTime = null;
         this.totalCost = 0.0f;
+    }
+
+    public Rental() {
+
     }
 
 
@@ -31,6 +52,9 @@ public class Rental {
         this.client = client;
     }
 
+    public Long getId() {
+        return Id;
+    }
 
     public Bike getBike() {
         return bike;
@@ -85,7 +109,7 @@ public class Rental {
 
     // Metoda do wyświetlania informacji o wypożyczeniu
     public String getInfo() {
-        return "Rental ID: " + rentalID +
+        return "Rental ID: " + Id +
                 "\nClient: " + client.getInfo() +
                 "\nBike ID: " + bike.getId() +
                 "\nStart Time: " + startTime +

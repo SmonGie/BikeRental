@@ -1,12 +1,30 @@
 package org.example.Model.clients;
 
+import jakarta.persistence.*;
+import org.example.Model.Rental;
+
+import java.util.ArrayList;
+import java.util.List;
+
+
+@Entity
+@Table(name = "Client")
 public class Client {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "Id", unique = true, nullable = false)
+
     private Long Id;
     private String firstName, lastName, phoneNumber;
     private int age;
+    @Embedded
     private Address address;
+    @Transient
     private ClientType clientType;
 
+    @OneToMany(mappedBy = "client")
+    private List<Rental> currentRentals = new ArrayList<>();
 
     public Client(String firstName, String lastName, String phoneNumber, int age, Address address) {
         this.firstName = firstName;
@@ -23,6 +41,10 @@ public class Client {
 
     }
 
+    public Client() {
+
+    }
+
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
@@ -36,10 +58,7 @@ public class Client {
     public void setAge(int age) {
         this.age = age;
     }
-    public Long setId(long Id)
-    {
-        return Id;
-    }
+
     public Long getId() {
         return Id;
     }
