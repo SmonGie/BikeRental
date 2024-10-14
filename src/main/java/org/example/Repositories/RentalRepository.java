@@ -1,27 +1,17 @@
 package org.example.Repositories;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Transient;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import org.example.Model.Rental;
-import org.example.Model.clients.Client;
-import org.hibernate.persister.entity.EntityPersister;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
+
 
 public class RentalRepository implements IRentalRepository {
-    private List<Rental> rentals = new ArrayList<>();  // Lista wszystkich wypożyczeń
 
-//     Pobieranie aktywnego wypożyczenia klienta (jeśli istnieje)
+    private EntityManagerFactory emf;
 
-    // Pobieranie historii wypożyczeń klienta
-    public List<Rental> getRentalHistory(Client client) {
-        return rentals.stream()
-                .filter(r -> r.getClient().equals(client))
-                .collect(Collectors.toList());
-    }
 
     // Zakończenie bieżącego wypożyczenia dla klienta
 //    public static void endCurrentRental(Client client) {
@@ -48,41 +38,75 @@ public class RentalRepository implements IRentalRepository {
 
     @Override
     public Rental findById(Long id) {
-        return em.find(Rental.class, id);
+        EntityManager em = emf.createEntityManager();
+        Rental r = null;
+
+        try {
+            r = em.find(Rental.class, id);
+        } finally {
+            em.close();
+        }
+
+        return r;
     }
 
     @Override
     public List<Rental> findAll() {
-        return em.createQuery("SELECT r FROM Rental r", Rental.class).getResultList();
+
+        EntityManager em = emf.createEntityManager();
+
+        List<Rental> rentals = null;
+
+        try {
+            rentals = em.createQuery("SELECT r FROM Rental r", Rental.class).getResultList();
+        } finally {
+            em.close();
+        }
+
+        return rentals;
     }
 
     @Override
-    @Transactional
+
     public void save(Rental rental) {
+        EntityManager em = emf.createEntityManager();
 
-        if (rental.getId() == null) {
-            em.persist(rental);
-        } else em.merge(rental);
+        EntityTransaction transaction = em.getTransaction();
 
-    }
+        try {
+            transaction.begin();
 
-    @Override
-    @Transactional
-    public void delete(Rental rental) {
+            if (rental.getId() == null) {
+                em.persist(rental);
+            } else em.merge(rental);
 
-        if (em.contains(rental)) {
-
-            em.remove(rental);
-        } else {
-            em.remove((em.merge(rental)));
+            transaction.commit();
+        } finally {
+            em.close();
         }
 
     }
 
+    @Override
 
+    public void delete(Rental rental) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction transaction = em.getTransaction();
 
+        try {
+            transaction.begin();
+            if (em.contains(rental)) {
+                em.remove(rental);
+            } else {
+                em.remove((em.merge(rental)));
+            }
+            transaction.commit();
 
+        } finally {
+            em.close();
+        }
 
+    }
 
 
 }

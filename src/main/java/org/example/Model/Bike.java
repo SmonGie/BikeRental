@@ -12,11 +12,11 @@ public class Bike {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "Id", unique = true, nullable = false)
-    private Long Id;  // Change to String for UUID
+    private Long Id;
     private String ModelName;
     private boolean IsAvailable;
 
-    public Bike(Long id, String ModelName,  boolean IsAvailable) {
+    public Bike(String ModelName,  boolean IsAvailable) {
         this.ModelName = ModelName;
         this.IsAvailable = IsAvailable;
     }
@@ -27,9 +27,6 @@ public class Bike {
 
     public Long getId() {
         return Id;
-    }
-    public void setId(Long id) {
-        Id = id;
     }
     public String getModelName() {
         return ModelName;

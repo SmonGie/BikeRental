@@ -18,6 +18,7 @@ public class Client {
     private Long Id;
     private String firstName, lastName, phoneNumber;
     private int age;
+    private int rentalCount;
     @Embedded
     private Address address;
     @Transient
@@ -32,6 +33,7 @@ public class Client {
         this.phoneNumber = phoneNumber;
         this.age = age;
         this.address = address;
+        rentalCount = 0;
 
         if (age < 18) {
             clientType = new Child();
@@ -59,6 +61,14 @@ public class Client {
         this.age = age;
     }
 
+    public ClientType getClientType() {
+        return clientType;
+    }
+
+    public void setClientType(ClientType clientType) {
+        this.clientType = clientType;
+    }
+
     public Long getId() {
         return Id;
     }
@@ -82,8 +92,8 @@ public class Client {
         return "Klient: " + firstName + " " + lastName +
                 "\n numer telefonu: " + phoneNumber +
                 "\n wiek: " + age +
-                "\n Id: " + Id +
-                "\n " + clientType.getInfo();
+                "\n Id: " + Id;
+               // "\n " + clientType.getInfo();
     }
     public int applyDiscount(){
         return clientType.applyDiscount();

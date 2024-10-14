@@ -1,97 +1,103 @@
 package org.example.Repositories;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.Transient;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.EntityTransaction;
 import org.example.Model.clients.Client;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+
 
 public class ClientRepository implements IClientRepository {
-    // Lista przechowująca klientów
-    private List<Client> clients = new ArrayList<>();
 
-    // Dodawanie nowego klienta do repozytorium
-//    public void addClient(Client client) {
-//        clients.add(client);
-//    }
-    // SAVE SPELNIA TA FUNKCJE!
+    private EntityManagerFactory emf;
 
-
-    // Usuwanie klienta po ID
-//    public void removeClientById(Long clientId) {
-//        clients.removeIf(client -> client.getId().equals(clientId));
-//    }
-//MYSLE ZE DELETE TEZ SPELNIA TA FUNKCJE
-
-
-    // Znajdowanie klienta po ID
-//    public Optional<Client> findClientById(Long clientId) {
-//        return clients.stream()
-//                .filter(client -> client.getId().equals(clientId))
-//                .findFirst();
-//    }
-// PRZEJETE PRZEZ FINDBYID
-
-    // Znajdowanie klienta po numerze telefonu CZY TO SIE GDZIEKOLWIEK PRZYDA?
-    public Optional<Client> findClientByPhoneNumber(String phoneNumber) {
-        return clients.stream()
-                .filter(client -> client.getPhoneNumber().equals(phoneNumber))
-                .findFirst();
+    public ClientRepository(EntityManagerFactory emf) {
+        this.emf = emf;
     }
 
-    // Pobieranie wszystkich klientów
-//    public List<Client> getAllClients() {
-//        return new ArrayList<>(clients);
-//    }
-// MYSLE ZE FINDALL ODPOWIADA TEJ FUNKCJI
+
+    // Znajdowanie klienta po numerze telefonu CZY TO SIE GDZIEKOLWIEK PRZYDA?
 
 
     // Pobieranie klientów w zależności od wieku (np. dzieci lub dorośli)
-    public List<Client> findClientsByAge(int age) {
-        return clients.stream()
-                .filter(client -> client.getAge() == age)
-                .collect(Collectors.toList());
-    }// tego nie zrobilem
-
-    // Aktualizacja danych klienta
-    // teraz save to robi
-
-    private EntityManager em;
-
+//    public List<Client> findClientsByAge(int age) {
+//        return clients.stream()
+//                .filter(client -> client.getAge() == age)
+//                .collect(Collectors.toList());
+//    }// tego nie zrobilem
 
     @Override
     public Client findById(Long id) {
-        return em.find(Client.class, id);
+
+        EntityManager em = emf.createEntityManager();
+        Client client = null;
+
+        try {
+            client = em.find(Client.class, id);
+        } finally {
+            em.close();
+        }
+
+        return client;
     }
 
     @Override
     public List<Client> findAll() {
-        return em.createQuery("SELECT c FROM Client c", Client.class).getResultList();
-    }
+        EntityManager em = emf.createEntityManager();
 
-    @Override
-    @Transactional
-    public void save(Client client) {
-        if (client.getId() == null) {
-            em.persist(client);
-        } else em.merge(client);
+        List<Client> clients = null;
 
-    }
+        try {
+            clients = em.createQuery("SELECT c FROM Client c", Client.class).getResultList();
 
-    @Override
-    @Transactional
-    public void delete(Client client) {
-
-        if (em.contains(client)) {
-
-            em.remove(client);
-        } else {
-            em.remove((em.merge(client)));
+        } finally {
+            em.close();
         }
+
+        return clients;
+    }
+
+    @Override
+
+    public void save(Client client) {
+        EntityManager em = emf.createEntityManager();
+
+        EntityTransaction transaction = em.getTransaction();
+
+        try {
+            transaction.begin();
+
+            if (client.getId() == null) {
+                em.persist(client);
+            } else em.merge(client);
+
+            transaction.commit();
+        } finally {
+            em.close();
+        }
+
+    }
+
+    @Override
+
+    public void delete(Client client) {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction transaction = em.getTransaction();
+
+        try {
+            transaction.begin();
+            if (em.contains(client)) {
+                em.remove(client);
+            } else {
+                em.remove((em.merge(client)));
+            }
+            transaction.commit();
+        } finally {
+            em.close();
+        }
+
+
     }
 
 

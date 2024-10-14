@@ -1,13 +1,19 @@
 package org.example.UserInterface;
 
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
 import org.example.Repositories.RentalRepository;
 
 public class Main {
     public static void main(String[] args) {
-        ClientRepository clientRepository = new ClientRepository();
-        BikeRepository bikeRepository = new BikeRepository();
+
+        EntityManagerFactory emf;
+        emf = Persistence.createEntityManagerFactory("default");
+
+        ClientRepository clientRepository = new ClientRepository(emf);
+        BikeRepository bikeRepository = new BikeRepository(emf);
         RentalRepository rentalRepository = new RentalRepository();
         UserInterface ui = new UserInterface(clientRepository, bikeRepository, rentalRepository);
 

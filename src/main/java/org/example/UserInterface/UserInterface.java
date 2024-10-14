@@ -1,6 +1,5 @@
 package org.example.UserInterface;
 
-import org.example.Model.Rental;
 import org.example.Model.clients.Client;
 import org.example.Model.clients.Address;
 import org.example.Model.Bike;
@@ -8,7 +7,6 @@ import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
 import org.example.Repositories.RentalRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
@@ -25,7 +23,21 @@ public class UserInterface {
         this.scanner = new Scanner(System.in);
     }
 
+
     public void start() {
+
+
+        Address a = new Address("lodz", "janowa", "3");
+        Client c = new Client("jedrzej", "wisniewski", "123123123", 54, a);
+        clientRepository.save(c);
+//        List<Client> clients = clientRepository.findAll();
+//        for (Client client : clients) {
+//
+//            System.out.println(client.getInfo());
+//
+//        }
+
+
         while (true) {
             System.out.println("Wybierz opcję:");
             System.out.println("1. Zarządzanie klientami");
@@ -43,9 +55,9 @@ public class UserInterface {
                 case 2:
                     manageBikes();
                     break;
-//                case 3:
+                case 3:
 //                   // rentBike();
-//                    break;
+                    break;
                 case 4:
                     endRental();
                     break;
@@ -132,43 +144,47 @@ public class UserInterface {
         String street = scanner.nextLine();
         System.out.print("Numer: ");
         String number = scanner.nextLine();
-        long id = 1; // Możesz wprowadzić logikę do generowania unikalnego ID
 
         Address address = new Address(city, street, number);
         Client client = new Client(firstName, lastName, phoneNumber, age, address);
-      //  client.setId(id);
-       // clientRepository.addClient(client);
+        clientRepository.save(client);
         System.out.println("Klient został dodany.");
     }
 
     private void removeClient() {
         System.out.print("Podaj ID klienta do usunięcia: ");
         Long clientId = scanner.nextLong();
-       // clientRepository.removeClientById(clientId);
-        System.out.println("Klient został usunięty.");
+
+        Client c = clientRepository.findById(clientId);
+        if (c == null) {
+            System.out.println("Nie znaleziono klienta o podanym ID.");
+        } else {
+            clientRepository.delete(c);
+            System.out.println("Klient został usunięty.");
+        }
+
     }
 
     private void listClients() {
-        //List<Client> clients = clientRepository.getAllClients();
+        List<Client> clients = clientRepository.findAll();
         System.out.println("Lista klientów:");
-//        for (Client client : clients) {
-//            System.out.println(client.getInfo());
-//        }
+        for (Client client : clients) {
+            System.out.println(client.getInfo());
+        }
     }
 
     private void addBike() {
         System.out.print("Model roweru: ");
         String model = scanner.nextLine();
-        System.out.print("ID roweru: ");
-        Long id = scanner.nextLong();
-        boolean available = true; // Domyślnie, rower jest dostępny
 
-        Bike bike = new Bike(id, model, available);
-       // bikeRepository.addBike(bike);
+        boolean available = true; // Domyślnie rower jest dostępny
+
+        Bike bike = new Bike(model, available);
+        bikeRepository.save(bike);
         System.out.println("Rower został dodany.");
     }
 
-//    private void rentBike() {
+    //    private void rentBike() {
 //        System.out.print("Podaj ID klienta: ");
 //        Long clientId = scanner.nextLong();
 //        System.out.print("Podaj ID roweru do wypożyczenia: ");
@@ -217,25 +233,23 @@ public class UserInterface {
 //        }
     }
 
-
-    private int generateRentalID() {
-        // Logika do generowania unikalnego ID dla wypożyczenia
-        // Na przykład można wykorzystać licznik lub UUID
-        return (int) (Math.random() * 10000); // Przykład prostej losowej wartości
-    }
-
     private void removeBike() {
         System.out.print("Podaj ID roweru do usunięcia: ");
         Long bikeId = scanner.nextLong();
-        bikeRepository.removeBikeById(bikeId);
-        System.out.println("Rower został usunięty.");
+        Bike b = bikeRepository.findById(bikeId);
+        if (b == null) {
+            System.out.println("Nie znaleziono roweru o podanym ID");
+        } else {
+            bikeRepository.delete(bikeRepository.findById(bikeId));
+            System.out.println("Rower został usunięty.");
+        }
     }
 
-//    private void listBikes() {
-//        List<Bike> bikes = bikeRepository.getAllBikes();
-//        System.out.println("Lista rowerów:");
-//        for (Bike bike : bikes) {
-//            System.out.println("Model: " + bike.getModelName() + ", ID: " + bike.getId() + ", Dostępny: " + bike.isIsAvailable());
-//        }
-//    }
+    private void listBikes() {
+        List<Bike> bikes = bikeRepository.findAll();
+        System.out.println("Lista rowerów:");
+        for (Bike bike : bikes) {
+            System.out.println("Model: " + bike.getModelName() + ", ID: " + bike.getId() + ", Dostępny: " + bike.isIsAvailable());
+        }
+    }
 }
