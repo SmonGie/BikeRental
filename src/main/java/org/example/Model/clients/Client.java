@@ -27,6 +27,9 @@ public class Client {
     @OneToMany(mappedBy = "client")
     private List<Rental> currentRentals = new ArrayList<>();
 
+    @Version
+    private Long version;
+
     public Client(String firstName, String lastName, String phoneNumber, int age, Address address) {
         this.firstName = firstName;
         this.lastName = lastName;
@@ -102,5 +105,7 @@ public class Client {
             this.clientType = new Adult();
         }
     }
-
+    public Long getVersion() {
+        return version;
+    }
 }

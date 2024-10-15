@@ -1,8 +1,6 @@
 package org.example.Repositories;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.*;
 import org.example.Model.Bike;
 
 import java.util.List;
@@ -70,6 +68,9 @@ public class BikeRepository implements IBikeRepository {
 
             transaction.commit();
 
+        } catch (OptimisticLockException e) {
+            transaction.rollback();
+            System.out.println("Inny użytkownik zmodyfikował ten obiekt. Spróbuj ponownie.");
         } finally {
             em.close();
         }
@@ -84,12 +85,17 @@ public class BikeRepository implements IBikeRepository {
 
         try {
             transaction.begin();
+
             if (em.contains(bike)) {
                 em.remove(bike);
             } else {
                 em.remove((em.merge(bike)));
             }
+
             transaction.commit();
+        } catch (OptimisticLockException e) {
+            transaction.rollback();
+            System.out.println("Inny użytkownik zmodyfikował ten obiekt. Spróbuj ponownie.");
         } finally {
             em.close();
         }

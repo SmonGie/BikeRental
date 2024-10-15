@@ -1,8 +1,6 @@
 package org.example.Repositories;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.*;
 import org.example.Model.Rental;
 
 import java.time.LocalDateTime;
@@ -77,6 +75,9 @@ public class RentalRepository implements IRentalRepository {
             } else em.merge(rental);
 
             transaction.commit();
+        }catch (OptimisticLockException e) {
+            transaction.rollback();
+            System.out.println("Inny użytkownik zmodyfikował ten obiekt. Spróbuj ponownie.");
         } finally {
             em.close();
         }
@@ -91,6 +92,7 @@ public class RentalRepository implements IRentalRepository {
 
         try {
             transaction.begin();
+
             if (em.contains(rental)) {
                 em.remove(rental);
             } else {
@@ -98,6 +100,9 @@ public class RentalRepository implements IRentalRepository {
             }
             transaction.commit();
 
+        }catch (OptimisticLockException e) {
+            transaction.rollback();
+            System.out.println("Inny użytkownik zmodyfikował ten obiekt. Spróbuj ponownie.");
         } finally {
             em.close();
         }

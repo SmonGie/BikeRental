@@ -29,6 +29,9 @@ public class Rental {
     private LocalDateTime endTime;
     private float totalCost;
 
+    @Version
+    private Long version;
+
     // Konstruktor
     public Rental( Client client, Bike bike, LocalDateTime startTime) {
 
@@ -106,6 +109,10 @@ public class Rental {
 
     public LocalDateTime getEndTime() {
         return endTime;
+    }
+
+    public Long getVersion() {
+        return version;
     }
 
     // Metoda do wyświetlania informacji o wypożyczeniu

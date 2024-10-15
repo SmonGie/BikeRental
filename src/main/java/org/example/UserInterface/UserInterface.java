@@ -155,7 +155,6 @@ public class UserInterface {
         String phoneNumber = scanner.nextLine();
         System.out.print("Wiek: ");
         int age = readIntegerInput();
-        scanner.nextLine();
         System.out.print("Miasto: ");
         String city = scanner.nextLine();
         System.out.print("Ulica: ");

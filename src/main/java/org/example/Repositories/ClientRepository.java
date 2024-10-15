@@ -1,8 +1,6 @@
 package org.example.Repositories;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.EntityTransaction;
+import jakarta.persistence.*;
 import org.example.Model.clients.Client;
 
 import java.util.List;
@@ -73,7 +71,10 @@ public class ClientRepository implements IClientRepository {
             } else em.merge(client);
 
             transaction.commit();
-        } finally {
+        } catch (OptimisticLockException e) {
+            transaction.rollback();
+            System.out.println("Inny użytkownik zmodyfikował ten obiekt. Spróbuj ponownie.");
+        }finally {
             em.close();
         }
 
@@ -87,12 +88,16 @@ public class ClientRepository implements IClientRepository {
 
         try {
             transaction.begin();
+
             if (em.contains(client)) {
                 em.remove(client);
             } else {
                 em.remove((em.merge(client)));
             }
             transaction.commit();
+        }catch (OptimisticLockException e) {
+            transaction.rollback();
+            System.out.println("Inny użytkownik zmodyfikował ten obiekt. Spróbuj ponownie.");
         } finally {
             em.close();
         }

@@ -14,6 +14,9 @@ public class Bike {
     private String modelName;
     private boolean isAvailable;
 
+    @Version
+    private Long version;
+
     public Bike(String modelName,  boolean isAvailable) {
         this.modelName = modelName;
         this.isAvailable = isAvailable;
@@ -43,4 +46,7 @@ public class Bike {
         return modelName + " " + isAvailable;
     }
 
+    public Long getVersion() {
+        return version;
+    }
 }
