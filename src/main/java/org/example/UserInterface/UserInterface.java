@@ -1,5 +1,10 @@
 package org.example.UserInterface;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.Persistence;
+import org.example.Model.ElectricBike;
+import org.example.Model.MountainBike;
 import org.example.Model.Rental;
 import org.example.Model.clients.Client;
 import org.example.Model.clients.Address;
@@ -38,6 +43,26 @@ public class UserInterface {
 //            System.out.println(client.getInfo());
 //
 //        }
+//        EntityManagerFactory emf;
+//        emf = Persistence.createEntityManagerFactory("default");
+//        EntityManager em = emf.createEntityManager();
+//        em.getTransaction().begin();
+//
+//        MountainBike mtb = new MountainBike("Trek X-Cal", true, 120);
+//        ElectricBike ebike = new ElectricBike("Giant E+", false, 500);
+//
+//        em.persist(mtb);
+//        em.persist(ebike);
+//
+//        em.getTransaction().commit();
+//        em.close();
+//
+//       List<Bike> bikes = bikeRepository.findAll();
+//
+//       for (Bike bike : bikes) {
+//           System.out.println(bike.getInfo());
+//       }
+
 
 
         while (true) {

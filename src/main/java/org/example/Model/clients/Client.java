@@ -21,7 +21,9 @@ public class Client {
     private int rentalCount;
     @Embedded
     private Address address;
-    @Transient
+
+
+    @Enumerated(EnumType.STRING)
     private ClientType clientType;
 
     @OneToMany(mappedBy = "client")
@@ -37,8 +39,7 @@ public class Client {
         this.age = age;
         this.address = address;
         rentalCount = 0;
-
-        updateClientType();
+        this.clientType = ClientType.determineClientType(age);
 
     }
 
@@ -91,20 +92,13 @@ public class Client {
         return "Klient: " + firstName + " " + lastName +
                 "\n numer telefonu: " + phoneNumber +
                 "\n wiek: " + age +
-                "\n Id: " + Id;
-               // "\n " + clientType.getInfo();
+                "\n Id: " + Id +
+                "\n " + clientType.getInfo();
     }
     public int applyDiscount(){
         return clientType.applyDiscount();
     }
 
-    private void updateClientType() {
-        if (age < 18) {
-            this.clientType = new Child();
-        } else {
-            this.clientType = new Adult();
-        }
-    }
     public Long getVersion() {
         return version;
     }

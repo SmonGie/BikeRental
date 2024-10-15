@@ -4,6 +4,8 @@ package org.example.Model;
 import jakarta.persistence.*;
 
 @Entity
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name = "bike_type")
 public class Bike {
 
     @Id
@@ -17,7 +19,7 @@ public class Bike {
     @Version
     private Long version;
 
-    public Bike(String modelName,  boolean isAvailable) {
+    public Bike(String modelName, boolean isAvailable) {
         this.modelName = modelName;
         this.isAvailable = isAvailable;
     }
@@ -29,9 +31,11 @@ public class Bike {
     public Long getId() {
         return Id;
     }
+
     public String getModelName() {
         return modelName;
     }
+
     public void setModelName(String modelName) {
         this.modelName = modelName;
     }
@@ -39,11 +43,13 @@ public class Bike {
     public boolean isIsAvailable() {
         return isAvailable;
     }
+
     public void setIsAvailable(boolean isAvailable) {
         this.isAvailable = isAvailable;
     }
+
     public String getInfo() {
-        return modelName + " " + isAvailable;
+        return modelName + " Dostępność: " + isAvailable;
     }
 
     public Long getVersion() {

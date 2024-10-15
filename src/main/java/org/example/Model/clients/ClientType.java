@@ -1,14 +1,37 @@
 package org.example.Model.clients;
 
-public class ClientType {
-    public ClientType() {
+public enum ClientType {
+
+    YOUTH(7) {
+        @Override
+        public int applyDiscount() {
+            return this.discount;
+        }
+    },
+    ADULT(0) {
+        @Override
+        public int applyDiscount() {
+            return this.discount;
+        }
+    };
+
+    protected int discount;
+
+    ClientType(int discount) {
+        this.discount = discount;
     }
-    protected int applyDiscount()
-    {
-        return 0;
+
+    public abstract int applyDiscount();
+
+    public String getInfo() {
+        return "Przecena: " + applyDiscount() + "%";
     }
-    public String getInfo()
-    {
-        return "Przecena: " + applyDiscount();
+
+    public static ClientType determineClientType(int age) {
+        if (age < 18) {
+            return YOUTH;
+        } else {
+            return ADULT;
+        }
     }
 }
