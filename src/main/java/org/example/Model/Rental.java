@@ -11,7 +11,7 @@ import org.example.Model.clients.Client;
 public class Rental {
 
     @jakarta.persistence.Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id", unique = true, nullable = false)
     private Long Id;  // Change to String for UUID
 
@@ -102,6 +102,7 @@ public class Rental {
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
+    public void setEndTime(LocalDateTime endTime) {this.endTime = endTime;}
 
     public LocalDateTime getEndTime() {
         return endTime;

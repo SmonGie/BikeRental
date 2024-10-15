@@ -1,24 +1,22 @@
 package org.example.Model;
 
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
+import jakarta.persistence.*;
 
 @Entity
 public class Bike {
 
-    @jakarta.persistence.Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id", unique = true, nullable = false)
-    private Long Id;
-    private String ModelName;
-    private boolean IsAvailable;
 
-    public Bike(String ModelName,  boolean IsAvailable) {
-        this.ModelName = ModelName;
-        this.IsAvailable = IsAvailable;
+    private Long Id;
+    private String modelName;
+    private boolean isAvailable;
+
+    public Bike(String modelName,  boolean isAvailable) {
+        this.modelName = modelName;
+        this.isAvailable = isAvailable;
     }
 
     public Bike() {
@@ -29,20 +27,20 @@ public class Bike {
         return Id;
     }
     public String getModelName() {
-        return ModelName;
+        return modelName;
     }
     public void setModelName(String modelName) {
-        ModelName = modelName;
+        this.modelName = modelName;
     }
 
     public boolean isIsAvailable() {
-        return IsAvailable;
+        return isAvailable;
     }
     public void setIsAvailable(boolean isAvailable) {
-        IsAvailable = isAvailable;
+        this.isAvailable = isAvailable;
     }
     public String getInfo() {
-        return ModelName  + " " + IsAvailable;
+        return modelName + " " + isAvailable;
     }
 
 }

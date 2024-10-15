@@ -5,6 +5,7 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
 import org.example.Model.Rental;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -12,28 +13,23 @@ public class RentalRepository implements IRentalRepository {
 
     private EntityManagerFactory emf;
 
+    public RentalRepository(EntityManagerFactory emf) {
+        this.emf = emf;
+    }
 
-    // Zakończenie bieżącego wypożyczenia dla klienta
-//    public static void endCurrentRental(Client client) {
-//        Rental currentRental = getCurrentRental(client);
-//        if (currentRental != null) {
-//            currentRental.endRental(java.time.LocalDateTime.now());  // Ustawienie czasu zakończenia
-//        } else {
-//            System.out.println("Brak aktywnych wypożyczeń do zakończenia.");
-//        }
-//    }
-
-
-    private EntityManager em;
 
 
     public List<Rental> getCurrentRentals(Long clientId) {
+        EntityManager em = emf.createEntityManager();
 
-        return em.createQuery(
-                        "SELECT r FROM Rental r JOIN r.client c WHERE r.endTime IS NULL AND c.id = :clientId", Rental.class)
-                .setParameter("clientId", clientId)
-                .getResultList(); // to moze byc zle lol
-
+        try {
+            return em.createQuery(
+                            "SELECT r FROM Rental r WHERE r.client.Id = :clientId AND r.endTime IS NULL", Rental.class)
+                    .setParameter("clientId", clientId)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
     }
 
     @Override

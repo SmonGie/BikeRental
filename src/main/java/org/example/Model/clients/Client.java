@@ -12,7 +12,7 @@ import java.util.List;
 public class Client {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id", unique = true, nullable = false)
 
     private Long Id;
@@ -35,11 +35,7 @@ public class Client {
         this.address = address;
         rentalCount = 0;
 
-        if (age < 18) {
-            clientType = new Child();
-        } else {
-            clientType = new Adult();
-        }
+        updateClientType();
 
     }
 
@@ -98,4 +94,13 @@ public class Client {
     public int applyDiscount(){
         return clientType.applyDiscount();
     }
+
+    private void updateClientType() {
+        if (age < 18) {
+            this.clientType = new Child();
+        } else {
+            this.clientType = new Adult();
+        }
+    }
+
 }
