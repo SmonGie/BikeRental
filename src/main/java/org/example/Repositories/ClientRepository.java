@@ -14,17 +14,6 @@ public class ClientRepository implements IClientRepository {
         this.emf = emf;
     }
 
-
-    // Znajdowanie klienta po numerze telefonu CZY TO SIE GDZIEKOLWIEK PRZYDA?
-
-
-    // Pobieranie klientów w zależności od wieku (np. dzieci lub dorośli)
-//    public List<Client> findClientsByAge(int age) {
-//        return clients.stream()
-//                .filter(client -> client.getAge() == age)
-//                .collect(Collectors.toList());
-//    }// tego nie zrobilem
-
     @Override
     public Client findById(Long id) {
 

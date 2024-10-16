@@ -53,6 +53,21 @@ public class BikeRepository implements IBikeRepository {
         return bikes;
     }
 
+
+    public List<Bike> findAllAvailable() {
+        EntityManager em = emf.createEntityManager();
+
+        List<Bike> bikes = null;
+
+        try {
+            bikes = em.createQuery("SELECT b from Bike b WHERE b.isAvailable = true ", Bike.class).getResultList();
+        } finally {
+            em.close();
+        }
+
+        return bikes;
+    }
+
     @Override
 
     public void save(Bike bike) {
