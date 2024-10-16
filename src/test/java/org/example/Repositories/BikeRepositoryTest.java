@@ -100,7 +100,7 @@ class BikeRepositoryTest {
     @Test
     void save_delete() {
         ElectricBike tesla = new ElectricBike(" CyberBike", true, 12000);
-        
+
         int count = bikeRepository.findAll().size();
         bikeRepository.save(tesla);
         assertEquals(bikeRepository.findAll().size(), count + 1);

@@ -19,6 +19,7 @@ public class Client {
     private String firstName, lastName, phoneNumber;
     private int age;
     private int rentalCount;
+
     @Embedded
     private Address address;
 

@@ -19,6 +19,8 @@ public class Main {
 
         // Uruchamiamy interfejs użytkownika
         ui.start();
+
+        emf.close();
     }
 }
 

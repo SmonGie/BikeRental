@@ -36,32 +36,15 @@ public class UserInterface {
 
         Address a = new Address("lodz", "janowa", "3");
         Client c = new Client("Jedrzej", "Wisniewski", "123123123", 54, a);
+
         clientRepository.save(c);
-//        List<Client> clients = clientRepository.findAll();
-//        for (Client client : clients) {
-//
-//            System.out.println(client.getInfo());
-//
-//        }
-//        EntityManagerFactory emf;
-//        emf = Persistence.createEntityManagerFactory("default");
-//        EntityManager em = emf.createEntityManager();
-//        em.getTransaction().begin();
-//
-//        MountainBike mtb = new MountainBike("Trek X-Cal", true, 120);
-//        ElectricBike ebike = new ElectricBike("Giant E+", false, 500);
-//
-//        em.persist(mtb);
-//        em.persist(ebike);
-//
-//        em.getTransaction().commit();
-//        em.close();
-//
-//       List<Bike> bikes = bikeRepository.findAll();
-//
-//       for (Bike bike : bikes) {
-//           System.out.println(bike.getInfo());
-//       }
+
+        MountainBike mtb2 = new MountainBike("lolek X-Cal", true, 120);
+        MountainBike mtb = new MountainBike("Trek X-Cal", true, 120);
+        ElectricBike ebike = new ElectricBike("Giant E+", true, 500);
+        bikeRepository.save(mtb);
+        bikeRepository.save(ebike);
+
 
 
 
@@ -311,7 +294,7 @@ public class UserInterface {
         List<Bike> bikes = bikeRepository.findAll();
         System.out.println("Lista rowerów:");
         for (Bike bike : bikes) {
-            System.out.println("Model: " + bike.getModelName() + ", ID: " + bike.getId() + ", Dostępny: " + bike.isIsAvailable());
+            System.out.println(bike.getInfo());
         }
     }
 

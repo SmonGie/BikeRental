@@ -6,6 +6,8 @@ import java.time.Duration;
 import com.sun.istack.NotNull;
 import jakarta.persistence.*;
 import org.example.Model.clients.Client;
+
+
 @Entity
 @Table(name = "Rental")
 public class Rental {
