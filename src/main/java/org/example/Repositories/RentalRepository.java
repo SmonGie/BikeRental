@@ -15,7 +15,16 @@ public class RentalRepository implements IRentalRepository {
         this.emf = emf;
     }
 
-
+    public List<Rental> getCurrentRentalsByBikeId(Long bikeId) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createQuery("SELECT r FROM Rental r WHERE r.bike.Id = :bikeId AND r.endTime IS NULL", Rental.class)
+                    .setParameter("bikeId", bikeId)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
 
     public List<Rental> getCurrentRentals(Long clientId) {
         EntityManager em = emf.createEntityManager();

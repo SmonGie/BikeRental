@@ -27,6 +27,6 @@ public class ElectricBike extends Bike {
 
     @Override
     public String getInfo() {
-        return super.getInfo() + "Pojemność baterii: " + batteryCapacity + " Wh";
+        return super.getInfo() + " Pojemność baterii: " + batteryCapacity + " Wh";
     }
 }

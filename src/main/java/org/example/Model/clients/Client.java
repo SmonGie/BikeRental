@@ -18,6 +18,7 @@ public class Client {
     private Long Id;
     private String firstName, lastName, phoneNumber;
     private int age;
+
     private int rentalCount;
 
     private boolean active = true;
@@ -112,6 +113,14 @@ public class Client {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+    public int getRentalCount() {
+        return rentalCount;
+    }
+
+    public void setRentalCount(int rentalCount) {
+        this.rentalCount = rentalCount;
     }
 
 }
