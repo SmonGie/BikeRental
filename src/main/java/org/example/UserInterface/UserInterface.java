@@ -303,6 +303,7 @@ public class UserInterface {
                 if (client.getRentalCount() >= 2) {
                     transaction.rollback();
                     System.out.println("Klient może mieć maksymalnie 2 wypożyczenia.");
+                    em.close();
                     return;
                 }
 
@@ -320,6 +321,8 @@ public class UserInterface {
 
             } else {
                 System.out.println("Nieprawidłowy klient lub rower niedostępny.");
+                transaction.rollback();
+                em.close();
             }
 
         } catch (OptimisticLockException e) {
@@ -333,6 +336,9 @@ public class UserInterface {
     }
 
     private void endRental() {
+
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction transaction = em.getTransaction();
         System.out.print("Podaj ID klienta, którego wypożyczenie chcesz zakończyć: ");
         Long clientId = scanner.nextLong();
         scanner.nextLine();
@@ -359,27 +365,43 @@ public class UserInterface {
         }
 
         Rental selectedRental = currentRentals.get(rentalIndex);
-        selectedRental.setEndTime(LocalDateTime.now());
-        selectedRental.calculateTotalCost();
-        rentalRepository.save(selectedRental);
 
         Client client = selectedRental.getClient();
-
         ClientType clientType = ClientType.determineClientType(client.getAge());
         int discount = clientType.applyDiscount();
+
+        Bike bike = selectedRental.getBike();
+
+        try {
+
+            transaction.begin();
+
+            selectedRental.setEndTime(LocalDateTime.now());
+            selectedRental.calculateTotalCost();
+            client.setRentalCount(client.getRentalCount() - 1);
+            bike.setIsAvailable(true);
+
+            em.merge(client);
+            em.merge(bike);
+            em.merge(selectedRental);
+
+            transaction.commit();
+
+        }  catch (OptimisticLockException e) {
+
+            transaction.rollback();
+            System.out.println("Operacja zakończyła się niepowodzeniem");
+
+        } finally {
+            em.close();
+        }
+
 
         double totalCost = selectedRental.getTotalCost();
         System.out.println("Wypożyczenie zakończone");
         System.out.println("Typ klienta: " + clientType + ", Zniżka: " + discount + "%");
         System.out.println("Całkowity koszt po zniżce: " + totalCost + " zł");
 
-        client.setRentalCount(client.getRentalCount() - 1);
-        clientRepository.save(client);
-
-        Bike bike = selectedRental.getBike();
-
-        bike.setIsAvailable(true);
-        bikeRepository.save(bike);
     }
 
     private void listRentals() {
@@ -430,6 +452,7 @@ public class UserInterface {
         Bike b = bikeRepository.findById(bikeId);
         if (b == null) {
             System.out.println("Nie znaleziono roweru o podanym ID");
+            return;
         }
 
         bikeRepository.delete(b);
