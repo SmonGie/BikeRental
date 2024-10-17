@@ -3,7 +3,6 @@ package org.example.Repositories;
 import jakarta.persistence.*;
 import org.example.Model.Rental;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 

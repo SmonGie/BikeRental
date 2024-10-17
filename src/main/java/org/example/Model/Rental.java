@@ -15,7 +15,7 @@ public class Rental {
     @jakarta.persistence.Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "Id", unique = true, nullable = false)
-    private Long Id;  // Change to String for UUID
+    private Long Id;
 
 
     @ManyToOne
@@ -90,7 +90,6 @@ public class Rental {
         return totalCost;
     }
 
-    // Getter i setter dla czasu rozpoczęcia i zakończenia
     public LocalDateTime getStartTime() {
         return startTime;
     }
@@ -107,7 +106,6 @@ public class Rental {
         return endTime;
     }
 
-    // Metoda do wyświetlania informacji o wypożyczeniu
     public String getInfo() {
         return "Numer wypożyczenia: " + Id +
                 "\nKlient: " + client.getInfo() +

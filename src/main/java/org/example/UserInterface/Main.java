@@ -17,7 +17,6 @@ public class Main {
         RentalRepository rentalRepository = new RentalRepository(emf);
         UserInterface ui = new UserInterface(clientRepository, bikeRepository, rentalRepository, emf);
 
-        // Uruchamiamy interfejs użytkownika
         ui.start();
 
         emf.close();

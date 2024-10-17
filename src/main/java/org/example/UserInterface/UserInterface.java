@@ -116,7 +116,7 @@ public class UserInterface {
                     listClients();
                     break;
                 case 0:
-                    return; // Powrót do menu głównego
+                    return;
                 default:
                     System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
             }
@@ -144,7 +144,7 @@ public class UserInterface {
                     listBikes();
                     break;
                 case 0:
-                    return; // Powrót do menu głównego
+                    return;
                 default:
                     System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
             }
@@ -176,7 +176,7 @@ public class UserInterface {
                     listFinishedRentals();
                     break;
                 case 0:
-                    return; // Powrót do menu głównego
+                    return;
                 default:
                     System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
             }
