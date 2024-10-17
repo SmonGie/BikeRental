@@ -53,8 +53,7 @@ public class UserInterface {
             System.out.println("Wybierz opcję:");
             System.out.println("1. Zarządzanie klientami");
             System.out.println("2. Zarządzanie rowerami");
-            System.out.println("3. Wypożyczenie roweru");
-            System.out.println("4. Zakończenie wypożyczenia");
+            System.out.println("3. Zarządzanie wypożyczeniami");
             System.out.println("0. Wyjdź");
 
             int choice = readIntegerInput();
@@ -67,10 +66,7 @@ public class UserInterface {
                     manageBikes();
                     break;
                 case 3:
-                    rentBike();
-                    break;
-                case 4:
-                    endRental();
+                    manageRentals();
                     break;
                 case 0:
                     System.out.println("Do widzenia!");
@@ -147,6 +143,37 @@ public class UserInterface {
                 case 3:
                     listBikes();
                     break;
+                case 0:
+                    return; // Powrót do menu głównego
+                default:
+                    System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
+            }
+        }
+    }
+
+    private void manageRentals() {
+        while (true) {
+            System.out.println("\nZarządzanie wypożyczeniami:");
+            System.out.println("1. Wypożycz Rower");
+            System.out.println("2. Zakończ wypożyczenie");
+            System.out.println("3. Przeglądaj wszystkie wypożyczenia");
+            System.out.println("4. Przeglądaj zakończone wypożyczenia");
+            System.out.println("0. Powrót do menu głównego");
+
+            int choice = readIntegerInput();
+
+            switch (choice) {
+                case 1:
+                    rentBike();
+                    break;
+                case 2:
+                    endRental();
+                    break;
+                case 3:
+                    listRentals();
+                    break;
+                case 4:
+                    listFinishedRentals();
                 case 0:
                     return; // Powrót do menu głównego
                 default:
@@ -288,11 +315,6 @@ public class UserInterface {
 
                 transaction.commit();
 
-                System.out.print("Podaj kwotę do zapłaty za wypożyczenie: ");
-                double amount = scanner.nextDouble();
-                scanner.nextLine();
-
-                System.out.println("Płatność w wysokości " + amount + " została przetworzona dla klienta: " + client.getFirstName());
                 System.out.println("Rower wypożyczony: " + bike.getModelName() + " przez klienta: " + client.getFirstName());
 
             } else {
@@ -357,6 +379,41 @@ public class UserInterface {
 
         bike.setIsAvailable(true);
         bikeRepository.save(bike);
+    }
+
+    private void listRentals() {
+        List<Rental> rentals = rentalRepository.findAll();
+        if(rentals.isEmpty()){
+            System.out.println("Aktualnie nie ma wypożyczeń.");
+            return;
+        }
+        System.out.println("Lista wypożyczeń:");
+        for (Rental rental : rentals) {
+            System.out.println("ID wypożyczenia: " + rental.getId() +
+                    ", Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
+                    ", Rower: " + rental.getBike().getModelName() +
+                    ", Czas wypożyczenia: " + rental.getStartTime() +
+                    (rental.getEndTime() != null ? ", Czas zakończenia: " + rental.getEndTime() : ", Wciąż wypożyczony"));
+        }
+    }
+
+    private void listFinishedRentals() {
+        List<Rental> finishedRentals = rentalRepository.findAll();
+        if(finishedRentals.isEmpty()){
+            System.out.println("Aktualnie nie ma żadnych zakończonych wypożyczeń.");
+            return;
+        }
+        System.out.println("Lista zakończonych wypożyczeń:");
+
+        for (Rental rental : finishedRentals) {
+            if (rental.getEndTime() != null) {
+                System.out.println("ID wypożyczenia: " + rental.getId() +
+                        ", Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
+                        ", Rower: " + rental.getBike().getModelName() +
+                        ", Czas wypożyczenia: " + rental.getStartTime() +
+                        ", Czas zakończenia: " + rental.getEndTime());
+            }
+        }
     }
 
 
