@@ -51,8 +51,4 @@ public class Bike {
     public String getInfo() {
         return modelName + " Dostępność: " + isAvailable;
     }
-
-    public Long getVersion() {
-        return version;
-    }
 }

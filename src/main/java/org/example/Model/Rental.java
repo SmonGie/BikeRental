@@ -34,7 +34,7 @@ public class Rental {
     @Version
     private Long version;
 
-    public Rental( Client client, Bike bike, LocalDateTime startTime) {
+    public Rental(Client client, Bike bike, LocalDateTime startTime) {
 
         this.client = client;
         this.bike = bike;
@@ -98,24 +98,23 @@ public class Rental {
     public void setStartTime(LocalDateTime startTime) {
         this.startTime = startTime;
     }
-    public void setEndTime(LocalDateTime endTime) {this.endTime = endTime;}
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
 
     public LocalDateTime getEndTime() {
         return endTime;
     }
 
-    public Long getVersion() {
-        return version;
-    }
-
     // Metoda do wyświetlania informacji o wypożyczeniu
     public String getInfo() {
-        return "Rental ID: " + Id +
-                "\nClient: " + client.getInfo() +
-                "\nBike ID: " + bike.getId() +
-                "\nStart Time: " + startTime +
-                "\nEnd Time: " + (endTime != null ? endTime : "Wypożyczenie nadal trwa") +
-                "\nTotal Cost: " + totalCost + " zł";
+        return "Numer wypożyczenia: " + Id +
+                "\nKlient: " + client.getInfo() +
+                "\nRower ID: " + bike.getId() +
+                "\nData rozpoczęcia: " + startTime +
+                "\nData zakończenia: " + (endTime != null ? endTime : "Wypożyczenie nadal trwa") +
+                "\nCena całkowita: " + totalCost + " zł";
     }
 }
 

@@ -35,6 +35,7 @@ public class Address{
     }
     public String getInfo(){
 
-        return getCity() + ", " + getStreet() + ", "+ getNumber();
+        return "Miasto: " + getCity() +
+                "\n Ulica i numer: " + getStreet() + " "+ getNumber();
     }
 }

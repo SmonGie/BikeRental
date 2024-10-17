@@ -93,18 +93,15 @@ public class Client {
     }
     public String getInfo()
     {
-        return "Klient: " + firstName + " " + lastName +
+        return " Klient: " + firstName + " " + lastName +
                 "\n numer telefonu: " + phoneNumber +
                 "\n wiek: " + age +
                 "\n Id: " + Id +
-                "\n " + clientType.getInfo();
+                "\n " + clientType.getInfo() +
+                "\n " + address.getInfo();
     }
     public int applyDiscount(){
         return clientType.applyDiscount();
-    }
-
-    public Long getVersion() {
-        return version;
     }
 
     public boolean isActive() {

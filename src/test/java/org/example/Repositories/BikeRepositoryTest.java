@@ -136,13 +136,11 @@ class BikeRepositoryTest {
         em1.getTransaction().commit();
 
         bike2.setModelName("model2");
-
-        // okazuje sie ze JPA zwykle rzuca wyjatek RollbackException kiedy wystepuje jakis blad w transakcji
+        em2.persist(bike2);
+        
         RollbackException thrown = assertThrows(RollbackException.class, () -> {
-            em2.persist(bike2);
             em2.getTransaction().commit();
         });
-        // aby upewnic sie ze to OptimisticLockException nalezy go "rozpakowac"
         assertThrows(OptimisticLockException.class, () -> {
             throw thrown.getCause();
         });
