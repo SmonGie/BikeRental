@@ -194,9 +194,15 @@ public class UserInterface {
             System.out.println("Klient ma aktywne wypożyczenia. Zakończ wypożyczenia przed usunięciem klienta.");
             return;
         }
-        c.setActive(false);
-        clientRepository.save(c);
-        System.out.println("Klient został oznaczony jako nieaktywny.");
+        List<Rental> rentalHistory = rentalRepository.getRentalHistoryByClientId(clientId);
+        if (rentalHistory.isEmpty()) {
+            clientRepository.delete(c);
+            System.out.println("Klient został usunięty.");
+        } else {
+            c.setActive(false);
+            clientRepository.save(c);
+            System.out.println("Klient został oznaczony jako nieaktywny.");
+        }
     }
 
     private void listClients() {

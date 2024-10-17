@@ -39,6 +39,17 @@ public class RentalRepository implements IRentalRepository {
         }
     }
 
+    public List<Rental> getRentalHistoryByClientId(Long clientId) {
+        EntityManager em = emf.createEntityManager();
+        try {
+            return em.createQuery("SELECT r FROM Rental r WHERE r.client.id = :clientId", Rental.class)
+                    .setParameter("clientId", clientId)
+                    .getResultList();
+        } finally {
+            em.close();
+        }
+    }
+
     @Override
     public Rental findById(Long id) {
         EntityManager em = emf.createEntityManager();
