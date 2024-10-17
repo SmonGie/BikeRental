@@ -16,12 +16,6 @@ public class BikeRepository implements IBikeRepository {
 
     }
 
-    // Znajdowanie rowerów dostępnych do wypożyczenia
-//    public List<Bike> findAvailableBikes() {
-//        return bikes.stream()
-//                .filter(Bike::isIsAvailable) // Zakładając, że jest metoda isAvailable() w klasie Bike
-//                .collect(Collectors.toList());
-//    }
 
     @Override
     public Bike findById(Long id) {

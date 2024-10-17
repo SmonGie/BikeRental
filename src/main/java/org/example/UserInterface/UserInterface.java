@@ -174,6 +174,7 @@ public class UserInterface {
                     break;
                 case 4:
                     listFinishedRentals();
+                    break;
                 case 0:
                     return; // Powrót do menu głównego
                 default:
