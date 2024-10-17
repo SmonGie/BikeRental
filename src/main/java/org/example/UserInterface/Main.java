@@ -15,7 +15,7 @@ public class Main {
         ClientRepository clientRepository = new ClientRepository(emf);
         BikeRepository bikeRepository = new BikeRepository(emf);
         RentalRepository rentalRepository = new RentalRepository(emf);
-        UserInterface ui = new UserInterface(clientRepository, bikeRepository, rentalRepository);
+        UserInterface ui = new UserInterface(clientRepository, bikeRepository, rentalRepository, emf);
 
         // Uruchamiamy interfejs użytkownika
         ui.start();

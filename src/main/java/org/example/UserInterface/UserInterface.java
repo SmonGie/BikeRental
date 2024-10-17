@@ -1,14 +1,14 @@
 package org.example.UserInterface;
 
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.Persistence;
+import jakarta.persistence.*;
 import org.example.Model.ElectricBike;
 import org.example.Model.MountainBike;
 import org.example.Model.Rental;
 import org.example.Model.clients.Client;
 import org.example.Model.clients.Address;
 import org.example.Model.Bike;
+import org.example.Model.clients.ClientType;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
 import org.example.Repositories.RentalRepository;
@@ -22,12 +22,14 @@ public class UserInterface {
     private final BikeRepository bikeRepository;
     private final RentalRepository rentalRepository;
     private final Scanner scanner;
+    private final EntityManagerFactory emf;
 
-    public UserInterface(ClientRepository clientRepository, BikeRepository bikeRepository, RentalRepository rentalRepository) {
+    public UserInterface(ClientRepository clientRepository, BikeRepository bikeRepository, RentalRepository rentalRepository,EntityManagerFactory emf) {
         this.clientRepository = clientRepository;
         this.bikeRepository = bikeRepository;
         this.rentalRepository = rentalRepository;
         this.scanner = new Scanner(System.in);
+        this.emf = emf;
     }
 
 
@@ -43,6 +45,7 @@ public class UserInterface {
         MountainBike mtb = new MountainBike("Trek X-Cal", true, 120);
         ElectricBike ebike = new ElectricBike("Giant E+", true, 500);
         bikeRepository.save(mtb);
+        bikeRepository.save(mtb2);
         bikeRepository.save(ebike);
 
 
@@ -183,11 +186,16 @@ public class UserInterface {
         Client c = clientRepository.findById(clientId);
         if (c == null) {
             System.out.println("Nie znaleziono klienta o podanym ID.");
-        } else {
-            clientRepository.delete(c);
-            System.out.println("Klient został usunięty.");
+            return;
         }
-
+        List<Rental> currentRentals = rentalRepository.getCurrentRentals(clientId);
+        if (!currentRentals.isEmpty()) {
+            System.out.println("Klient ma aktywne wypożyczenia. Zakończ wypożyczenia przed usunięciem klienta.");
+            return;
+        }
+        c.setActive(false);
+        clientRepository.save(c);
+        System.out.println("Klient został oznaczony jako nieaktywny.");
     }
 
     private void listClients() {
@@ -195,45 +203,102 @@ public class UserInterface {
         System.out.println("Lista klientów:");
         for (Client client : clients) {
             System.out.println(client.getInfo());
+            List<Rental> currentRentals = rentalRepository.getCurrentRentals(client.getId());
+            if (!currentRentals.isEmpty()) {
+                System.out.println("Aktualne wypożyczenia:");
+                for (Rental rental : currentRentals) {
+                    System.out.println(" - Rower: " + rental.getBike().getModelName() + ", ID: " + rental.getId());
+                }
+            } else {
+                System.out.println("Brak aktywnych wypożyczeń.");
+            }
         }
     }
 
     private void addBike() {
+        System.out.println("Wybierz typ roweru:");
+        System.out.println("1. MountainBike");
+        System.out.println("2. ElectricBike");
+
+        int choice = readIntegerInput();
+
         System.out.print("Model roweru: ");
         String model = scanner.nextLine();
 
-        boolean available = true; // Domyślnie rower jest dostępny
+        boolean available = true; //Domyślnie rower jest dostępny
 
-        Bike bike = new Bike(model, available);
-        bikeRepository.save(bike);
-        System.out.println("Rower został dodany.");
+        switch (choice) {
+            case 1:
+                //MountainBike
+                System.out.print("Szerokość opony (w cm): ");
+                int tireWidth = readIntegerInput();
+                MountainBike mountainBike = new MountainBike(model, available, tireWidth);
+                bikeRepository.save(mountainBike);
+                System.out.println("Rower górski został dodany.");
+                break;
+            case 2:
+                //ElectricBike
+                System.out.print("Pojemność baterii (w Wh): ");
+                int batteryCapacity = readIntegerInput();
+                ElectricBike electricBike = new ElectricBike(model, available, batteryCapacity);
+                bikeRepository.save(electricBike);
+                System.out.println("Rower elektryczny został dodany.");
+                break;
+            default:
+                System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
+        }
     }
 
-    private void rentBike() {
-        System.out.print("Podaj ID klienta: ");
-        Long clientId = scanner.nextLong();
-        System.out.print("Podaj ID roweru do wypożyczenia: ");
-        Long bikeId = scanner.nextLong();
+    public void rentBike() {
+        EntityManager em = emf.createEntityManager();
+        EntityTransaction tx = em.getTransaction();
 
-        Client client = clientRepository.findById(clientId);
-        Bike bike = bikeRepository.findById(bikeId);
+        try {
+            tx.begin();
 
-        if (client != null && bike != null && bike.isIsAvailable()) {
-            System.out.print("Podaj kwotę do zapłaty za wypożyczenie: ");
-            double amount = scanner.nextDouble();
+            System.out.print("Podaj ID klienta: ");
+            Long clientId = scanner.nextLong();
+            scanner.nextLine();
+            System.out.print("Podaj ID roweru do wypożyczenia: ");
+            Long bikeId = scanner.nextLong();
+            scanner.nextLine();
 
-            System.out.println("Płatność w wysokości " + amount + " została przetworzona dla klienta: " + client.getFirstName());
+            Client client = clientRepository.findById(clientId);
+            Bike bike = bikeRepository.findById(bikeId);
 
-            Rental rental = new Rental(client, bike, LocalDateTime.now());
+            if (client != null && bike != null && bike.isIsAvailable()) {
+                System.out.print("Podaj kwotę do zapłaty za wypożyczenie: ");
 
-            rentalRepository.save(rental);
+                List<Rental> currentRentals = rentalRepository.getCurrentRentals(clientId);
+                if (currentRentals.size() >= 2) {
+                    System.out.println("Klient może mieć maksymalnie 2 wypożyczenia.");
+                    return;
+                }
 
-            bike.setIsAvailable(false);
-            bikeRepository.save(bike);
+                double amount = scanner.nextDouble();
+                scanner.nextLine();
 
-            System.out.println("Rower wypożyczony: " + bike.getModelName() + " przez klienta: " + client.getFirstName());
-        } else {
-            System.out.println("Nieprawidłowy klient lub rower niedostępny.");
+                System.out.println("Płatność w wysokości " + amount + " została przetworzona dla klienta: " + client.getFirstName());
+
+                Rental rental = new Rental(client, bike, LocalDateTime.now());
+                rentalRepository.save(rental);
+
+                bike.setIsAvailable(false);
+                bikeRepository.save(bike);
+
+                tx.commit(); // Zatwierdź transakcję
+                System.out.println("Rower wypożyczony: " + bike.getModelName() + " przez klienta: " + client.getFirstName());
+            } else {
+                System.out.println("Nieprawidłowy klient lub rower niedostępny.");
+            }
+
+        } catch (Exception e) {
+            if (tx.isActive()) {
+                tx.rollback();
+            }
+            System.out.println("Wystąpił błąd: " + e.getMessage());
+        } finally {
+            em.close();
         }
     }
 
@@ -257,19 +322,26 @@ public class UserInterface {
 
         System.out.print("Wybierz numer wypożyczenia do zakończenia: ");
         int rentalIndex = scanner.nextInt() - 1;
+        scanner.nextLine();
         if (rentalIndex < 0 || rentalIndex >= currentRentals.size()) {
             System.out.println("Nieprawidłowy wybór.");
             return;
         }
 
         Rental selectedRental = currentRentals.get(rentalIndex);
-
         selectedRental.setEndTime(LocalDateTime.now());
+        selectedRental.calculateTotalCost();
         rentalRepository.save(selectedRental);
 
-        double totalCost = selectedRental.getTotalCost();
+        Client client = selectedRental.getClient();
 
-        System.out.println("Wypożyczenie zakończone. Całkowity koszt: " + totalCost + " zł");
+        ClientType clientType = ClientType.determineClientType(client.getAge());
+        int discount = clientType.applyDiscount();
+
+        double totalCost = selectedRental.getTotalCost();
+        System.out.println("Wypożyczenie zakończone");
+        System.out.println("Typ klienta: " + clientType + ", Zniżka: " + discount + "%");
+        System.out.println("Całkowity koszt po zniżce: " + totalCost + " zł");
 
         Bike bike = selectedRental.getBike();
         bike.setIsAvailable(true);

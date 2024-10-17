@@ -53,6 +53,7 @@ class ClientRepositoryTest {
         assertNotNull(foundClient);
         assertEquals(foundClient.getId(), c2.getId());
 
+        clientRepository.delete(c2);
     }
 
     @Test
@@ -72,6 +73,7 @@ class ClientRepositoryTest {
         List<Client> clientList = clientRepository.findAll();
         assertEquals(clientList.size(), count + 1);
 
+        clientRepository.delete(c1);
     }
 
     @Test

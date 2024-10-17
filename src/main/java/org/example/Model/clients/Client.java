@@ -20,6 +20,8 @@ public class Client {
     private int age;
     private int rentalCount;
 
+    private boolean active = true;
+
     @Embedded
     private Address address;
 
@@ -103,4 +105,13 @@ public class Client {
     public Long getVersion() {
         return version;
     }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
 }

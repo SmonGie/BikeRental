@@ -29,12 +29,11 @@ public class Rental {
     private Bike bike;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    private float totalCost;
+    private double totalCost;
 
     @Version
     private Long version;
 
-    // Konstruktor
     public Rental( Client client, Bike bike, LocalDateTime startTime) {
 
         this.client = client;
@@ -70,13 +69,7 @@ public class Rental {
     }
 
 
-    public void endRental(LocalDateTime endTime) {
-        this.endTime = endTime;
-        this.totalCost = calculateCost();
-    }
-
-
-    private float calculateCost() {
+    public void calculateTotalCost() {
         if (endTime == null) {
             throw new IllegalStateException("Wypożyczenie jeszcze sie nie zakończyło.");
         }
@@ -84,18 +77,16 @@ public class Rental {
         Duration rentalDuration = Duration.between(startTime, endTime);
         long days = rentalDuration.toDays();
 
-        // Stawka np. 25 zł za dzień
+        // Stawka 25 zł za dzień
         float costPerDay = 25.0f;
         float cost = days * costPerDay;
 
         // Uwzględnienie zniżki klienta
-        cost += client.applyDiscount();
-
-        return cost;
+        totalCost = cost - (cost * client.applyDiscount() / 100);
     }
 
 
-    public float getTotalCost() {
+    public double getTotalCost() {
         return totalCost;
     }
 
