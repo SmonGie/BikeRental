@@ -17,6 +17,8 @@ public class Client {
 
     private Long Id;
     private String firstName, lastName, phoneNumber;
+
+    @Transient
     private int age;
 
     private int rentalCount;
