@@ -1,42 +1,29 @@
 package org.example.Model.clients;
 
-import jakarta.persistence.*;
 import org.example.Model.Rental;
-
+import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.List;
 
-
-@Entity
-@Table(name = "Client")
 public class Client {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "Id", unique = true, nullable = false)
+    private ObjectId id;
 
-    private Long Id;
     private String firstName, lastName, phoneNumber;
 
-    @Transient
     private int age;
 
     private int rentalCount;
 
     private boolean active = true;
 
-    @Embedded
     private Address address;
 
-
-    @Enumerated(EnumType.STRING)
     private ClientType clientType;
 
-    @OneToMany(mappedBy = "client")
-    private List<Rental> currentRentals = new ArrayList<>();
-
-    @Version
-    private Long version;
+    //  private List<Rental> currentRentals = new ArrayList<>();
 
     public Client(String firstName, String lastName, String phoneNumber, int age, Address address) {
         this.firstName = firstName;
@@ -44,7 +31,7 @@ public class Client {
         this.phoneNumber = phoneNumber;
         this.age = age;
         this.address = address;
-        rentalCount = 0;
+        this.rentalCount = 0;
         this.clientType = ClientType.determineClientType(age);
 
     }
@@ -75,9 +62,10 @@ public class Client {
         this.clientType = clientType;
     }
 
-    public Long getId() {
-        return Id;
+    public ObjectId getId() {
+        return id;
     }
+
     public String getFirstName() {
         return firstName;
     }
@@ -98,7 +86,7 @@ public class Client {
         return " Klient: " + firstName + " " + lastName +
                 "\n numer telefonu: " + phoneNumber +
                 "\n wiek: " + age +
-                "\n Id: " + Id +
+                "\n Id: " + id +
                 "\n " + clientType.getInfo() +
                 "\n " + address.getInfo();
     }

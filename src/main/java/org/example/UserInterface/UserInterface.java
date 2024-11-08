@@ -10,6 +10,7 @@ import org.example.Model.Bike;
 import org.example.Model.clients.ClientType;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
+import org.example.Repositories.MongoRepository;
 import org.example.Repositories.RentalRepository;
 
 import java.time.LocalDateTime;
@@ -20,14 +21,16 @@ public class UserInterface {
     private final ClientRepository clientRepository;
     private final BikeRepository bikeRepository;
     private final RentalRepository rentalRepository;
+    private MongoRepository repo;
     private final Scanner scanner;
 
 
-    public UserInterface(ClientRepository clientRepository, BikeRepository bikeRepository, RentalRepository rentalRepository) {
+    public UserInterface(ClientRepository clientRepository, BikeRepository bikeRepository, RentalRepository rentalRepository, MongoRepository repo) {
         this.clientRepository = clientRepository;
         this.bikeRepository = bikeRepository;
         this.rentalRepository = rentalRepository;
         this.scanner = new Scanner(System.in);
+        this.repo = repo;
 
     }
 

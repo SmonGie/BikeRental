@@ -3,33 +3,35 @@ package org.example.Model;
 import java.time.LocalDateTime;
 import java.time.Duration;
 
-
-import jakarta.persistence.*;
+import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.example.Model.clients.Client;
+import org.example.Model.clients.PersonalIdMgd;
+import org.example.Repositories.UniqueIdMgd;
 
 
-
-public class Rental {
-
-
-    private Long Id;
-
-
-
+public class Rental extends AbstractEntityMgd {
+    @BsonProperty("client")
     private Client client;
-
-
-
+    @BsonProperty("personalid")
+    private PersonalIdMgd personalId;
+    @BsonProperty("bike")
     private Bike bike;
+    @BsonProperty("start_time")
     private LocalDateTime startTime;
+    @BsonProperty("end_time")
     private LocalDateTime endTime;
+    @BsonProperty("totalCost")
     private double totalCost;
 
-    @Version
-    private Long version;
-
-    public Rental(Client client, Bike bike, LocalDateTime startTime) {
-
+    @BsonCreator
+    public Rental(@BsonProperty("_id") UniqueIdMgd entityId,
+                  @BsonProperty("personalid") PersonalIdMgd rentalId,
+                  @BsonProperty("client") Client client,
+                  @BsonProperty("bike") Bike bike,
+                  @BsonProperty("start_time") LocalDateTime startTime) {
+        super(entityId);
+        this.personalId = rentalId;
         this.client = client;
         this.bike = bike;
         this.startTime = startTime;
@@ -37,21 +39,12 @@ public class Rental {
         this.totalCost = 0.0f;
     }
 
-    public Rental() {
-
-    }
-
-
     public Client getClient() {
         return client;
     }
 
     public void setClient(Client client) {
         this.client = client;
-    }
-
-    public Long getId() {
-        return Id;
     }
 
     public Bike getBike() {
@@ -101,9 +94,9 @@ public class Rental {
     }
 
     public String getInfo() {
-        return "Numer wypożyczenia: " + Id +
+        return "Numer wypożyczenia: " + personalId +
                 "\nKlient: " + client.getInfo() +
-                "\nRower ID: " + bike.getId() +
+                "\nRower ID: " + bike.getBikeId() +
                 "\nData rozpoczęcia: " + startTime +
                 "\nData zakończenia: " + (endTime != null ? endTime : "Wypożyczenie nadal trwa") +
                 "\nCena całkowita: " + totalCost + " zł";
