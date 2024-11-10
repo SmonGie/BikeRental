@@ -43,7 +43,9 @@ public class BikeRepository implements IBikeRepository {
     @Override
     public List<BikeMgd> findAll() {
 
-        return bikeCollection.find().into(new ArrayList<BikeMgd>());
+        Bson filter = Filters.or(Filters.eq("_clazz","electric"), Filters.eq("_clazz","mountain"));
+
+        return bikeCollection.find(filter).into(new ArrayList<>());
     }
 
 
@@ -51,7 +53,7 @@ public class BikeRepository implements IBikeRepository {
 
         Bson filter = Filters.eq("is_available", true);
 
-        return bikeCollection.find(filter).into(new ArrayList<BikeMgd>());
+        return bikeCollection.find(filter).into(new ArrayList<>());
     }
 
     @Override

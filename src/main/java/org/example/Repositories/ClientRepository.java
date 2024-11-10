@@ -41,7 +41,7 @@ public class ClientRepository implements IClientRepository {
     @Override
     public List<ClientAddressMgd> findAll() {
 
-        return  collection.find().into(new ArrayList<ClientAddressMgd>());
+        return  collection.find().into(new ArrayList<>());
     }
 
     @Override
