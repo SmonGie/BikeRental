@@ -24,29 +24,33 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
     private final MongoCredential credential = MongoCredential.createCredential(
             "admin", "admin", "adminpassword".toCharArray());
 
-    private MongoDatabase database;
-
     private final CodecRegistry pojoCodecRegistry =
             CodecRegistries.fromProviders(PojoCodecProvider.builder()
                     .automatic(true)
                     .conventions(List.of(Conventions.ANNOTATION_CONVENTION))
                     .build());
 
-    private void initDbConnection() {
-        MongoClientSettings settings = MongoClientSettings.builder()
-                .credential(credential)
-                .applyConnectionString(connectionString)
-                .uuidRepresentation(UuidRepresentation.STANDARD)
-                .codecRegistry(CodecRegistries.fromRegistries(
-                        CodecRegistries.fromProviders(new UniqueIdCodecProvider()),
-                        MongoClientSettings.getDefaultCodecRegistry(),
-                        pojoCodecRegistry
-                ))
-                .build();
+    private MongoDatabase rentABike;
 
-        MongoClient mongoClient = MongoClients.create(settings);
-        database = mongoClient.getDatabase("rentabike");
-        System.out.println("Connected to database: " + database.getCollection("rentabike"));
+    private void initDbConnection() {
+        try {
+            MongoClientSettings settings = MongoClientSettings.builder()
+                    .credential(credential)
+                    .applyConnectionString(connectionString)
+                    .uuidRepresentation(UuidRepresentation.STANDARD)
+                    .codecRegistry(CodecRegistries.fromRegistries(
+                            CodecRegistries.fromProviders(new UniqueIdCodecProvider()),
+                            MongoClientSettings.getDefaultCodecRegistry(),
+                            pojoCodecRegistry
+                    ))
+                    .build();
+
+            MongoClient mongoClient = MongoClients.create(settings);
+            rentABike = mongoClient.getDatabase("rentabike");
+            System.out.println("Connected to database: " + rentABike.getCollection("rentabike"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void initialize() {
@@ -54,6 +58,6 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
     }
 
     public MongoDatabase getDatabase() {
-        return database;
+        return rentABike;
     }
 }

@@ -1,7 +1,5 @@
 package org.example.Model.bikes;
 
-import org.example.Model.clients.PersonalIdMgd;
-
 public class ElectricBike extends Bike {
 
     private int batteryCapacity;

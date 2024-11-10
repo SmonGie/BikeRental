@@ -9,8 +9,6 @@ import java.util.UUID;
 
 public class ClientAddressMgd extends AbstractEntityMgd {
 
-    @BsonProperty("personalid")
-    private PersonalIdMgd personalId;
     @BsonProperty("first_name")
     private String firstName;
     @BsonProperty("last_name")
@@ -34,7 +32,6 @@ public class ClientAddressMgd extends AbstractEntityMgd {
 
     @BsonCreator
     public ClientAddressMgd(@BsonProperty("_id") UniqueIdMgd entityId,
-                            @BsonProperty("personalId") PersonalIdMgd personId,
                             @BsonProperty("first_name") String firstName,
                             @BsonProperty("last_name") String lastName,
                             @BsonProperty("phone_number") String phoneNumber,
@@ -45,7 +42,6 @@ public class ClientAddressMgd extends AbstractEntityMgd {
 
     ) {
         super(entityId);
-        this.personalId = personId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
@@ -57,9 +53,8 @@ public class ClientAddressMgd extends AbstractEntityMgd {
         this.rentalCount = 0;
     }
 
-    public ClientAddressMgd(Client client, Address address, String personalId) {
+    public ClientAddressMgd(Client client, Address address) {
         super(new UniqueIdMgd(UUID.randomUUID())); // lub inny sposób generowania ID
-        this.personalId = new PersonalIdMgd(personalId);
         this.firstName = client.getFirstName();
         this.lastName = client.getLastName();
         this.phoneNumber = client.getPhoneNumber();
@@ -143,6 +138,10 @@ public class ClientAddressMgd extends AbstractEntityMgd {
 
     public void setRentalCount(int rentalCount) {
         this.rentalCount = rentalCount;
+    }
+
+    public double applyDiscount() {
+        return clientType.applyDiscount();  // Call the ClientType's discount method
     }
 
     public boolean isActive() {

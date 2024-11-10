@@ -3,10 +3,16 @@ package org.example.Repositories;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Updates;
+import org.bson.conversions.Bson;
 import org.example.Model.Rental;
 
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+
+import static com.mongodb.client.model.Filters.eq;
 
 
 public class RentalRepository implements IRentalRepository {
@@ -24,17 +30,13 @@ public class RentalRepository implements IRentalRepository {
     }
 
     public List<Rental> getCurrentRentalsByBikeId(Long bikeId) {
-
-
-            return null;
-
-
+        Bson filter = eq("bike._id", bikeId);
+        return rentCollection.find(filter).into(new ArrayList<>());
     }
 
     public List<Rental> getCurrentRentals(Long clientId) {
-
-
-      return null;
+        Bson filter = eq("client._id", clientId);
+        return rentCollection.find(filter).into(new ArrayList<>());
     }
 
     public List<Rental> getRentalHistoryByClientId(Long clientId) {
@@ -43,38 +45,34 @@ public class RentalRepository implements IRentalRepository {
 
     @Override
     public Rental findById(Long id) {
-
-        Rental r = null;
-
-
-        return r;
+        Bson filter = eq("_id", new UniqueIdMgd(UUID.fromString(id.toString())));
+        return rentCollection.find(filter).first();
     }
 
     @Override
     public List<Rental> findAll() {
 
-        List<Rental> rentals = null;
-
-        return rentals;
+        return rentCollection.find().into(new ArrayList<>());
     }
 
     @Override
 
     public void save(Rental rental) {
-
-
-
+        rentCollection.insertOne(rental);
     }
 
     @Override
 
     public void delete(Rental rental) {
-
-
+        Bson filter = eq("_id", rental.getEntityId().getUuid());
+        rentCollection.deleteOne(filter);
     }
 
     @Override
     public void update(Rental rental) {
+        Bson filter = eq("_id", rental.getEntityId().getUuid());
+        Bson update = Updates.set("end_time", rental.getEndTime());
+        rentCollection.updateOne(filter, update);
 
     }
 

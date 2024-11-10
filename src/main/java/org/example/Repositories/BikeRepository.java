@@ -1,14 +1,10 @@
 package org.example.Repositories;
 
-
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.bson.conversions.Bson;
-import org.example.Model.bikes.Bike;
-import org.bson.Document;
 import org.example.Model.bikes.BikeMgd;
 
 
@@ -42,10 +38,7 @@ public class BikeRepository implements IBikeRepository {
 
     @Override
     public List<BikeMgd> findAll() {
-
-        Bson filter = Filters.or(Filters.eq("_clazz","electric"), Filters.eq("_clazz","mountain"));
-
-        return bikeCollection.find(filter).into(new ArrayList<>());
+        return  bikeCollection.find().into(new ArrayList<>());
     }
 
 
@@ -64,7 +57,6 @@ public class BikeRepository implements IBikeRepository {
     }
 
     @Override
-
     public void delete(BikeMgd bike) {
 
         Bson filter = Filters.eq("_id", bike.getEntityId().getUuid());

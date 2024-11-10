@@ -6,11 +6,12 @@ import org.example.Model.bikes.*;
 import org.example.Model.clients.Client;
 import org.example.Model.clients.Address;
 import org.example.Model.clients.ClientAddressMgd;
+import org.example.Model.clients.ClientType;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
-import org.example.Repositories.MongoRepository;
 import org.example.Repositories.RentalRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
@@ -36,7 +37,7 @@ public class UserInterface {
         Address a = new Address("lodz", "janowa", "3");
         Client c = new Client("Jedrzej", "Wisniewski", "123123123", 54, a);
 
-        ClientAddressMgd startClient = new ClientAddressMgd(c, a, "alfa");
+        ClientAddressMgd startClient = new ClientAddressMgd(c, a);
         clientRepository.save(startClient);
 
 //        MountainBike mtb2 = new MountainBike("lolek X-Cal", true, 120);
@@ -162,10 +163,10 @@ public class UserInterface {
 
             switch (choice) {
                 case 1:
-//                    rentBike();
+                    rentBike();
                     break;
                 case 2:
-//                    endRental();
+                    endRental();
                     break;
                 case 3:
                     listRentals();
@@ -200,7 +201,7 @@ public class UserInterface {
         Address address = new Address(city, street, number);
         Client client = new Client(firstName, lastName, phoneNumber, age, address);
 
-        ClientAddressMgd convertedClient = new ClientAddressMgd(client, address, "sigiemka"); // sigma??
+        ClientAddressMgd convertedClient = new ClientAddressMgd(client, address);
 
         clientRepository.save(convertedClient);
         System.out.println("Klient został dodany.");
@@ -232,12 +233,15 @@ public class UserInterface {
     }
 
     private void listClients() {
-//        List<Client> clients = clientRepository.findAll();
-//        System.out.println("Lista klientów:");
-//        for (Client client : clients) {
-//            System.out.println(client.getInfo());
-//            if (client.getRentalCount() != 0) {
-//                List<Rental> currentRentals = rentalRepository.getCurrentRentals(client.getId());
+        List<ClientAddressMgd> clients = clientRepository.findAll();
+        System.out.println("Lista klientów:");
+
+        for (ClientAddressMgd client : clients) {
+            System.out.println(client.getInfo());
+
+//            List<Rental> currentRentals = rentalRepository.getCurrentRentals(client.getEntityId().getUuid().toString());
+//
+//            if (!currentRentals.isEmpty()) {
 //                System.out.println("Aktualne wypożyczenia:");
 //                for (Rental rental : currentRentals) {
 //                    System.out.println(" - Rower: " + rental.getBike().getModelName() + ", ID: " + rental.getId());
@@ -245,7 +249,7 @@ public class UserInterface {
 //            } else {
 //                System.out.println("Brak aktywnych wypożyczeń.");
 //            }
-//        }
+        }
     }
 
     private void addBike() {
@@ -258,17 +262,15 @@ public class UserInterface {
         System.out.print("Model roweru: ");
         String model = scanner.nextLine();
 
-        boolean available = true; //Domyślnie rower jest dostępny
+        boolean available = true;
 
         switch (choice) {
             case 1:
                 //MountainBike
                 System.out.print("Szerokość opony (w cm): ");
                 int tireWidth = readIntegerInput();
-                System.out.print("jakies nowe id niepotrzebne? ");
-                String id1 = scanner.nextLine();
                 MountainBike mountainBike = new MountainBike(available, model, tireWidth);
-                MountainBikeMgd newMountain = new MountainBikeMgd(mountainBike, id1);
+                MountainBikeMgd newMountain = new MountainBikeMgd(mountainBike);
                 bikeRepository.save(newMountain);
                 System.out.println("Rower górski został dodany.");
                 break;
@@ -276,10 +278,8 @@ public class UserInterface {
                 //ElectricBike
                 System.out.print("Pojemność baterii (w Wh): ");
                 int batteryCapacity = readIntegerInput();
-                System.out.print("jakies nowe id niepotrzebne? ");
-                String id2 = scanner.nextLine();
                 ElectricBike electricBike = new ElectricBike(available, model, batteryCapacity);
-                ElectricBikeMgd newElectric = new ElectricBikeMgd(electricBike, id2);
+                ElectricBikeMgd newElectric = new ElectricBikeMgd(electricBike);
                 bikeRepository.save(newElectric);
                 System.out.println("Rower elektryczny został dodany.");
                 break;
@@ -287,165 +287,127 @@ public class UserInterface {
                 System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
         }
     }
-//    private void rentBike() {
-//
-//        System.out.print("Podaj ID klienta: ");
-//        Long clientId = scanner.nextLong();
-//        scanner.nextLine();
-//        System.out.print("Podaj ID roweru do wypożyczenia: ");
-//        Long bikeId = scanner.nextLong();
-//        scanner.nextLine();
-//
-//        EntityManager em = emf.createEntityManager();
-//        EntityTransaction transaction = em.getTransaction();
-//
-//        try {
-//            transaction.begin();
-//
-//            Client client = em.find(Client.class, clientId, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-//            Bike bike = em.find(Bike.class, bikeId);
-//
-//            if (client != null && bike != null && bike.isIsAvailable()) {
-//
-//                if (client.getRentalCount() >= 2) {
-//                    transaction.rollback();
-//                    System.out.println("Klient może mieć maksymalnie 2 wypożyczenia.");
-//                    em.close();
-//                    return;
-//                }
-//
-//                Rental rental = new Rental(client, bike, LocalDateTime.now());
-//                bike.setIsAvailable(false);
-//                client.setRentalCount(client.getRentalCount() + 1);
-//                client.setActive(true);
-//                em.persist(client);
-//                em.persist(bike);
-//                em.persist(rental);
-//
-//                transaction.commit();
-//
-//                System.out.println("Rower wypożyczony: " + bike.getModelName() + " przez klienta: " + client.getFirstName());
-//
-//            } else {
-//                System.out.println("Nieprawidłowy klient lub rower niedostępny.");
-//                transaction.rollback();
-//                em.close();
-//            }
-//
-//        } catch (OptimisticLockException e) {
-//            transaction.rollback();
-//            System.out.println("W czasie przetwarzania transakcji doszlo do modyfikacji jednego z obiektow.");
-//        } finally {
-//            em.close();
-//
-//        }
-//
-//    }
+    private void rentBike() {
+        System.out.print("Podaj ID klienta: ");
+        Long clientId = scanner.nextLong();
+        System.out.print("Podaj ID roweru do wypożyczenia: ");
+        Long bikeId = scanner.nextLong();
 
-//    private void endRental() {
-//
-//        EntityManager em = emf.createEntityManager();
-//        EntityTransaction transaction = em.getTransaction();
-//        System.out.print("Podaj ID klienta, którego wypożyczenie chcesz zakończyć: ");
-//        Long clientId = scanner.nextLong();
-//        scanner.nextLine();
-//
-//        List<Rental> currentRentals = rentalRepository.getCurrentRentals(clientId);
-//
-//        if (currentRentals.isEmpty()) {
-//            System.out.println("Brak aktywnych wypożyczeń do zakończenia.");
-//            return;
-//        }
-//
-//        System.out.println("Aktywne wypożyczenia dla klienta:");
-//        for (int i = 0; i < currentRentals.size(); i++) {
-//            Rental rental = currentRentals.get(i);
-//            System.out.println((i + 1) + ". Rower: " + rental.getBike().getModelName() + ", ID: " + rental.getId());
-//        }
-//
-//        System.out.print("Wybierz numer wypożyczenia do zakończenia: ");
-//        int rentalIndex = scanner.nextInt() - 1;
-//        scanner.nextLine();
-//        if (rentalIndex < 0 || rentalIndex >= currentRentals.size()) {
-//            System.out.println("Nieprawidłowy wybór.");
-//            return;
-//        }
-//
-//        Rental selectedRental = currentRentals.get(rentalIndex);
-//
-//        Client client = selectedRental.getClient();
-//        ClientType clientType = ClientType.determineClientType(client.getAge());
-//        int discount = clientType.applyDiscount();
-//
-//        Bike bike = selectedRental.getBike();
-//
-//        try {
-//
-//            transaction.begin();
-//
-//            selectedRental.setEndTime(LocalDateTime.now());
-//            selectedRental.calculateTotalCost();
-//            client.setRentalCount(client.getRentalCount() - 1);
-//            bike.setIsAvailable(true);
-//
-//            em.merge(client);
-//            em.merge(bike);
-//            em.merge(selectedRental);
-//
-//            transaction.commit();
-//
-//        }  catch (OptimisticLockException e) {
-//
-//            transaction.rollback();
-//            System.out.println("Operacja zakończyła się niepowodzeniem");
-//
-//        } finally {
-//            em.close();
-//        }
-//
-//
-//        double totalCost = selectedRental.getTotalCost();
-//        System.out.println("Wypożyczenie zakończone");
-//        System.out.println("Typ klienta: " + clientType + ", Zniżka: " + discount + "%");
-//        System.out.println("Całkowity koszt po zniżce: " + totalCost + " zł");
-//
-//    }
+        // Załadowanie klienta i roweru z MongoDB
+        ClientAddressMgd client = clientRepository.findById(clientId);
+        BikeMgd bike = bikeRepository.findById(bikeId);
+
+        if (client != null && bike != null && bike.isIsAvailable()) {
+            // Sprawdzenie liczby wypożyczeń
+            if (client.getRentalCount() >= 2) {
+                System.out.println("Klient może mieć maksymalnie 2 wypożyczenia.");
+                return;
+            }
+
+            Rental rental = new Rental(client, bike, LocalDateTime.now());
+            bike.setIsAvailable(false); // Oznaczenie roweru jako niedostępnego
+            client.setRentalCount(client.getRentalCount() + 1);
+            client.setActive(true); // Ustawienie klienta jako aktywnego
+
+            // Zapisz dane w MongoDB
+            clientRepository.save(client);
+            bikeRepository.save(bike);
+            rentalRepository.save(rental);
+
+            System.out.println("Rower " + bike.getModelName() + " wypożyczony przez " + client.getFirstName());
+        } else {
+            System.out.println("Nieprawidłowy klient lub rower niedostępny.");
+        }
+    }
+
+
+    private void endRental() {
+        System.out.print("Podaj ID klienta, którego wypożyczenie chcesz zakończyć: ");
+        Long clientId = scanner.nextLong();
+
+        // Znajdź aktywne wypożyczenia dla klienta
+        List<Rental> currentRentals = (List<Rental>) rentalRepository.findById(clientId);
+
+        if (currentRentals.isEmpty()) {
+            System.out.println("Brak aktywnych wypożyczeń do zakończenia.");
+            return;
+        }
+
+        System.out.println("Aktywne wypożyczenia dla klienta:");
+        for (int i = 0; i < currentRentals.size(); i++) {
+            Rental rental = currentRentals.get(i);
+            System.out.println((i + 1) + ". Rower: " + rental.getBike().getModelName() + ", ID: " + rental.getEntityId().toString());
+        }
+
+        System.out.print("Wybierz numer wypożyczenia do zakończenia: ");
+        int rentalIndex = scanner.nextInt() - 1;
+        scanner.nextLine();
+        if (rentalIndex < 0 || rentalIndex >= currentRentals.size()) {
+            System.out.println("Nieprawidłowy wybór.");
+            return;
+        }
+
+        Rental selectedRental = currentRentals.get(rentalIndex);
+        ClientAddressMgd client = selectedRental.getClient();
+        BikeMgd bike = selectedRental.getBike();
+
+        // Załóżmy, że klient ma metodę do obliczania zniżki na podstawie typu
+        ClientType clientType = client.getClientType();
+        int discount = clientType.applyDiscount();
+
+        // Zakończenie wypożyczenia
+        selectedRental.setEndTime(LocalDateTime.now());
+        selectedRental.calculateTotalCost();
+        client.setRentalCount(client.getRentalCount() - 1);
+        bike.setIsAvailable(true);
+
+        // Zapisz zaktualizowane obiekty w MongoDB
+        rentalRepository.save(selectedRental);
+        clientRepository.save(client);
+        bikeRepository.save(bike);
+
+        double totalCost = selectedRental.getTotalCost();
+        System.out.println("Wypożyczenie zakończone");
+        System.out.println("Typ klienta: " + clientType + ", Zniżka: " + discount + "%");
+        System.out.println("Całkowity koszt po zniżce: " + totalCost + " zł");
+    }
+
 
     private void listRentals() {
-//        List<Rental> rentals = rentalRepository.findAll();
-//        if(rentals.isEmpty()){
-//            System.out.println("Aktualnie nie ma wypożyczeń.");
-//            return;
-//        }
-//        System.out.println("Lista wypożyczeń:");
-//        for (Rental rental : rentals) {
-//            System.out.println("ID wypożyczenia: " + rental.getId() +
-//                    ", Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
-//                    ", Rower: " + rental.getBike().getModelName() +
-//                    ", Czas wypożyczenia: " + rental.getStartTime() +
-//                    (rental.getEndTime() != null ? ", Czas zakończenia: " + rental.getEndTime() : ", Wciąż wypożyczony"));
-//        }
+        List<Rental> rentals = rentalRepository.findAll();
+
+        if (rentals.isEmpty()) {
+            System.out.println("Aktualnie nie ma wypożyczeń.");
+            return;
+        }
+
+        System.out.println("Lista wypożyczeń:");
+        for (Rental rental : rentals) {
+            System.out.println("ID wypożyczenia: " + rental.getEntityId().toString() +
+                    ", Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
+                    ", Rower: " + rental.getBike().getModelName() +
+                    ", Czas wypożyczenia: " + rental.getStartTime() +
+                    (rental.getEndTime() != null ? ", Czas zakończenia: " + rental.getEndTime() : ", Wciąż wypożyczony"));
+        }
     }
 
     private void listFinishedRentals() {
-//        List<Rental> finishedRentals = rentalRepository.findAll();
-//        if(finishedRentals.isEmpty()){
-//            System.out.println("Aktualnie nie ma żadnych zakończonych wypożyczeń.");
-//            return;
-//        }
-//        System.out.println("Lista zakończonych wypożyczeń:");
-//
-//        for (Rental rental : finishedRentals) {
-//            if (rental.getEndTime() != null) {
-//                System.out.println("ID wypożyczenia: " + rental.getId() +
-//                        ", Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
-//                        ", Rower: " + rental.getBike().getModelName() +
-//                        ", Czas wypożyczenia: " + rental.getStartTime() +
-//                        ", Czas zakończenia: " + rental.getEndTime());
-//            }
-//        }
-    }
+        List<Rental> finishedRentals = rentalRepository.findAll();
 
+        if (finishedRentals.isEmpty()) {
+            System.out.println("Aktualnie nie ma żadnych zakończonych wypożyczeń.");
+            return;
+        }
+
+        System.out.println("Lista zakończonych wypożyczeń:");
+        for (Rental rental : finishedRentals) {
+            System.out.println("ID wypożyczenia: " + rental.getEntityId().toString() +
+                    ", Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
+                    ", Rower: " + rental.getBike().getModelName() +
+                    ", Czas wypożyczenia: " + rental.getStartTime() +
+                    ", Czas zakończenia: " + rental.getEndTime());
+        }
+    }
 
     private void removeBike() {
         System.out.print("Podaj ID roweru do usunięcia: ");

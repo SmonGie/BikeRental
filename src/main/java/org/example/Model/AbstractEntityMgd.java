@@ -16,4 +16,8 @@ public class AbstractEntityMgd implements Serializable {
     public AbstractEntityMgd(UniqueIdMgd entityId) {
         this.entityId = entityId;
     }
+
+    public AbstractEntityMgd() {
+        this.entityId = null;
+    }
 }

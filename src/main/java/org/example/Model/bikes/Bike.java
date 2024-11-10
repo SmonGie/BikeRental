@@ -1,15 +1,6 @@
 package org.example.Model.bikes;
 
 
-
-import org.bson.codecs.pojo.annotations.BsonCreator;
-import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import org.bson.codecs.pojo.annotations.BsonProperty;
-import org.example.Model.AbstractEntityMgd;
-import org.example.Model.clients.PersonalIdMgd;
-import org.example.Repositories.UniqueIdMgd;
-
-
 public class Bike {
 
     private  String personalId  = null;

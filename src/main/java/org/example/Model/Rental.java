@@ -2,22 +2,20 @@ package org.example.Model;
 
 import java.time.LocalDateTime;
 import java.time.Duration;
+import java.util.UUID;
 
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
-import org.example.Model.bikes.Bike;
-import org.example.Model.clients.Client;
-import org.example.Model.clients.PersonalIdMgd;
+import org.example.Model.bikes.BikeMgd;
+import org.example.Model.clients.ClientAddressMgd;
 import org.example.Repositories.UniqueIdMgd;
 
 
 public class Rental extends AbstractEntityMgd {
     @BsonProperty("client")
-    private Client client;
-    @BsonProperty("personalid")
-    private PersonalIdMgd personalId;
+    private ClientAddressMgd client;
     @BsonProperty("bike")
-    private Bike bike;
+    private BikeMgd bike;
     @BsonProperty("start_time")
     private LocalDateTime startTime;
     @BsonProperty("end_time")
@@ -27,12 +25,10 @@ public class Rental extends AbstractEntityMgd {
 
     @BsonCreator
     public Rental(@BsonProperty("_id") UniqueIdMgd entityId,
-                  @BsonProperty("personalid") PersonalIdMgd rentalId,
-                  @BsonProperty("client") Client client,
-                  @BsonProperty("bike") Bike bike,
+                  @BsonProperty("client") ClientAddressMgd client,
+                  @BsonProperty("bike") BikeMgd bike,
                   @BsonProperty("start_time") LocalDateTime startTime) {
         super(entityId);
-        this.personalId = rentalId;
         this.client = client;
         this.bike = bike;
         this.startTime = startTime;
@@ -40,19 +36,29 @@ public class Rental extends AbstractEntityMgd {
         this.totalCost = 0.0f;
     }
 
-    public Client getClient() {
+    public Rental(ClientAddressMgd client, BikeMgd bike, LocalDateTime startTime) {
+        super(new UniqueIdMgd(UUID.randomUUID()));
+        this.client = client;
+        this.bike = bike;
+        this.startTime = startTime;
+        this.endTime = null;
+        this.totalCost = 0.0f;
+    }
+
+
+    public ClientAddressMgd getClient() {
         return client;
     }
 
-    public void setClient(Client client) {
+    public void setClient(ClientAddressMgd client) {
         this.client = client;
     }
 
-    public Bike getBike() {
+    public BikeMgd getBike() {
         return bike;
     }
 
-    public void setBike(Bike bike) {
+    public void setBike(BikeMgd bike) {
         this.bike = bike;
     }
 
@@ -95,9 +101,8 @@ public class Rental extends AbstractEntityMgd {
     }
 
     public String getInfo() {
-        return "Numer wypożyczenia: " + personalId +
-                "\nKlient: " + client.getInfo() +
-                "\nRower ID: " + bike.getBikeId() +
+        return "\nKlient: " + client.getInfo() +
+                "\nRower ID: " + bike.getInfo() +
                 "\nData rozpoczęcia: " + startTime +
                 "\nData zakończenia: " + (endTime != null ? endTime : "Wypożyczenie nadal trwa") +
                 "\nCena całkowita: " + totalCost + " zł";
