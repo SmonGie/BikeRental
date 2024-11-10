@@ -5,10 +5,12 @@ import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.example.Model.AbstractEntityMgd;
 import org.example.Repositories.UniqueIdMgd;
 
+import java.util.UUID;
+
 public class ClientAddressMgd extends AbstractEntityMgd {
 
     @BsonProperty("personalid")
-    private PersonalIdMgd  personalId;
+    private PersonalIdMgd personalId;
     @BsonProperty("first_name")
     private String firstName;
     @BsonProperty("last_name")
@@ -21,8 +23,12 @@ public class ClientAddressMgd extends AbstractEntityMgd {
     private int rentalCount;
     @BsonProperty("active")
     private boolean active = true;
-    @BsonProperty("address")
-    private Address address;
+    @BsonProperty("city")
+    private String city;
+    @BsonProperty("street")
+    private String street;
+    @BsonProperty("street_number")
+    private String streetNumber;
     @BsonProperty("client_type")
     private ClientType clientType;
 
@@ -33,17 +39,39 @@ public class ClientAddressMgd extends AbstractEntityMgd {
                             @BsonProperty("last_name") String lastName,
                             @BsonProperty("phone_number") String phoneNumber,
                             @BsonProperty("age") int age,
-                            @BsonProperty("address") Address address) {
+                            @BsonProperty("city") String city,
+                            @BsonProperty("street") String street,
+                            @BsonProperty("street_number") String streetNumber
+
+    ) {
         super(entityId);
         this.personalId = personId;
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.age = age;
-        this.address = address;
+        this.city = city;
+        this.street = street;
+        this.streetNumber = streetNumber;
         this.clientType = ClientType.determineClientType(age);
         this.rentalCount = 0;
     }
+
+    public ClientAddressMgd(Client client, Address address, String personalId) {
+        super(new UniqueIdMgd(UUID.randomUUID())); // lub inny sposób generowania ID
+        this.personalId = new PersonalIdMgd(personalId);
+        this.firstName = client.getFirstName();
+        this.lastName = client.getLastName();
+        this.phoneNumber = client.getPhoneNumber();
+        this.age = client.getAge();
+        this.rentalCount = 0;
+        this.clientType = client.getClientType();
+        this.city = address.getCity();
+        this.street = address.getStreet();
+        this.streetNumber = address.getNumber();
+    }
+
+
 
     public String getFirstName() {
         return firstName;
@@ -77,12 +105,28 @@ public class ClientAddressMgd extends AbstractEntityMgd {
         this.age = age;
     }
 
-    public Address getAddress() {
-        return address;
+    public String getCity() {
+        return city;
     }
 
-    public void setAddress(Address address) {
-        this.address = address;
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getStreet() {
+        return street;
+    }
+
+    public void setStreet(String street) {
+        this.street = street;
+    }
+
+    public String getStreetNumber() {
+        return streetNumber;
+    }
+
+    public void setStreetNumber(String streetNumber) {
+        this.streetNumber = streetNumber;
     }
 
     public ClientType getClientType() {
@@ -114,6 +158,7 @@ public class ClientAddressMgd extends AbstractEntityMgd {
                 "\nNumer telefonu: " + phoneNumber +
                 "\nWiek: " + age +
                 "\n" + clientType.getInfo() +
-                "\n" + address.getInfo();
+                "\n" + "Miasto: " + getCity() +
+                "\n Ulica i numer: " + getStreet() + " " + getStreetNumber();
     }
 }

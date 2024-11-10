@@ -7,6 +7,8 @@ public class MongoRepository extends AbstractMongoRepository {
         initialize();  // Inicjalizacja połączenia z bazą
     }
 
+
+
     @Override
     public void close() throws Exception {
 

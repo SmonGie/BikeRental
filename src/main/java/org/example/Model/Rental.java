@@ -5,6 +5,7 @@ import java.time.Duration;
 
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonProperty;
+import org.example.Model.bikes.Bike;
 import org.example.Model.clients.Client;
 import org.example.Model.clients.PersonalIdMgd;
 import org.example.Repositories.UniqueIdMgd;

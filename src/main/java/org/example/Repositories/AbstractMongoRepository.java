@@ -17,17 +17,16 @@ import java.util.List;
 
 public abstract class AbstractMongoRepository implements AutoCloseable {
 
-    private static ConnectionString connectionString = new ConnectionString(
+    private static final ConnectionString connectionString = new ConnectionString(
             "mongodb://mongodb1:27017,mongodb2:27018,mongodb3:27019/?replicaSet=replica_set_single"
     );
 
-    private MongoCredential credential = MongoCredential.createCredential(
+    private final MongoCredential credential = MongoCredential.createCredential(
             "admin", "admin", "adminpassword".toCharArray());
 
-    private MongoClient mongoClient;
     private MongoDatabase database;
 
-    private CodecRegistry pojoCodecRegistry =
+    private final CodecRegistry pojoCodecRegistry =
             CodecRegistries.fromProviders(PojoCodecProvider.builder()
                     .automatic(true)
                     .conventions(List.of(Conventions.ANNOTATION_CONVENTION))
@@ -45,7 +44,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                 ))
                 .build();
 
-        mongoClient = MongoClients.create(settings);
+        MongoClient mongoClient = MongoClients.create(settings);
         database = mongoClient.getDatabase("rentabike");
         System.out.println("Connected to database: " + database.getCollection("rentabike"));
     }
@@ -54,4 +53,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
         initDbConnection();
     }
 
+    public MongoDatabase getDatabase() {
+        return database;
+    }
 }

@@ -1,19 +1,16 @@
 package org.example.UserInterface;
 
 
-import org.example.Model.ElectricBike;
-import org.example.Model.MountainBike;
 import org.example.Model.Rental;
+import org.example.Model.bikes.*;
 import org.example.Model.clients.Client;
 import org.example.Model.clients.Address;
-import org.example.Model.Bike;
-import org.example.Model.clients.ClientType;
+import org.example.Model.clients.ClientAddressMgd;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
 import org.example.Repositories.MongoRepository;
 import org.example.Repositories.RentalRepository;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
@@ -21,17 +18,15 @@ public class UserInterface {
     private final ClientRepository clientRepository;
     private final BikeRepository bikeRepository;
     private final RentalRepository rentalRepository;
-    private MongoRepository repo;
+
     private final Scanner scanner;
 
 
-    public UserInterface(ClientRepository clientRepository, BikeRepository bikeRepository, RentalRepository rentalRepository, MongoRepository repo) {
+    public UserInterface(ClientRepository clientRepository, BikeRepository bikeRepository, RentalRepository rentalRepository) {
         this.clientRepository = clientRepository;
         this.bikeRepository = bikeRepository;
         this.rentalRepository = rentalRepository;
         this.scanner = new Scanner(System.in);
-        this.repo = repo;
-
     }
 
 
@@ -41,14 +36,15 @@ public class UserInterface {
         Address a = new Address("lodz", "janowa", "3");
         Client c = new Client("Jedrzej", "Wisniewski", "123123123", 54, a);
 
-        clientRepository.save(c);
+        ClientAddressMgd startClient = new ClientAddressMgd(c, a, "alfa");
+        clientRepository.save(startClient);
 
-        MountainBike mtb2 = new MountainBike("lolek X-Cal", true, 120);
-        MountainBike mtb = new MountainBike("Trek X-Cal", true, 120);
-        ElectricBike ebike = new ElectricBike("Giant E+", true, 500);
-        bikeRepository.save(mtb);
-        bikeRepository.save(mtb2);
-        bikeRepository.save(ebike);
+//        MountainBike mtb2 = new MountainBike("lolek X-Cal", true, 120);
+//        MountainBike mtb = new MountainBike("Trek X-Cal", true, 120);
+//        ElectricBike ebike = new ElectricBike("Giant E+", true, 500);
+//        bikeRepository.save(mtb);
+//        bikeRepository.save(mtb2);
+//        bikeRepository.save(ebike);
 
 
         while (true) {
@@ -203,7 +199,10 @@ public class UserInterface {
 
         Address address = new Address(city, street, number);
         Client client = new Client(firstName, lastName, phoneNumber, age, address);
-        clientRepository.save(client);
+
+        ClientAddressMgd convertedClient = new ClientAddressMgd(client, address, "sigiemka"); // sigma??
+
+        clientRepository.save(convertedClient);
         System.out.println("Klient został dodany.");
     }
 
@@ -212,7 +211,7 @@ public class UserInterface {
         Long clientId = scanner.nextLong();
         scanner.nextLine();
 
-        Client c = clientRepository.findById(clientId);
+        ClientAddressMgd c = clientRepository.findById(clientId);
         if (c == null) {
             System.out.println("Nie znaleziono klienta o podanym ID.");
             return;
@@ -233,20 +232,20 @@ public class UserInterface {
     }
 
     private void listClients() {
-        List<Client> clients = clientRepository.findAll();
-        System.out.println("Lista klientów:");
-        for (Client client : clients) {
-            System.out.println(client.getInfo());
-            if (client.getRentalCount() != 0) {
-                List<Rental> currentRentals = rentalRepository.getCurrentRentals(client.getId());
-                System.out.println("Aktualne wypożyczenia:");
-                for (Rental rental : currentRentals) {
-                    System.out.println(" - Rower: " + rental.getBike().getModelName() + ", ID: " + rental.getId());
-                }
-            } else {
-                System.out.println("Brak aktywnych wypożyczeń.");
-            }
-        }
+//        List<Client> clients = clientRepository.findAll();
+//        System.out.println("Lista klientów:");
+//        for (Client client : clients) {
+//            System.out.println(client.getInfo());
+//            if (client.getRentalCount() != 0) {
+//                List<Rental> currentRentals = rentalRepository.getCurrentRentals(client.getId());
+//                System.out.println("Aktualne wypożyczenia:");
+//                for (Rental rental : currentRentals) {
+//                    System.out.println(" - Rower: " + rental.getBike().getModelName() + ", ID: " + rental.getId());
+//                }
+//            } else {
+//                System.out.println("Brak aktywnych wypożyczeń.");
+//            }
+//        }
     }
 
     private void addBike() {
@@ -266,16 +265,22 @@ public class UserInterface {
                 //MountainBike
                 System.out.print("Szerokość opony (w cm): ");
                 int tireWidth = readIntegerInput();
-                MountainBike mountainBike = new MountainBike(model, available, tireWidth);
-                bikeRepository.save(mountainBike);
+                System.out.print("jakies nowe id niepotrzebne? ");
+                String id1 = scanner.nextLine();
+                MountainBike mountainBike = new MountainBike(available, model, tireWidth);
+                MountainBikeMgd newMountain = new MountainBikeMgd(mountainBike, id1);
+                bikeRepository.save(newMountain);
                 System.out.println("Rower górski został dodany.");
                 break;
             case 2:
                 //ElectricBike
                 System.out.print("Pojemność baterii (w Wh): ");
                 int batteryCapacity = readIntegerInput();
-                ElectricBike electricBike = new ElectricBike(model, available, batteryCapacity);
-                bikeRepository.save(electricBike);
+                System.out.print("jakies nowe id niepotrzebne? ");
+                String id2 = scanner.nextLine();
+                ElectricBike electricBike = new ElectricBike(available, model, batteryCapacity);
+                ElectricBikeMgd newElectric = new ElectricBikeMgd(electricBike, id2);
+                bikeRepository.save(newElectric);
                 System.out.println("Rower elektryczny został dodany.");
                 break;
             default:
@@ -407,38 +412,38 @@ public class UserInterface {
 //    }
 
     private void listRentals() {
-        List<Rental> rentals = rentalRepository.findAll();
-        if(rentals.isEmpty()){
-            System.out.println("Aktualnie nie ma wypożyczeń.");
-            return;
-        }
-        System.out.println("Lista wypożyczeń:");
-        for (Rental rental : rentals) {
-            System.out.println("ID wypożyczenia: " + rental.getId() +
-                    ", Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
-                    ", Rower: " + rental.getBike().getModelName() +
-                    ", Czas wypożyczenia: " + rental.getStartTime() +
-                    (rental.getEndTime() != null ? ", Czas zakończenia: " + rental.getEndTime() : ", Wciąż wypożyczony"));
-        }
+//        List<Rental> rentals = rentalRepository.findAll();
+//        if(rentals.isEmpty()){
+//            System.out.println("Aktualnie nie ma wypożyczeń.");
+//            return;
+//        }
+//        System.out.println("Lista wypożyczeń:");
+//        for (Rental rental : rentals) {
+//            System.out.println("ID wypożyczenia: " + rental.getId() +
+//                    ", Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
+//                    ", Rower: " + rental.getBike().getModelName() +
+//                    ", Czas wypożyczenia: " + rental.getStartTime() +
+//                    (rental.getEndTime() != null ? ", Czas zakończenia: " + rental.getEndTime() : ", Wciąż wypożyczony"));
+//        }
     }
 
     private void listFinishedRentals() {
-        List<Rental> finishedRentals = rentalRepository.findAll();
-        if(finishedRentals.isEmpty()){
-            System.out.println("Aktualnie nie ma żadnych zakończonych wypożyczeń.");
-            return;
-        }
-        System.out.println("Lista zakończonych wypożyczeń:");
-
-        for (Rental rental : finishedRentals) {
-            if (rental.getEndTime() != null) {
-                System.out.println("ID wypożyczenia: " + rental.getId() +
-                        ", Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
-                        ", Rower: " + rental.getBike().getModelName() +
-                        ", Czas wypożyczenia: " + rental.getStartTime() +
-                        ", Czas zakończenia: " + rental.getEndTime());
-            }
-        }
+//        List<Rental> finishedRentals = rentalRepository.findAll();
+//        if(finishedRentals.isEmpty()){
+//            System.out.println("Aktualnie nie ma żadnych zakończonych wypożyczeń.");
+//            return;
+//        }
+//        System.out.println("Lista zakończonych wypożyczeń:");
+//
+//        for (Rental rental : finishedRentals) {
+//            if (rental.getEndTime() != null) {
+//                System.out.println("ID wypożyczenia: " + rental.getId() +
+//                        ", Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
+//                        ", Rower: " + rental.getBike().getModelName() +
+//                        ", Czas wypożyczenia: " + rental.getStartTime() +
+//                        ", Czas zakończenia: " + rental.getEndTime());
+//            }
+//        }
     }
 
 
@@ -451,7 +456,7 @@ public class UserInterface {
             System.out.println("Nie można usunąć roweru, ponieważ jest aktualnie wypożyczony.");
             return;
         }
-        Bike b = bikeRepository.findById(bikeId);
+        BikeMgd b = bikeRepository.findById(bikeId);
         if (b == null) {
             System.out.println("Nie znaleziono roweru o podanym ID");
             return;
@@ -463,9 +468,9 @@ public class UserInterface {
     }
 
     private void listBikes() {
-        List<Bike> bikes = bikeRepository.findAll();
+        List<BikeMgd> bikes = bikeRepository.findAll();
         System.out.println("Lista rowerów:");
-        for (Bike bike : bikes) {
+        for (BikeMgd bike : bikes) {
             System.out.println(bike.getInfo());
         }
     }

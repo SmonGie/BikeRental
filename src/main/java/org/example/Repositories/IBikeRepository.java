@@ -1,17 +1,20 @@
 package org.example.Repositories;
 
-import org.example.Model.Bike;
+import org.example.Model.bikes.Bike;
+import org.example.Model.bikes.BikeMgd;
 
 import java.util.List;
 
 public interface IBikeRepository {
 
-    Bike findById(Long id);
+    BikeMgd findById(Long id);
 
-    List<Bike> findAll();
+    List<BikeMgd> findAll();
 
-    void save(Bike bike);
+    void save(BikeMgd bike);
 
-    void delete(Bike bike);
+    void delete(BikeMgd bike);
+
+    void update(BikeMgd bike, String field, String value);
 
 }

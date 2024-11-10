@@ -13,4 +13,6 @@ public interface IRentalRepository {
     void save(Rental rental);
 
     void delete(Rental rental);
+
+    void update(Rental rental);
 }

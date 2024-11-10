@@ -1,16 +1,25 @@
 package org.example.Repositories;
 
 
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import org.example.Model.Rental;
+
 
 import java.util.List;
 
 
 public class RentalRepository implements IRentalRepository {
 
+    MongoCollection<Rental> rentCollection;
+    MongoDatabase database;
+    String collectionName;
 
+    public RentalRepository(MongoDatabase database ) {
 
-    public RentalRepository( ) {
+        this.database = database;
+        this.collectionName = "rents";
+        this.rentCollection = database.getCollection(collectionName, Rental.class);
 
     }
 
@@ -61,6 +70,11 @@ public class RentalRepository implements IRentalRepository {
 
     public void delete(Rental rental) {
 
+
+    }
+
+    @Override
+    public void update(Rental rental) {
 
     }
 
