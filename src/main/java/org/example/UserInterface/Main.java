@@ -18,7 +18,7 @@ public class Main {
         UserInterface ui = new UserInterface(clientRepository, bikeRepository, rentalRepository);
 
         ui.start();
-
+        sigma.drop();
     }
 }
 

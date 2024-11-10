@@ -1,9 +1,11 @@
 package org.example.Repositories;
 
+import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.example.Model.bikes.BikeMgd;
 
@@ -11,6 +13,7 @@ import org.example.Model.bikes.BikeMgd;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 
 public class BikeRepository implements IBikeRepository {
@@ -29,16 +32,20 @@ public class BikeRepository implements IBikeRepository {
     }
 
     @Override
-    public BikeMgd findById(Long id) {
+    public BikeMgd findById(String id) {
 
-        Bson filter = Filters.eq("_id", id.toString());
+        UUID uuid = UUID.fromString(id);
+        Bson filter = Filters.eq("_id", new UniqueIdMgd(uuid));
         return bikeCollection.find(filter).first();
 
     }
 
     @Override
     public List<BikeMgd> findAll() {
-        return  bikeCollection.find().into(new ArrayList<>());
+        Bson filters = Filters.or(
+                Filters.eq("_clazz", "mountain"),
+                Filters.eq("_clazz", "electric"));
+        return  bikeCollection.find(filters).into(new ArrayList<>());
     }
 
 

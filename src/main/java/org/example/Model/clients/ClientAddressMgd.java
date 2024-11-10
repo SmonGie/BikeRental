@@ -153,11 +153,11 @@ public class ClientAddressMgd extends AbstractEntityMgd {
     }
 
     public String getInfo() {
-        return "Klient: " + firstName + " " + lastName +
+        return "Id klienta: " + getEntityId().getUuid() +  "\nKlient: " + firstName + " " + lastName +
                 "\nNumer telefonu: " + phoneNumber +
                 "\nWiek: " + age +
                 "\n" + clientType.getInfo() +
                 "\n" + "Miasto: " + getCity() +
-                "\n Ulica i numer: " + getStreet() + " " + getStreetNumber();
+                "\nUlica i numer: " + getStreet() + " " + getStreetNumber();
     }
 }

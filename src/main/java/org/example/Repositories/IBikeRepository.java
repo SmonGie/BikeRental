@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface IBikeRepository {
 
-    BikeMgd findById(Long id);
+    BikeMgd findById(String id);
 
     List<BikeMgd> findAll();
 

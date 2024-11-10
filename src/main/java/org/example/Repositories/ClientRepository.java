@@ -3,6 +3,7 @@ package org.example.Repositories;
 
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
@@ -13,6 +14,7 @@ import org.example.Model.clients.ClientAddressMgd;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Filter;
 
 
@@ -32,10 +34,17 @@ public class ClientRepository implements IClientRepository {
     }
 
     @Override
-    public ClientAddressMgd findById(Long id) {
+    public ClientAddressMgd findById(String id) {
 
-        Bson filter = Filters.eq("_id", id.toString());
-        return collection.find(filter).first();
+        UUID uuid = UUID.fromString(id);
+
+        System.out.println("Szukam klienta w bazie");
+        Bson filter = Filters.eq("_id", new UniqueIdMgd(uuid));
+
+        ClientAddressMgd client = collection.find(filter).first();
+
+        System.out.println("Cos mam");
+        return client;
     }
 
     @Override
@@ -49,7 +58,8 @@ public class ClientRepository implements IClientRepository {
     public void save(ClientAddressMgd clientAddressMgd) {
 
         collection.insertOne(clientAddressMgd);
-
+        System.out.println("Inserted client: " + clientAddressMgd.getFirstName() + " " + clientAddressMgd.getLastName());
+        System.out.println("Id" + clientAddressMgd.getEntityId());
     }
 
     @Override

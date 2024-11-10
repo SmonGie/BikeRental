@@ -8,7 +8,7 @@ import java.util.List;
 public interface IClientRepository {
 
 
-    ClientAddressMgd findById(Long id);
+    ClientAddressMgd findById(String id);
 
     List<ClientAddressMgd> findAll();
 

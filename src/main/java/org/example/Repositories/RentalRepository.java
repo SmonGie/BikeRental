@@ -3,6 +3,7 @@ package org.example.Repositories;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.bson.conversions.Bson;
 import org.example.Model.Rental;
@@ -29,17 +30,21 @@ public class RentalRepository implements IRentalRepository {
 
     }
 
-    public List<Rental> getCurrentRentalsByBikeId(Long bikeId) {
-        Bson filter = eq("bike._id", bikeId);
+    public List<Rental> getCurrentRentalsByBikeId(String bikeId) {
+
+        UUID uuid = UUID.fromString(bikeId);
+        Bson filter = eq("bike._id", new UniqueIdMgd(uuid));
         return rentCollection.find(filter).into(new ArrayList<>());
     }
 
-    public List<Rental> getCurrentRentals(Long clientId) {
-        Bson filter = eq("client._id", clientId);
+    public List<Rental> getCurrentRentals(String clientId) {
+
+        UUID uuid = UUID.fromString(clientId);
+        Bson filter = eq("client._id", new UniqueIdMgd(uuid));
         return rentCollection.find(filter).into(new ArrayList<>());
     }
 
-    public List<Rental> getRentalHistoryByClientId(Long clientId) {
+    public List<Rental> getRentalHistoryByClientId(String clientId) {
    return null;
     }
 

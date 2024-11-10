@@ -209,8 +209,7 @@ public class UserInterface {
 
     private void removeClient() {
         System.out.print("Podaj ID klienta do usunięcia: ");
-        Long clientId = scanner.nextLong();
-        scanner.nextLine();
+        String clientId = scanner.nextLine();
 
         ClientAddressMgd c = clientRepository.findById(clientId);
         if (c == null) {
@@ -222,7 +221,7 @@ public class UserInterface {
             return;
         }
         List<Rental> rentalHistory = rentalRepository.getRentalHistoryByClientId(clientId);
-        if (rentalHistory.isEmpty()) {
+        if (rentalHistory == null || rentalHistory.isEmpty()) {
             clientRepository.delete(c);
             System.out.println("Klient został usunięty.");
         } else {
@@ -234,10 +233,14 @@ public class UserInterface {
 
     private void listClients() {
         List<ClientAddressMgd> clients = clientRepository.findAll();
-        System.out.println("Lista klientów:");
 
-        for (ClientAddressMgd client : clients) {
-            System.out.println(client.getInfo());
+        if (clients == null || clients.isEmpty()) {
+            System.out.println("Nie znaleziono żadnych klientów w systemie.");
+        } else {
+            System.out.println("Lista klientów:");
+            for (ClientAddressMgd client : clients) {
+                System.out.println("\n-----------------------------------------------------------\n");
+                System.out.println(client.getInfo());
 
 //            List<Rental> currentRentals = rentalRepository.getCurrentRentals(client.getEntityId().getUuid().toString());
 //
@@ -249,7 +252,13 @@ public class UserInterface {
 //            } else {
 //                System.out.println("Brak aktywnych wypożyczeń.");
 //            }
+            }
+            System.out.println("\n-----------------------------------------------------------\n");
         }
+
+
+
+
     }
 
     private void addBike() {
@@ -287,11 +296,12 @@ public class UserInterface {
                 System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
         }
     }
+
     private void rentBike() {
         System.out.print("Podaj ID klienta: ");
-        Long clientId = scanner.nextLong();
+        String clientId = scanner.nextLine();
         System.out.print("Podaj ID roweru do wypożyczenia: ");
-        Long bikeId = scanner.nextLong();
+        String bikeId = scanner.nextLine();
 
         // Załadowanie klienta i roweru z MongoDB
         ClientAddressMgd client = clientRepository.findById(clientId);
@@ -411,7 +421,7 @@ public class UserInterface {
 
     private void removeBike() {
         System.out.print("Podaj ID roweru do usunięcia: ");
-        Long bikeId = scanner.nextLong();
+        String bikeId = scanner.nextLine();
 
         List<Rental> currentRentals = rentalRepository.getCurrentRentalsByBikeId(bikeId);
         if (!currentRentals.isEmpty()) {
@@ -431,10 +441,21 @@ public class UserInterface {
 
     private void listBikes() {
         List<BikeMgd> bikes = bikeRepository.findAll();
-        System.out.println("Lista rowerów:");
-        for (BikeMgd bike : bikes) {
-            System.out.println(bike.getInfo());
+
+
+        if (bikes == null || bikes.isEmpty()) {
+            System.out.println("Nie znaleziono żadnych rowerów w systemie.");
+        } else {
+            System.out.println("Lista rowerów:");
+            for (BikeMgd bike : bikes) {
+
+                System.out.println("\n-----------------------------------------------------------\n");
+                System.out.println(bike.getInfo());
+            }
+            System.out.println("\n-----------------------------------------------------------\n");
         }
+
+
     }
 
     private String getValidNameInput() {

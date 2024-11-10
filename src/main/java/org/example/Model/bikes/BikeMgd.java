@@ -9,8 +9,8 @@ import org.example.Repositories.UniqueIdMgd;
 
 import java.util.UUID;
 
-@BsonDiscriminator(key = "_clazz", value = "bike")
-public class BikeMgd extends AbstractEntityMgd {
+@BsonDiscriminator(key = "_clazz", value = "lol")
+public abstract class BikeMgd extends AbstractEntityMgd {
     @BsonProperty("model_name")
     private String modelName;
     @BsonProperty("is_available")
@@ -52,6 +52,8 @@ public class BikeMgd extends AbstractEntityMgd {
     }
 
     public String getInfo() {
-        return "Model: " + modelName + " Dostępność: " + isAvailable;
+        return "Numer id: " + getEntityId().getUuid() +
+                "\nModel: " + modelName +
+                "\nDostępność: " + isAvailable;
     }
 }

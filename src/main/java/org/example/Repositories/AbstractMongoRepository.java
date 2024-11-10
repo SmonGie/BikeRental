@@ -11,6 +11,9 @@ import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.Conventions;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.example.Model.bikes.BikeMgd;
+import org.example.Model.bikes.ElectricBikeMgd;
+import org.example.Model.bikes.MountainBikeMgd;
 
 import java.util.List;
 
@@ -24,9 +27,14 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
     private final MongoCredential credential = MongoCredential.createCredential(
             "admin", "admin", "adminpassword".toCharArray());
 
+    PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder()
+             .build();
+
+
     private final CodecRegistry pojoCodecRegistry =
             CodecRegistries.fromProviders(PojoCodecProvider.builder()
                     .automatic(true)
+                    .register(BikeMgd.class, MountainBikeMgd.class, ElectricBikeMgd.class)
                     .conventions(List.of(Conventions.ANNOTATION_CONVENTION))
                     .build());
 
