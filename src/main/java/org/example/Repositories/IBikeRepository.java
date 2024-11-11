@@ -16,5 +16,6 @@ public interface IBikeRepository {
     void delete(BikeMgd bike);
 
     void update(BikeMgd bike, String field, String value);
+    void update(BikeMgd bike, String field, Boolean value);
 
 }

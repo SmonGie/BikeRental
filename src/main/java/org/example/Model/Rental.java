@@ -45,7 +45,6 @@ public class Rental extends AbstractEntityMgd {
         this.totalCost = 0.0f;
     }
 
-
     public ClientAddressMgd getClient() {
         return client;
     }

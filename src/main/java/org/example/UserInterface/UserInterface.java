@@ -320,8 +320,9 @@ public class UserInterface {
             client.setActive(true); // Ustawienie klienta jako aktywnego
 
             // Zapisz dane w MongoDB
-            clientRepository.save(client);
-            bikeRepository.save(bike);
+            clientRepository.update(client, "rentalCount", String.valueOf(client.getRentalCount() + 1));
+            clientRepository.update(client, "active", "true");
+            bikeRepository.update(bike, "is_available", false);
             rentalRepository.save(rental);
 
             System.out.println("Rower " + bike.getModelName() + " wypożyczony przez " + client.getFirstName());

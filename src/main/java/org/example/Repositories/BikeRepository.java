@@ -80,5 +80,13 @@ public class BikeRepository implements IBikeRepository {
 
     }
 
+    @Override
+    public void update(BikeMgd bike, String field, Boolean value) {
+        Bson filter = Filters.eq("_id", bike.getEntityId().getUuid());
+        Bson update = Updates.set(field, value);
+        bikeCollection.updateOne(filter, update);
+    }
+
+
 }
 

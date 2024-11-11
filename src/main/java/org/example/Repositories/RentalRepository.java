@@ -56,8 +56,13 @@ public class RentalRepository implements IRentalRepository {
 
     @Override
     public List<Rental> findAll() {
-
-        return rentCollection.find().into(new ArrayList<>());
+        List<Rental> rentals = rentCollection.find().into(new ArrayList<>());
+        rentals.forEach(rental -> {
+            System.out.println("Rental: " + rental.getInfo());
+            System.out.println("Client Info: " + rental.getClient().getInfo());
+            System.out.println("Bike Info: " + rental.getBike().getInfo());
+        });
+        return rentals;
     }
 
     @Override
