@@ -14,6 +14,7 @@ import org.bson.codecs.pojo.PojoCodecProvider;
 import org.example.Model.bikes.BikeMgd;
 import org.example.Model.bikes.ElectricBikeMgd;
 import org.example.Model.bikes.MountainBikeMgd;
+import org.example.Model.clients.ClientAddressMgd;
 
 import java.util.List;
 

@@ -6,10 +6,11 @@ import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.types.ObjectId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Client {
 
-    private ObjectId id;
+    private String clientId;
 
     private String firstName, lastName, phoneNumber;
 
@@ -25,7 +26,7 @@ public class Client {
 
     //  private List<Rental> currentRentals = new ArrayList<>();
 
-    public Client(String firstName, String lastName, String phoneNumber, int age, Address address) {
+    public Client(String firstName, String lastName, String phoneNumber, int age, Address address, String clientId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
@@ -33,6 +34,7 @@ public class Client {
         this.address = address;
         this.rentalCount = 0;
         this.clientType = ClientType.determineClientType(age);
+        this.clientId = (clientId != null) ? clientId : UUID.randomUUID().toString();
 
     }
 
@@ -62,8 +64,8 @@ public class Client {
         this.clientType = clientType;
     }
 
-    public ObjectId getId() {
-        return id;
+    public String getClientId() {
+        return clientId;
     }
 
     public String getFirstName() {
@@ -86,7 +88,7 @@ public class Client {
         return " Klient: " + firstName + " " + lastName +
                 "\n numer telefonu: " + phoneNumber +
                 "\n wiek: " + age +
-                "\n Id: " + id +
+                "\n Id: " + clientId +
                 "\n " + clientType.getInfo() +
                 "\n " + address.getInfo();
     }

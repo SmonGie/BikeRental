@@ -33,9 +33,9 @@ public class UserInterface {
 
     public void start() {
 
-
+        String id = "1";
         Address a = new Address("lodz", "janowa", "3");
-        Client c = new Client("Jedrzej", "Wisniewski", "123123123", 54, a);
+        Client c = new Client("Jedrzej", "Wisniewski", "123123123", 54, a, id);
 
         ClientAddressMgd startClient = new ClientAddressMgd(c, a);
         clientRepository.save(startClient);
@@ -198,8 +198,9 @@ public class UserInterface {
         System.out.print("Numer: ");
         String number = scanner.nextLine();
 
+        String ID = "some_unique_id";
         Address address = new Address(city, street, number);
-        Client client = new Client(firstName, lastName, phoneNumber, age, address);
+        Client client = new Client(firstName, lastName, phoneNumber, age, address, ID);
 
         ClientAddressMgd convertedClient = new ClientAddressMgd(client, address);
 
@@ -278,7 +279,9 @@ public class UserInterface {
                 //MountainBike
                 System.out.print("Szerokość opony (w cm): ");
                 int tireWidth = readIntegerInput();
-                MountainBike mountainBike = new MountainBike(available, model, tireWidth);
+                System.out.print("ID: ");
+                String MbikeID = scanner.nextLine();
+                MountainBike mountainBike = new MountainBike(available, model, tireWidth, MbikeID);
                 MountainBikeMgd newMountain = new MountainBikeMgd(mountainBike);
                 bikeRepository.save(newMountain);
                 System.out.println("Rower górski został dodany.");
@@ -287,7 +290,9 @@ public class UserInterface {
                 //ElectricBike
                 System.out.print("Pojemność baterii (w Wh): ");
                 int batteryCapacity = readIntegerInput();
-                ElectricBike electricBike = new ElectricBike(available, model, batteryCapacity);
+                System.out.print("ID: ");
+                String EbikeID = scanner.nextLine();
+                ElectricBike electricBike = new ElectricBike(available, model, batteryCapacity, EbikeID);
                 ElectricBikeMgd newElectric = new ElectricBikeMgd(electricBike);
                 bikeRepository.save(newElectric);
                 System.out.println("Rower elektryczny został dodany.");
@@ -334,10 +339,10 @@ public class UserInterface {
 
     private void endRental() {
         System.out.print("Podaj ID klienta, którego wypożyczenie chcesz zakończyć: ");
-        Long clientId = scanner.nextLong();
+        String clientId = scanner.nextLine();
 
         // Znajdź aktywne wypożyczenia dla klienta
-        List<Rental> currentRentals = (List<Rental>) rentalRepository.findById(clientId);
+        List<Rental> currentRentals = rentalRepository.findById(clientId);
 
         if (currentRentals.isEmpty()) {
             System.out.println("Brak aktywnych wypożyczeń do zakończenia.");

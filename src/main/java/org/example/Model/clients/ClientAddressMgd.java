@@ -1,6 +1,7 @@
 package org.example.Model.clients;
 
 import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.example.Model.AbstractEntityMgd;
 import org.example.Repositories.UniqueIdMgd;
@@ -9,6 +10,8 @@ import java.util.UUID;
 
 public class ClientAddressMgd extends AbstractEntityMgd {
 
+    @BsonProperty("client_id")
+    private String clientId;
     @BsonProperty("first_name")
     private String firstName;
     @BsonProperty("last_name")
@@ -32,14 +35,15 @@ public class ClientAddressMgd extends AbstractEntityMgd {
 
     @BsonCreator
     public ClientAddressMgd(@BsonProperty("_id") UniqueIdMgd entityId,
+                            @BsonProperty("client_id") String clientId,
                             @BsonProperty("first_name") String firstName,
                             @BsonProperty("last_name") String lastName,
                             @BsonProperty("phone_number") String phoneNumber,
                             @BsonProperty("age") int age,
                             @BsonProperty("city") String city,
                             @BsonProperty("street") String street,
-                            @BsonProperty("street_number") String streetNumber
-
+                            @BsonProperty("street_number") String streetNumber,
+                            @BsonProperty("active") Boolean active
     ) {
         super(entityId);
         this.firstName = firstName;
@@ -50,7 +54,9 @@ public class ClientAddressMgd extends AbstractEntityMgd {
         this.street = street;
         this.streetNumber = streetNumber;
         this.clientType = ClientType.determineClientType(age);
+        this.active = active;
         this.rentalCount = 0;
+        this.clientId = clientId;
     }
 
     public ClientAddressMgd(Client client, Address address) {
@@ -59,11 +65,13 @@ public class ClientAddressMgd extends AbstractEntityMgd {
         this.lastName = client.getLastName();
         this.phoneNumber = client.getPhoneNumber();
         this.age = client.getAge();
+        this.active = client.isActive();
         this.rentalCount = 0;
         this.clientType = client.getClientType();
         this.city = address.getCity();
         this.street = address.getStreet();
         this.streetNumber = address.getNumber();
+        this.clientId = client.getClientId();
     }
 
 
@@ -144,6 +152,10 @@ public class ClientAddressMgd extends AbstractEntityMgd {
         return clientType.applyDiscount();  // Call the ClientType's discount method
     }
 
+    public String getClientId() {
+        return clientId;
+    }
+
     public boolean isActive() {
         return active;
     }
@@ -152,6 +164,7 @@ public class ClientAddressMgd extends AbstractEntityMgd {
         this.active = active;
     }
 
+    @BsonIgnore
     public String getInfo() {
         return "Id klienta: " + getEntityId().getUuid() +  "\nKlient: " + firstName + " " + lastName +
                 "\nNumer telefonu: " + phoneNumber +

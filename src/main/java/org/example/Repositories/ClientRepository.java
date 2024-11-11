@@ -36,15 +36,8 @@ public class ClientRepository implements IClientRepository {
     @Override
     public ClientAddressMgd findById(String id) {
 
-        UUID uuid = UUID.fromString(id);
-
-        System.out.println("Szukam klienta w bazie");
-        Bson filter = Filters.eq("_id", new UniqueIdMgd(uuid));
-
-        ClientAddressMgd client = collection.find(filter).first();
-
-        System.out.println("Cos mam");
-        return client;
+        Bson filter = Filters.eq("client_id", id);
+        return collection.find(filter).first();
     }
 
     @Override

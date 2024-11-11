@@ -3,7 +3,6 @@ package org.example.Repositories;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
-import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.bson.conversions.Bson;
 import org.example.Model.Rental;
@@ -49,9 +48,9 @@ public class RentalRepository implements IRentalRepository {
     }
 
     @Override
-    public Rental findById(Long id) {
-        Bson filter = eq("_id", new UniqueIdMgd(UUID.fromString(id.toString())));
-        return rentCollection.find(filter).first();
+    public List<Rental> findById(String id) {
+        Bson filter = eq("client.client_id", id);
+        return rentCollection.find(filter).into(new ArrayList<>());
     }
 
     @Override

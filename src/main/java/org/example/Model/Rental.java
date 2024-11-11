@@ -5,6 +5,7 @@ import java.time.Duration;
 import java.util.UUID;
 
 import org.bson.codecs.pojo.annotations.BsonCreator;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.example.Model.bikes.BikeMgd;
 import org.example.Model.clients.ClientAddressMgd;
@@ -99,6 +100,7 @@ public class Rental extends AbstractEntityMgd {
         return endTime;
     }
 
+    @BsonIgnore
     public String getInfo() {
         return "\nKlient: " + client.getInfo() +
                 "\nRower ID: " + bike.getInfo() +

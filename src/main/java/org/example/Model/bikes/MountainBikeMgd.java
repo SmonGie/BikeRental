@@ -2,6 +2,7 @@ package org.example.Model.bikes;
 
 import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.example.Repositories.UniqueIdMgd;
 
@@ -9,16 +10,20 @@ import java.util.UUID;
 
 @BsonDiscriminator(key = "_clazz", value = "mountain")
 public class MountainBikeMgd extends BikeMgd {
+    @BsonProperty("bike_id")
+    private String bikeId;
     @BsonProperty("tire_width")
     private int tireWidth;
 
     @BsonCreator
     public MountainBikeMgd(@BsonProperty("_id") UniqueIdMgd entityId,
+                        @BsonProperty("bike_id") String bikeId,
                         @BsonProperty("model_name") String modelName,
                         @BsonProperty("is_available") boolean isAvailable,
                         @BsonProperty("tire_width") int tireWidth) {
         super(entityId, modelName, isAvailable);
         this.tireWidth = tireWidth;
+        this.bikeId = bikeId;
     }
 
     public MountainBikeMgd(){
@@ -28,6 +33,11 @@ public class MountainBikeMgd extends BikeMgd {
     public MountainBikeMgd(MountainBike mountainBike) {
         super(mountainBike.isIsAvailable(), mountainBike.getModelName() );
         this.tireWidth = mountainBike.getTireWidth();
+        this.bikeId = mountainBike.getBikeId();
+    }
+
+    public String getBikeId() {
+        return bikeId;
     }
 
     public int getTireWidth() {
@@ -38,6 +48,7 @@ public class MountainBikeMgd extends BikeMgd {
         this.tireWidth = tireWidth;
     }
 
+    @BsonIgnore
     @Override
     public String getInfo() {
         return "Numer id: " + super.getEntityId().getUuid() +

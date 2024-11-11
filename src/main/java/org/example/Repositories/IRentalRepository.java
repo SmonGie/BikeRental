@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface IRentalRepository {
 
-    Rental findById(Long id);
+    List<Rental> findById(String id);
 
     List<Rental> findAll();
 

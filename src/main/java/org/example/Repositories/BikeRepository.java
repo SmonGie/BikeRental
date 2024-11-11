@@ -33,9 +33,7 @@ public class BikeRepository implements IBikeRepository {
 
     @Override
     public BikeMgd findById(String id) {
-
-        UUID uuid = UUID.fromString(id);
-        Bson filter = Filters.eq("_id", new UniqueIdMgd(uuid));
+        Bson filter = Filters.eq("bike_id", id);
         return bikeCollection.find(filter).first();
 
     }

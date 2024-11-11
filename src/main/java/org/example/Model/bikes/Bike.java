@@ -3,7 +3,7 @@ package org.example.Model.bikes;
 
 public class Bike {
 
-    private  String personalId  = null;
+    private String bikeId;
 
     private String modelName;
 
@@ -33,10 +33,10 @@ public class Bike {
     }
 
     public String getBikeId() {
-        return personalId;
+        return bikeId;
     }
 
     public String getInfo() {
-        return "Rower ID: " + personalId + ", Model: " + modelName + " Dostępność: " + isAvailable;
+        return "Rower ID: " + bikeId + ", Model: " + modelName + " Dostępność: " + isAvailable;
     }
 }
