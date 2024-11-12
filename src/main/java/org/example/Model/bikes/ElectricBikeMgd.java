@@ -11,20 +11,17 @@ import java.util.UUID;
 
 @BsonDiscriminator(key = "_clazz", value = "electric")
 public class ElectricBikeMgd extends BikeMgd {
-    @BsonProperty("bike_id")
-    private String bikeId;
     @BsonProperty("battery_capacity")
     private int batteryCapacity;
 
     @BsonCreator
     public ElectricBikeMgd(@BsonProperty("_id") UniqueIdMgd entityId,
-                        @BsonProperty("bike_id") String bikeId,
+                           @BsonProperty("bike_id") String bikeId,
                         @BsonProperty("model_name") String modelName,
                         @BsonProperty("is_available") boolean isAvailable,
                         @BsonProperty("battery_capacity") int batteryCapacity) {
         super(entityId, modelName, isAvailable);
         this.batteryCapacity = batteryCapacity;
-        this.bikeId = bikeId;
     }
     public ElectricBikeMgd() {
         super();
@@ -33,11 +30,11 @@ public class ElectricBikeMgd extends BikeMgd {
     public ElectricBikeMgd(ElectricBike electricBike) {
         super(electricBike.isIsAvailable(),electricBike.getModelName() );
         this.batteryCapacity = electricBike.getBatteryCapacity();
-        this.bikeId = electricBike.getBikeId();
+        this.bikeId = generateNewBikeId();
     }
 
-    public String getBikeId() {
-        return bikeId;
+    private synchronized String generateNewBikeId() {
+        return Integer.toString(lastAssignedId);
     }
 
     public int getBatteryCapacity() {
@@ -52,6 +49,7 @@ public class ElectricBikeMgd extends BikeMgd {
     @Override
     public String getInfo() {
         return "Numer id: " + getEntityId().getUuid() +
+                "\nNumer id roweru: " + getBikeId() +
                 "\nModel: " + super.getModelName() +
                 "\nDostępność: " + super.isIsAvailable() +
                 "\nPojemność baterii: " + batteryCapacity + " Wh";

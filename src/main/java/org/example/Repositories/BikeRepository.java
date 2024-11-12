@@ -63,8 +63,7 @@ public class BikeRepository implements IBikeRepository {
 
     @Override
     public void delete(BikeMgd bike) {
-
-        Bson filter = Filters.eq("_id", bike.getEntityId().getUuid());
+        Bson filter = Filters.eq("bike_id", bike.getBikeId());
         bikeCollection.deleteOne(filter);
 
     }

@@ -12,6 +12,9 @@ import java.util.UUID;
 
 @BsonDiscriminator(key = "_clazz", value = "lol")
 public abstract class BikeMgd extends AbstractEntityMgd {
+    protected static int lastAssignedId = 0; // Shared across all subclasses
+    @BsonProperty("bike_id")
+    protected String bikeId;
     @BsonProperty("model_name")
     private String modelName;
     @BsonProperty("is_available")
@@ -24,6 +27,7 @@ public abstract class BikeMgd extends AbstractEntityMgd {
         super(entityId);
         this.modelName = modelName;
         this.isAvailable = isAvailable;
+        this.bikeId = generateNewBikeId();
     }
 
     public BikeMgd() {
@@ -34,6 +38,16 @@ public abstract class BikeMgd extends AbstractEntityMgd {
         super(new UniqueIdMgd(UUID.randomUUID()));
         this.isAvailable = isAvailable;
         this.modelName = modelName;
+        this.bikeId = generateNewBikeId();
+    }
+
+    private synchronized String generateNewBikeId() {
+        lastAssignedId++;
+        return Integer.toString(lastAssignedId);
+    }
+
+    public String getBikeId() {
+        return bikeId;
     }
 
     public String getModelName() {

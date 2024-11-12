@@ -10,8 +10,6 @@ import java.util.UUID;
 
 @BsonDiscriminator(key = "_clazz", value = "mountain")
 public class MountainBikeMgd extends BikeMgd {
-    @BsonProperty("bike_id")
-    private String bikeId;
     @BsonProperty("tire_width")
     private int tireWidth;
 
@@ -33,11 +31,11 @@ public class MountainBikeMgd extends BikeMgd {
     public MountainBikeMgd(MountainBike mountainBike) {
         super(mountainBike.isIsAvailable(), mountainBike.getModelName() );
         this.tireWidth = mountainBike.getTireWidth();
-        this.bikeId = mountainBike.getBikeId();
+        this.bikeId = generateNewBikeId();
     }
 
-    public String getBikeId() {
-        return bikeId;
+    private synchronized String generateNewBikeId() {
+        return Integer.toString(lastAssignedId);
     }
 
     public int getTireWidth() {
@@ -52,6 +50,7 @@ public class MountainBikeMgd extends BikeMgd {
     @Override
     public String getInfo() {
         return "Numer id: " + super.getEntityId().getUuid() +
+                "\nNumer id roweru: " + getBikeId() +
                 "\nModel: " + super.getModelName() +
                 "\nDostępność: " + super.isIsAvailable() +
                 "\nSzerokośc opony: " + +tireWidth + " cm";

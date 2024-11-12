@@ -12,6 +12,8 @@ public class Client {
 
     private String clientId;
 
+    private static int lastAssignedId = 0;
+
     private String firstName, lastName, phoneNumber;
 
     private int age;
@@ -26,7 +28,7 @@ public class Client {
 
     //  private List<Rental> currentRentals = new ArrayList<>();
 
-    public Client(String firstName, String lastName, String phoneNumber, int age, Address address, String clientId) {
+    public Client(String firstName, String lastName, String phoneNumber, int age, Address address) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
@@ -34,8 +36,8 @@ public class Client {
         this.address = address;
         this.rentalCount = 0;
         this.clientType = ClientType.determineClientType(age);
-        this.clientId = (clientId != null) ? clientId : UUID.randomUUID().toString();
-
+        lastAssignedId += 1;
+        this.clientId = Integer.toString(lastAssignedId);
     }
 
     public Client() {

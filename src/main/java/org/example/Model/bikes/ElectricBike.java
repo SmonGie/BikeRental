@@ -3,21 +3,14 @@ package org.example.Model.bikes;
 public class ElectricBike extends Bike {
 
     private int batteryCapacity;
-    private final String bikeId;
 
-    public ElectricBike(boolean isAvailable, String modelName, int batteryCapacity, String bikeId) {
+    public ElectricBike(boolean isAvailable, String modelName, int batteryCapacity) {
         super(isAvailable, modelName);
         this.batteryCapacity = batteryCapacity;
-        this.bikeId = bikeId;
     }
 
     public int getBatteryCapacity() {
         return batteryCapacity;
-    }
-
-    public String getBikeId()
-    {
-        return bikeId;
     }
 
     public void setBatteryCapacity(int batteryCapacity) {
