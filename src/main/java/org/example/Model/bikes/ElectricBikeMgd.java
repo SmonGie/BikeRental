@@ -22,6 +22,7 @@ public class ElectricBikeMgd extends BikeMgd {
                         @BsonProperty("battery_capacity") int batteryCapacity) {
         super(entityId, modelName, isAvailable);
         this.batteryCapacity = batteryCapacity;
+        this.bikeId = bikeId;
     }
     public ElectricBikeMgd() {
         super();
@@ -30,11 +31,6 @@ public class ElectricBikeMgd extends BikeMgd {
     public ElectricBikeMgd(ElectricBike electricBike) {
         super(electricBike.isIsAvailable(),electricBike.getModelName() );
         this.batteryCapacity = electricBike.getBatteryCapacity();
-        this.bikeId = generateNewBikeId();
-    }
-
-    private synchronized String generateNewBikeId() {
-        return Integer.toString(lastAssignedId);
     }
 
     public int getBatteryCapacity() {

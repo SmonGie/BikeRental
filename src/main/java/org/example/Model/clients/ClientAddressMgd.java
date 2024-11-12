@@ -166,7 +166,9 @@ public class ClientAddressMgd extends AbstractEntityMgd {
 
     @BsonIgnore
     public String getInfo() {
-        return "Id klienta: " + getEntityId().getUuid() +  "\nKlient: " + firstName + " " + lastName +
+        return "Id klienta: " + getEntityId().getUuid() +
+                "\nNumer id klienta: " + getClientId() +
+                "\nKlient: " + firstName + " " + lastName +
                 "\nNumer telefonu: " + phoneNumber +
                 "\nWiek: " + age +
                 "\n" + clientType.getInfo() +

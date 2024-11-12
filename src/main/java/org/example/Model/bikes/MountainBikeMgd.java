@@ -31,11 +31,6 @@ public class MountainBikeMgd extends BikeMgd {
     public MountainBikeMgd(MountainBike mountainBike) {
         super(mountainBike.isIsAvailable(), mountainBike.getModelName() );
         this.tireWidth = mountainBike.getTireWidth();
-        this.bikeId = generateNewBikeId();
-    }
-
-    private synchronized String generateNewBikeId() {
-        return Integer.toString(lastAssignedId);
     }
 
     public int getTireWidth() {

@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @BsonDiscriminator(key = "_clazz", value = "lol")
 public abstract class BikeMgd extends AbstractEntityMgd {
-    protected static int lastAssignedId = 0; // Shared across all subclasses
+    protected static int lastAssignedId = 0;
     @BsonProperty("bike_id")
     protected String bikeId;
     @BsonProperty("model_name")
@@ -27,7 +27,6 @@ public abstract class BikeMgd extends AbstractEntityMgd {
         super(entityId);
         this.modelName = modelName;
         this.isAvailable = isAvailable;
-        this.bikeId = generateNewBikeId();
     }
 
     public BikeMgd() {
@@ -43,6 +42,7 @@ public abstract class BikeMgd extends AbstractEntityMgd {
 
     private synchronized String generateNewBikeId() {
         lastAssignedId++;
+        System.out.print(lastAssignedId);
         return Integer.toString(lastAssignedId);
     }
 
