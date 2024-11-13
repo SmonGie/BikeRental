@@ -316,15 +316,12 @@ public class UserInterface {
             }
 
             Rental rental = new Rental(client, bike, LocalDateTime.now());
-            bike.setIsAvailable(false); // Oznaczenie roweru jako niedostępnego
+            bike.setIsAvailable(false);
             client.setRentalCount(client.getRentalCount() + 1);
-            client.setActive(true); // Ustawienie klienta jako aktywnego
+            client.setActive(true);
 
-
-
-            // Zapisz dane w MongoDB
             clientRepository.update(client, "rentalCount", String.valueOf(client.getRentalCount() + 1));
-            clientRepository.update(client, "active", "true");
+            clientRepository.update(client, "active", true);
             bikeRepository.update(bike, "is_available", false);
             rentalRepository.save(rental);
 
@@ -339,7 +336,6 @@ public class UserInterface {
         System.out.print("Podaj ID klienta, którego wypożyczenie chcesz zakończyć: ");
         String clientId = scanner.nextLine();
 
-        // Znajdź aktywne wypożyczenia dla klienta
         List<Rental> currentRentals = rentalRepository.findById(clientId);
 
         if (currentRentals.isEmpty()) {
@@ -429,11 +425,11 @@ public class UserInterface {
         System.out.print("Podaj ID roweru do usunięcia: ");
         String bikeId = scanner.nextLine();
 
-//        List<Rental> currentRentals = rentalRepository.getCurrentRentalsByBikeId(bikeId);
-//        if (!currentRentals.isEmpty()) {
-//            System.out.println("Nie można usunąć roweru, ponieważ jest aktualnie wypożyczony.");
-//            return;
-//        }
+        List<Rental> currentRentals = rentalRepository.getCurrentRentalsByBikeId(bikeId);
+        if (!currentRentals.isEmpty()) {
+            System.out.println("Nie można usunąć roweru, ponieważ jest aktualnie wypożyczony.");
+            return;
+        }
         BikeMgd b = bikeRepository.findById(bikeId);
         if (b == null) {
             System.out.println("Nie znaleziono roweru o podanym ID");

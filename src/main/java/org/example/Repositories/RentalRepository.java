@@ -40,9 +40,7 @@ public class RentalRepository implements IRentalRepository {
     }
 
     public List<Rental> getCurrentRentalsByBikeId(String bikeId) {
-
-        UUID uuid = UUID.fromString(bikeId);
-        Bson filter = eq("bike._id", new UniqueIdMgd(uuid));
+        Bson filter = eq("bike_id", bikeId);
         return rentCollection.find(filter).into(new ArrayList<>());
     }
 

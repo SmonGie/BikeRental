@@ -18,5 +18,6 @@ public interface IClientRepository {
 
     void update(ClientAddressMgd client, String field, String value);
 
+    void update(ClientAddressMgd client, String field, Boolean value);
 
 }

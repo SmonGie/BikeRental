@@ -73,6 +73,15 @@ public class ClientRepository implements IClientRepository {
 
     }
 
+    @Override
+    public void update(ClientAddressMgd client, String field, Boolean value) {
+
+        Bson filter = Filters.eq("_id", client.getEntityId().getUuid());
+        Bson update = Updates.set(field,value);
+        collection.updateOne(filter, update);
+
+    }
+
 
 
 }
