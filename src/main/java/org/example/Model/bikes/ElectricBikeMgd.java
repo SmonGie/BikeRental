@@ -33,6 +33,12 @@ public class ElectricBikeMgd extends BikeMgd {
         this.batteryCapacity = electricBike.getBatteryCapacity();
     }
 
+    public ElectricBikeMgd( String bikeId,String modelName, boolean isAvailable, int batteryCapacity) {
+        super(null, isAvailable, modelName);
+        this.bikeId = bikeId;
+        this.batteryCapacity = batteryCapacity;
+    }
+
     public int getBatteryCapacity() {
         return batteryCapacity;
     }

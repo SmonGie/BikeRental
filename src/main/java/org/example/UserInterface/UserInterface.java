@@ -1,6 +1,7 @@
 package org.example.UserInterface;
 
 
+import com.mongodb.internal.session.SessionContext;
 import org.example.Model.Rental;
 import org.example.Model.bikes.*;
 import org.example.Model.clients.Client;
@@ -319,6 +320,8 @@ public class UserInterface {
             client.setRentalCount(client.getRentalCount() + 1);
             client.setActive(true); // Ustawienie klienta jako aktywnego
 
+
+
             // Zapisz dane w MongoDB
             clientRepository.update(client, "rentalCount", String.valueOf(client.getRentalCount() + 1));
             clientRepository.update(client, "active", "true");
@@ -394,12 +397,14 @@ public class UserInterface {
 
         System.out.println("Lista wypożyczeń:");
         for (Rental rental : rentals) {
-            System.out.println("ID wypożyczenia: " + rental.getEntityId().toString() +
-                    ", Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
-                    ", Rower: " + rental.getBike().getModelName() +
-                    ", Czas wypożyczenia: " + rental.getStartTime() +
-                    (rental.getEndTime() != null ? ", Czas zakończenia: " + rental.getEndTime() : ", Wciąż wypożyczony"));
+            System.out.println("\n-----------------------------------------------------------\n");
+            System.out.println(" ID wypożyczenia: " + rental.getEntityId().getUuid() +
+                    ",\n Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
+                    ",\n Rower: " + rental.getBike().getModelName() +
+                    ",\n Czas wypożyczenia: " + rental.getStartTime() +
+                    (rental.getEndTime() != null ? ",\n Czas zakończenia: " + rental.getEndTime() : ", Wciąż wypożyczony"));
         }
+        System.out.println("\n-----------------------------------------------------------\n");
     }
 
     private void listFinishedRentals() {

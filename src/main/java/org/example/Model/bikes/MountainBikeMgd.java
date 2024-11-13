@@ -33,6 +33,12 @@ public class MountainBikeMgd extends BikeMgd {
         this.tireWidth = mountainBike.getTireWidth();
     }
 
+    public MountainBikeMgd(String bikeId,String modelName, boolean isAvailable, int tireWidth) {
+        super(null, isAvailable, modelName);
+        this.bikeId = bikeId;
+        this.tireWidth = tireWidth;
+    }
+
     public int getTireWidth() {
         return tireWidth;
     }

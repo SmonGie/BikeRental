@@ -35,6 +35,7 @@ public class Rental extends AbstractEntityMgd {
         this.startTime = startTime;
         this.endTime = null;
         this.totalCost = 0.0f;
+
     }
 
     public Rental(ClientAddressMgd client, BikeMgd bike, LocalDateTime startTime) {
@@ -44,6 +45,7 @@ public class Rental extends AbstractEntityMgd {
         this.startTime = startTime;
         this.endTime = null;
         this.totalCost = 0.0f;
+
     }
 
     public ClientAddressMgd getClient() {

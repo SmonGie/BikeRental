@@ -33,8 +33,11 @@ public class BikeRepository implements IBikeRepository {
 
     @Override
     public BikeMgd findById(String id) {
-        Bson filter = Filters.eq("bike_id", id);
-        return bikeCollection.find(filter).first();
+        Bson filters = Filters.and(Filters.eq("bike_id", id),
+                (Filters.or(
+                        Filters.eq("_clazz", "mountain"),
+                        Filters.eq("_clazz", "electric"))));
+        return bikeCollection.find(filters).first();
 
     }
 

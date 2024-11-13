@@ -10,13 +10,14 @@ import org.example.Repositories.UniqueIdMgd;
 
 import java.util.UUID;
 
-@BsonDiscriminator(key = "_clazz", value = "lol")
+@BsonDiscriminator(key = "_clazz", value = "bike")
 public abstract class BikeMgd extends AbstractEntityMgd {
     protected static int lastAssignedId = 0;
     @BsonProperty("bike_id")
     protected String bikeId;
     @BsonProperty("model_name")
-    private String modelName;
+
+    private String modelName = "";
     @BsonProperty("is_available")
     private boolean isAvailable;
 
@@ -40,10 +41,22 @@ public abstract class BikeMgd extends AbstractEntityMgd {
         this.bikeId = generateNewBikeId();
     }
 
+    public BikeMgd(UniqueIdMgd uniqueIdMgd, boolean isAvailable, String modelName) {
+        super(new UniqueIdMgd(UUID.randomUUID()));
+        this.isAvailable = isAvailable;
+        this.modelName = modelName;
+
+    }
+
+
     private synchronized String generateNewBikeId() {
         lastAssignedId++;
         System.out.print(lastAssignedId);
         return Integer.toString(lastAssignedId);
+    }
+
+    public boolean isAvailable() {
+        return isAvailable;
     }
 
     public String getBikeId() {
