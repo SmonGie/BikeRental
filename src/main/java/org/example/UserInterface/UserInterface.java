@@ -34,18 +34,18 @@ public class UserInterface {
 
     public void start() {
 
-        Address a = new Address("lodz", "janowa", "3");
-        Client c = new Client("Jedrzej", "Wisniewski", "123123123", 54, a);
-
-        ClientAddressMgd startClient = new ClientAddressMgd(c, a);
-        clientRepository.save(startClient);
-
-//        MountainBike mtb2 = new MountainBike("lolek X-Cal", true, 120);
-//        MountainBike mtb = new MountainBike("Trek X-Cal", true, 120);
-//        ElectricBike ebike = new ElectricBike("Giant E+", true, 500);
-//        bikeRepository.save(mtb);
-//        bikeRepository.save(mtb2);
-//        bikeRepository.save(ebike);
+//        Address a = new Address("lodz", "janowa", "3");
+//        Client c = new Client("Jedrzej", "Wisniewski", "123123123", 54, a);
+//
+//        ClientAddressMgd startClient = new ClientAddressMgd(c, a);
+//        clientRepository.save(startClient);
+//
+//        MountainBike mtb2 = new MountainBike(true,"lolek X-Cal",120);
+//        ElectricBike ebike = new ElectricBike(true,"Giant E+",500);
+//        MountainBikeMgd mountainBikeMgd = new MountainBikeMgd(mtb2);
+//        ElectricBikeMgd electricBikeMgd = new ElectricBikeMgd(ebike);
+//        bikeRepository.save(mountainBikeMgd);
+//        bikeRepository.save(electricBikeMgd);
 
 
         while (true) {
@@ -198,7 +198,6 @@ public class UserInterface {
         System.out.print("Numer: ");
         String number = scanner.nextLine();
 
-        String ID = "some_unique_id";
         Address address = new Address(city, street, number);
         Client client = new Client(firstName, lastName, phoneNumber, age, address);
 
@@ -226,7 +225,6 @@ public class UserInterface {
             clientRepository.delete(c);
             System.out.println("Klient został usunięty.");
         } else {
-            c.setActive(false);
             clientRepository.save(c);
             System.out.println("Klient został oznaczony jako nieaktywny.");
         }
@@ -315,14 +313,12 @@ public class UserInterface {
                 return;
             }
 
-            Rental rental = new Rental(client, bike, LocalDateTime.now());
             bike.setIsAvailable(false);
             client.setRentalCount(client.getRentalCount() + 1);
-            client.setActive(true);
 
-            clientRepository.update(client, "rentalCount", String.valueOf(client.getRentalCount() + 1));
-            clientRepository.update(client, "active", true);
-            bikeRepository.update(bike, "is_available", false);
+            Rental rental = new Rental(client, bike, LocalDateTime.now());
+            clientRepository.update(client, "rental_count", client.getRentalCount());
+            bikeRepository.update(bike, "is_available", bike.isIsAvailable());
             rentalRepository.save(rental);
 
             System.out.println("Rower " + bike.getModelName() + " wypożyczony przez " + client.getFirstName());
@@ -336,6 +332,7 @@ public class UserInterface {
         System.out.print("Podaj ID klienta, którego wypożyczenie chcesz zakończyć: ");
         String clientId = scanner.nextLine();
 
+
         List<Rental> currentRentals = rentalRepository.findById(clientId);
 
         if (currentRentals.isEmpty()) {
@@ -346,7 +343,7 @@ public class UserInterface {
         System.out.println("Aktywne wypożyczenia dla klienta:");
         for (int i = 0; i < currentRentals.size(); i++) {
             Rental rental = currentRentals.get(i);
-            System.out.println((i + 1) + ". Rower: " + rental.getBike().getModelName() + ", ID: " + rental.getEntityId().toString());
+            System.out.println((i + 1) + ". Rower: " + rental.getBike().getModelName() + ", ID: " + rental.getEntityId().getUuid());
         }
 
         System.out.print("Wybierz numer wypożyczenia do zakończenia: ");
@@ -368,13 +365,11 @@ public class UserInterface {
         // Zakończenie wypożyczenia
         selectedRental.setEndTime(LocalDateTime.now());
         selectedRental.calculateTotalCost();
-        client.setRentalCount(client.getRentalCount() - 1);
-        bike.setIsAvailable(true);
 
         // Zapisz zaktualizowane obiekty w MongoDB
-        rentalRepository.save(selectedRental);
-        clientRepository.save(client);
-        bikeRepository.save(bike);
+        rentalRepository.update(selectedRental);
+        clientRepository.update(client, "rental_count", client.getRentalCount() - 1);
+        bikeRepository.update(bike, "is_available", !bike.isIsAvailable());
 
         double totalCost = selectedRental.getTotalCost();
         System.out.println("Wypożyczenie zakończone");
@@ -404,7 +399,7 @@ public class UserInterface {
     }
 
     private void listFinishedRentals() {
-        List<Rental> finishedRentals = rentalRepository.findAll();
+        List<Rental> finishedRentals = rentalRepository.findAllFinished();
 
         if (finishedRentals.isEmpty()) {
             System.out.println("Aktualnie nie ma żadnych zakończonych wypożyczeń.");
@@ -413,12 +408,14 @@ public class UserInterface {
 
         System.out.println("Lista zakończonych wypożyczeń:");
         for (Rental rental : finishedRentals) {
-            System.out.println("ID wypożyczenia: " + rental.getEntityId().toString() +
-                    ", Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
-                    ", Rower: " + rental.getBike().getModelName() +
-                    ", Czas wypożyczenia: " + rental.getStartTime() +
-                    ", Czas zakończenia: " + rental.getEndTime());
+            System.out.println("\n-----------------------------------------------------------\n");
+            System.out.println(" ID wypożyczenia: " + rental.getEntityId().getUuid() +
+                    ",\n Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
+                    ",\n Rower: " + rental.getBike().getModelName() +
+                    ",\n Czas wypożyczenia: " + rental.getStartTime() +
+                    ",\n Czas zakończenia: " + rental.getEndTime() );
         }
+        System.out.println("\n-----------------------------------------------------------\n");
     }
 
     private void removeBike() {

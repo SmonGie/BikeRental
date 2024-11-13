@@ -20,7 +20,7 @@ public class Client {
 
     private int rentalCount;
 
-    private boolean active = true;
+//    private boolean active = true;
 
     private Address address;
 
@@ -98,13 +98,13 @@ public class Client {
         return clientType.applyDiscount();
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
+//    public boolean isActive() {
+//        return active;
+//    }
+//
+//    public void setActive(boolean active) {
+//        this.active = active;
+//    }
 
     public int getRentalCount() {
         return rentalCount;

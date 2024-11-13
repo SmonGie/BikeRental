@@ -22,8 +22,6 @@ public class ClientAddressMgd extends AbstractEntityMgd {
     private int age;
     @BsonProperty("rental_count")
     private int rentalCount;
-    @BsonProperty("active")
-    private boolean active = true;
     @BsonProperty("city")
     private String city;
     @BsonProperty("street")
@@ -43,7 +41,8 @@ public class ClientAddressMgd extends AbstractEntityMgd {
                             @BsonProperty("city") String city,
                             @BsonProperty("street") String street,
                             @BsonProperty("street_number") String streetNumber,
-                            @BsonProperty("active") Boolean active
+                            @BsonProperty("rental_count") int rentalCount
+
     ) {
         super(entityId);
         this.firstName = firstName;
@@ -54,7 +53,6 @@ public class ClientAddressMgd extends AbstractEntityMgd {
         this.street = street;
         this.streetNumber = streetNumber;
         this.clientType = ClientType.determineClientType(age);
-        this.active = active;
         this.rentalCount = 0;
         this.clientId = clientId;
     }
@@ -65,7 +63,6 @@ public class ClientAddressMgd extends AbstractEntityMgd {
         this.lastName = client.getLastName();
         this.phoneNumber = client.getPhoneNumber();
         this.age = client.getAge();
-        this.active = client.isActive();
         this.rentalCount = 0;
         this.clientType = client.getClientType();
         this.city = address.getCity();
@@ -156,13 +153,7 @@ public class ClientAddressMgd extends AbstractEntityMgd {
         return clientId;
     }
 
-    public boolean isActive() {
-        return active;
-    }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
 
     @BsonIgnore
     public String getInfo() {

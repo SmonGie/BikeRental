@@ -71,7 +71,7 @@ public class Rental extends AbstractEntityMgd {
         }
 
         Duration rentalDuration = Duration.between(startTime, endTime);
-        long days = rentalDuration.toDays();
+        long days = rentalDuration.toSeconds();
 
         // Stawka 25 zł za dzień
         float costPerDay = 25.0f;
@@ -79,6 +79,7 @@ public class Rental extends AbstractEntityMgd {
 
         // Uwzględnienie zniżki klienta
         totalCost = cost - (cost * client.applyDiscount() / 100);
+        System.out.println("totalny koszt to " +totalCost);
     }
 
 

@@ -16,10 +16,7 @@ import org.example.Model.bikes.MountainBikeMgd;
 import org.example.Model.clients.ClientAddressMgd;
 
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import static com.mongodb.client.model.Aggregates.*;
 import static com.mongodb.client.model.Filters.eq;
@@ -44,12 +41,12 @@ public class RentalRepository implements IRentalRepository {
         return rentCollection.find(filter).into(new ArrayList<>());
     }
 
-    public List<Rental> getCurrentRentals(String clientId) {
-
-        UUID uuid = UUID.fromString(clientId);
-        Bson filter = eq("client._id", new UniqueIdMgd(uuid));
-        return rentCollection.find(filter).into(new ArrayList<>());
-    }
+//    public List<Rental> getCurrentRentals(String clientId) {
+//
+//        UUID uuid = UUID.fromString(clientId);
+//        Bson filter = eq("client._id", new UniqueIdMgd(uuid));
+//        return rentCollection.find(filter).into(new ArrayList<>());
+//    }
 
     public List<Rental> getRentalHistoryByClientId(String clientId) {
    return null;
@@ -58,9 +55,16 @@ public class RentalRepository implements IRentalRepository {
     @Override
     public List<Rental> findById(String id) {
 
-        Bson filter = eq("client.client_id", id);
 
-        return rentCollection.find(filter).into(new ArrayList<>());
+       List<Rental> list = findAll();
+       List<Rental> result = new ArrayList<>();
+       for (Rental r : list) {
+           if (Objects.equals(r.getClient().getClientId(), id)) {
+
+              result.add(r);
+           }
+       }
+       return result;
     }
 
     public ClientAddressMgd getClientfromRental(UUID rentalId) {
@@ -71,7 +75,6 @@ public class RentalRepository implements IRentalRepository {
                 .first();
 
         assert rental != null;
-        System.out.println(rental.getClient().getInfo());
 
         return rental.getClient();
     }
@@ -107,7 +110,6 @@ public class RentalRepository implements IRentalRepository {
         }
 
         assert bike != null;
-        System.out.println(bike.getInfo());
 
         return bike;
     }
@@ -125,21 +127,27 @@ public class RentalRepository implements IRentalRepository {
 
         for (Rental rental : rentals) {
             id = rental.getEntityId().getUuid();
-//            System.out.println(bike.getInfo());
             ClientAddressMgd client = getClientfromRental(id);
-//            System.out.println(client.getInfo());
             rental.setClient(client);
             BikeMgd bike = getBikefromRental(id);
             rental.setBike(bike);
 
-           System.out.println(rental.getInfo());
         }
-
-
-
-
         return rentals;
     }
+
+    public List<Rental> findAllFinished() {
+
+        List<Rental> finishedRentals = new ArrayList<>();
+
+        for (Rental rental : findAll()) {
+            if (rental.getEndTime() != null) {
+                finishedRentals.add(rental);
+            }
+        }
+        return finishedRentals;
+    }
+
 
     @Override
 
@@ -157,8 +165,9 @@ public class RentalRepository implements IRentalRepository {
     @Override
     public void update(Rental rental) {
         Bson filter = eq("_id", rental.getEntityId().getUuid());
-        Bson update = Updates.set("end_time", rental.getEndTime());
-        rentCollection.updateOne(filter, update);
+        Bson updateValue = Updates.set("end_time", rental.getEndTime());
+        Bson updateCost = Updates.set("totalCost", rental.getTotalCost());
+        rentCollection.updateOne(filter, Updates.combine(updateValue, updateCost));
 
     }
 
