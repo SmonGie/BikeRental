@@ -16,7 +16,6 @@ import org.example.Model.clients.ClientAddressMgd;
 
 import java.util.*;
 
-import static com.mongodb.client.model.Aggregates.*;
 import static com.mongodb.client.model.Filters.eq;
 
 public class RentalRepository implements IRentalRepository {
@@ -89,8 +88,11 @@ public class RentalRepository implements IRentalRepository {
 
             if (bikeDoc != null) {
                 String bikeType = bikeDoc.getString("_clazz");
+                UUID bikeIdUUID = bikeDoc.get("_id", UUID.class);
+                UniqueIdMgd bikeId = new UniqueIdMgd(bikeIdUUID);
                 if ("mountain".equals(bikeType)) {
                     bike = new MountainBikeMgd(
+                            bikeId,
                             bikeDoc.getString("bike_id"),
                             bikeDoc.getString("model_name"),
                             bikeDoc.getBoolean("is_available"),
@@ -98,6 +100,7 @@ public class RentalRepository implements IRentalRepository {
                     );
                 } else if ("electric".equals(bikeType)) {
                     bike = new ElectricBikeMgd(
+                            bikeId,
                             bikeDoc.getString("bike_id"),
                             bikeDoc.getString("model_name"),
                             bikeDoc.getBoolean("is_available"),

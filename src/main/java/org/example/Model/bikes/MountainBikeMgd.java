@@ -39,6 +39,12 @@ public class MountainBikeMgd extends BikeMgd {
         this.tireWidth = tireWidth;
     }
 
+    public MountainBikeMgd(UniqueIdMgd uniqueIdMgd,String modelName, boolean isAvailable, int tireWidth) {
+        super(uniqueIdMgd, isAvailable, modelName);
+        this.bikeId = bikeId;
+        this.tireWidth = tireWidth;
+    }
+
     public int getTireWidth() {
         return tireWidth;
     }
@@ -53,7 +59,7 @@ public class MountainBikeMgd extends BikeMgd {
         return "Numer id: " + super.getEntityId().getUuid() +
                 "\nNumer id roweru: " + getBikeId() +
                 "\nModel: " + super.getModelName() +
-                "\nDostępność: " + super.isIsAvailable() +
+                "\nDostępność: " + super.getIsAvailable() +
                 "\nSzerokośc opony: " + +tireWidth + " cm";
     }
 }

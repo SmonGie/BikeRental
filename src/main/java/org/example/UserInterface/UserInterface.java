@@ -293,7 +293,7 @@ public class UserInterface {
         String bikeId = scanner.nextLine();
         ClientAddressMgd client = clientRepository.findById(clientId);
         BikeMgd bike = bikeRepository.findById(bikeId);
-        if (client != null && bike != null && bike.isIsAvailable()) {
+        if (client != null && bike != null && bike.getIsAvailable()) {
             if (client.getRentalCount() >= 2) {
                 System.out.println("Klient może mieć maksymalnie 2 wypożyczenia.");
                 return;
@@ -305,9 +305,10 @@ public class UserInterface {
                 client.setRentalCount(client.getRentalCount() + 1);
                 Rental rental = new Rental(client, bike, LocalDateTime.now());
                 clientRepository.update(clientSession, client, "rental_count", client.getRentalCount());
-                bikeRepository.update(clientSession, bike, "is_available", bike.isIsAvailable());
+                bikeRepository.update(clientSession, bike, "is_available", bike.getIsAvailable());
                 rentalRepository.save(rental);
                 clientSession.commitTransaction();
+                System.out.println(bike.getEntityId().getUuid());
             } catch (Exception e) {
                 clientSession.abortTransaction();
                 e.printStackTrace();
@@ -360,8 +361,7 @@ public class UserInterface {
             selectedRental.setEndTime(LocalDateTime.now());
             selectedRental.calculateTotalCost();
             bike.setIsAvailable(true);
-
-            // Zapisz zaktualizowane obiekty w MongoDB
+            System.out.println(bike.getEntityId().getUuid());
             rentalRepository.update(clientSession, selectedRental);
             clientRepository.update(clientSession, client, "rental_count", client.getRentalCount() - 1);
             bikeRepository.update(clientSession, bike, "is_available", true);

@@ -3,12 +3,14 @@ package org.example.Repositories;
 import com.mongodb.client.ClientSession;
 import org.example.Model.bikes.*;
 import org.junit.jupiter.api.*;
+
+import java.io.IOException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-class BikeRepositoryTest {
-
+class BikeRepositoryOneNodeMissingTest {
     MongoRepository repo;
     BikeRepository bikeRepository;
     private ClientSession session;
@@ -22,6 +24,18 @@ class BikeRepositoryTest {
         session = repo.getMongoClient().startSession();
         session.startTransaction();
 
+    }
+
+    @BeforeAll
+    static void turnOff() throws IOException, InterruptedException {
+        Runtime.getRuntime().exec("docker stop mongodb1");
+        Thread.sleep(10000);
+    }
+
+    @AfterAll
+    static void turnOn() throws IOException, InterruptedException {
+        Runtime.getRuntime().exec("docker start mongodb1");
+        Thread.sleep(10000);
     }
 
     @AfterEach

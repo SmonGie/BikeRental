@@ -2,21 +2,24 @@ package org.example.Repositories;
 
 import com.mongodb.client.ClientSession;
 import org.example.Model.Rental;
-import org.example.Model.bikes.*;
+import org.example.Model.bikes.BikeMgd;
+import org.example.Model.bikes.MountainBike;
+import org.example.Model.bikes.MountainBikeMgd;
 import org.example.Model.clients.Address;
 import org.example.Model.clients.Client;
 import org.example.Model.clients.ClientAddressMgd;
 import org.junit.jupiter.api.*;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class RentalRepositoryTest {
-
+class RentalRepositoryOneNodeMissingTest {
     MongoRepository repo;
     ClientRepository clientRepository;
     BikeRepository bikeRepository;
@@ -32,6 +35,18 @@ class RentalRepositoryTest {
         session = repo.getMongoClient().startSession();
         session.startTransaction();
 
+    }
+
+    @BeforeAll
+    static void turnOff() throws IOException, InterruptedException {
+        Runtime.getRuntime().exec("docker stop mongodb1");
+        Thread.sleep(10000);
+    }
+
+    @AfterAll
+    static void turnOn() throws IOException, InterruptedException {
+        Runtime.getRuntime().exec("docker start mongodb1");
+        Thread.sleep(10000);
     }
 
     @AfterEach

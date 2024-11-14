@@ -19,7 +19,7 @@ public abstract class BikeMgd extends AbstractEntityMgd {
 
     private String modelName = "";
     @BsonProperty("is_available")
-    private boolean isAvailable;
+    protected boolean isAvailable;
 
     @BsonCreator
     public BikeMgd(@BsonProperty("_id") UniqueIdMgd entityId,
@@ -48,6 +48,13 @@ public abstract class BikeMgd extends AbstractEntityMgd {
 
     }
 
+    public BikeMgd(UniqueIdMgd uniqueIdMgd, boolean isAvailable, String modelName, String test) {
+        super(uniqueIdMgd);
+        this.isAvailable = isAvailable;
+        this.modelName = modelName;
+
+    }
+
 
     private synchronized String generateNewBikeId() {
         lastAssignedId++;
@@ -65,7 +72,7 @@ public abstract class BikeMgd extends AbstractEntityMgd {
         this.modelName = modelName;
     }
 
-    public boolean isIsAvailable() {
+    public boolean getIsAvailable() {
         return isAvailable;
     }
 

@@ -33,10 +33,21 @@ public class ElectricBikeMgd extends BikeMgd {
         this.batteryCapacity = electricBike.getBatteryCapacity();
     }
 
-    public ElectricBikeMgd( String bikeId,String modelName, boolean isAvailable, int batteryCapacity) {
+    public ElectricBikeMgd(String bikeId, String modelName, boolean isAvailable, int batteryCapacity) {
         super(null, isAvailable, modelName);
         this.bikeId = bikeId;
         this.batteryCapacity = batteryCapacity;
+    }
+
+    public ElectricBikeMgd(UniqueIdMgd uniqueIdMgd, String modelName, boolean isAvailable, int batteryCapacity) {
+        super(uniqueIdMgd, isAvailable, modelName);
+        this.bikeId = bikeId;
+        this.batteryCapacity = batteryCapacity;
+    }
+
+    @Override
+    public boolean getIsAvailable() {
+        return isAvailable;
     }
 
     public int getBatteryCapacity() {
@@ -53,7 +64,7 @@ public class ElectricBikeMgd extends BikeMgd {
         return "Numer id: " + getEntityId().getUuid() +
                 "\nNumer id roweru: " + getBikeId() +
                 "\nModel: " + super.getModelName() +
-                "\nDostępność: " + super.isIsAvailable() +
+                "\nDostępność: " + super.getIsAvailable() +
                 "\nPojemność baterii: " + batteryCapacity + " Wh";
     }
 }
