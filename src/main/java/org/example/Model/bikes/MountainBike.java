@@ -19,6 +19,6 @@ public class MountainBike extends Bike {
 
     @Override
     public String getInfo() {
-        return super.getInfo() + " Szerokośc opony: " + +tireWidth + " cm";
+        return super.getInfo() + " Szerokośc opony: " + tireWidth + " cm";
     }
 }

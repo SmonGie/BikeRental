@@ -1,7 +1,6 @@
 package org.example.Repositories;
 
 import com.mongodb.client.ClientSession;
-import org.example.Model.clients.Client;
 import org.example.Model.clients.ClientAddressMgd;
 
 import java.util.List;

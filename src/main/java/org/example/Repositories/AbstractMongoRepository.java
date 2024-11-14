@@ -33,10 +33,6 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
     private final MongoCredential credential = MongoCredential.createCredential(
             "admin", "admin", "adminpassword".toCharArray());
 
-    PojoCodecProvider pojoCodecProvider = PojoCodecProvider.builder()
-             .build();
-
-
     private final CodecRegistry pojoCodecRegistry =
             CodecRegistries.fromProviders(PojoCodecProvider.builder()
                     .automatic(true)
@@ -76,8 +72,8 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                             first_name: {
                                 bsonType: "string",
                                 minLength: 1,
-                                maxLength: 10,
-                                description: "Imię nie może być puste"
+                                maxLength: 15,
+                                description: "Imię nie może być puste ani dłuższe niż 15 "
                             },
                             last_name: {
                                 bsonType: "string",
@@ -99,7 +95,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
             rentABike.createCollection("bikes");
             rentABike.createCollection("clients", createCollectionOptions);
             rentABike.createCollection("rents");
-            System.out.println("Connected to database: " + rentABike.getName());
+            System.out.println("Połączono się z bazą danych: " + rentABike.getName());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -117,7 +113,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
     public void close() throws Exception {
         if (mongoClient != null) {
             mongoClient.close();
-            System.out.println("MongoClient connection closed.");
+            System.out.println("Zamknięto połączenie.");
         }
     }
 }

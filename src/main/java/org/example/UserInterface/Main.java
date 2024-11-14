@@ -1,8 +1,5 @@
 package org.example.UserInterface;
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
-import com.mongodb.client.MongoDatabase;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
 import org.example.Repositories.MongoRepository;
@@ -25,7 +22,6 @@ public class Main {
             e.printStackTrace();
         } finally {
             try {
-
                 repo.close();
             } catch (Exception e) {
                 e.printStackTrace();

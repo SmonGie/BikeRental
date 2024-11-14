@@ -2,7 +2,6 @@ package org.example.UserInterface;
 
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoClients;
 import org.example.Model.Rental;
 import org.example.Model.bikes.*;
 import org.example.Model.clients.Client;
@@ -11,7 +10,6 @@ import org.example.Model.clients.ClientAddressMgd;
 import org.example.Model.clients.ClientType;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
-import org.example.Repositories.MongoRepository;
 import org.example.Repositories.RentalRepository;
 
 import java.time.LocalDateTime;
@@ -288,17 +286,19 @@ public class UserInterface {
     }
 
     private void rentBike() {
+        String temp = "";
         System.out.print("Podaj ID klienta: ");
         String clientId = scanner.nextLine();
         System.out.print("Podaj ID roweru do wypożyczenia: ");
         String bikeId = scanner.nextLine();
         ClientAddressMgd client = clientRepository.findById(clientId);
         BikeMgd bike = bikeRepository.findById(bikeId);
+
         if (client != null && bike != null && bike.getIsAvailable()) {
-            if (client.getRentalCount() >= 2) {
-                System.out.println("Klient może mieć maksymalnie 2 wypożyczenia.");
-                return;
-            }
+//            if (client.getRentalCount() >= 2) {
+//                System.out.println("Klient może mieć maksymalnie 2 wypożyczenia.");
+//                return;
+//            }
             ClientSession clientSession = mongoClient.startSession();
             try  {
                 clientSession.startTransaction();
@@ -309,14 +309,15 @@ public class UserInterface {
                 bikeRepository.update(clientSession, bike, "is_available", bike.getIsAvailable());
                 rentalRepository.save(rental);
                 clientSession.commitTransaction();
-                System.out.println(bike.getEntityId().getUuid());
             } catch (Exception e) {
+                System.out.println("Napotkano problem. Upewnij się, że klient nie ma już 2 trwających wypożyczeń");
                 clientSession.abortTransaction();
                 e.printStackTrace();
+                temp = " NIE";
             } finally {
                 clientSession.close();
             }
-            System.out.println("Rower " + bike.getModelName() + " wypożyczony przez " + client.getFirstName());
+            System.out.println("Rower " + bike.getModelName() + temp + " został wypożyczony przez " + client.getFirstName());
         } else {
             System.out.println("Nieprawidłowy klient lub rower niedostępny.");
         }
@@ -338,7 +339,7 @@ public class UserInterface {
         System.out.println("Aktywne wypożyczenia dla klienta:");
         for (int i = 0; i < currentRentals.size(); i++) {
             Rental rental = currentRentals.get(i);
-            System.out.println((i + 1) + ". Rower: " + rental.getBike().getModelName() + ", ID: " + rental.getEntityId().getUuid());
+            System.out.println((i + 1) + ". Rower: " + rental.getBike().getModelName() + ", ID wypożyczenia: " + rental.getEntityId().getUuid());
         }
 
         System.out.print("Wybierz numer wypożyczenia do zakończenia: ");
@@ -352,7 +353,6 @@ public class UserInterface {
         Rental selectedRental = currentRentals.get(rentalIndex);
         ClientAddressMgd client = selectedRental.getClient();
         BikeMgd bike = selectedRental.getBike();
-        System.out.println(bike.getInfo());
 
         ClientType clientType = client.getClientType();
         int discount = clientType.applyDiscount();
@@ -362,7 +362,6 @@ public class UserInterface {
             selectedRental.setEndTime(LocalDateTime.now());
             selectedRental.calculateTotalCost();
             bike.setIsAvailable(true);
-            System.out.println(bike.getEntityId().getUuid());
             rentalRepository.update(clientSession, selectedRental);
             clientRepository.update(clientSession, client, "rental_count", client.getRentalCount() - 1);
             bikeRepository.update(clientSession, bike, "is_available", true);

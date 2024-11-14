@@ -7,8 +7,6 @@ import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.example.Repositories.UniqueIdMgd;
 
-import java.util.UUID;
-
 @BsonDiscriminator(key = "_clazz", value = "electric")
 public class ElectricBikeMgd extends BikeMgd {
     @BsonProperty("battery_capacity")

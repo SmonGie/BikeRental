@@ -1,18 +1,14 @@
 package org.example.Repositories;
 
 
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.bson.conversions.Bson;
-import org.example.Model.clients.Address;
-import org.example.Model.clients.Client;
 import org.example.Model.clients.ClientAddressMgd;
-
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
-import java.util.logging.Filter;
 
 
 public class ClientRepository implements IClientRepository {
@@ -48,8 +44,7 @@ public class ClientRepository implements IClientRepository {
     public void save(ClientAddressMgd clientAddressMgd) {
 
         collection.insertOne(clientAddressMgd);
-        System.out.println("Inserted client: " + clientAddressMgd.getFirstName() + " " + clientAddressMgd.getLastName());
-        System.out.println("Id" + clientAddressMgd.getEntityId());
+
     }
 
     @Override
@@ -80,7 +75,7 @@ public class ClientRepository implements IClientRepository {
     }
 
     @Override
-    public void update(ClientSession session, ClientAddressMgd client, String field, int value) {
+    public void update(ClientSession session, ClientAddressMgd client, String field, int value) throws MongoWriteException {
 
         Bson filter = Filters.eq("_id", client.getEntityId().getUuid());
         Bson update = Updates.set(field,value);

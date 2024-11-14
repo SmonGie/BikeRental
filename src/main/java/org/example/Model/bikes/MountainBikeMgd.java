@@ -6,8 +6,6 @@ import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.example.Repositories.UniqueIdMgd;
 
-import java.util.UUID;
-
 @BsonDiscriminator(key = "_clazz", value = "mountain")
 public class MountainBikeMgd extends BikeMgd {
     @BsonProperty("tire_width")
@@ -60,6 +58,6 @@ public class MountainBikeMgd extends BikeMgd {
                 "\nNumer id roweru: " + getBikeId() +
                 "\nModel: " + super.getModelName() +
                 "\nDostępność: " + super.getIsAvailable() +
-                "\nSzerokośc opony: " + +tireWidth + " cm";
+                "\nSzerokośc opony: " + tireWidth + " cm";
     }
 }
