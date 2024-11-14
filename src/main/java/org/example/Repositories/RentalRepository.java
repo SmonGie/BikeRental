@@ -1,9 +1,7 @@
 package org.example.Repositories;
 
 
-import com.mongodb.client.AggregateIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Updates;
@@ -26,9 +24,10 @@ public class RentalRepository implements IRentalRepository {
     MongoCollection<Rental> rentCollection;
     MongoDatabase database;
     String collectionName;
+    private MongoClient mongoClient;
 
-    public RentalRepository(MongoDatabase database ) {
-
+    public RentalRepository(MongoDatabase database, MongoClient mongoClient) {
+        this.mongoClient = mongoClient;
         this.database = database;
         this.collectionName = "rents";
         this.rentCollection = database.getCollection(collectionName, Rental.class);
@@ -41,12 +40,12 @@ public class RentalRepository implements IRentalRepository {
         return rentCollection.find(filter).into(new ArrayList<>());
     }
 
-//    public List<Rental> getCurrentRentals(String clientId) {
-//
-//        UUID uuid = UUID.fromString(clientId);
-//        Bson filter = eq("client._id", new UniqueIdMgd(uuid));
-//        return rentCollection.find(filter).into(new ArrayList<>());
-//    }
+    public List<Rental> getCurrentRentals(String clientId) {
+
+        UUID uuid = UUID.fromString(clientId);
+        Bson filter = eq("client._id", new UniqueIdMgd(uuid));
+        return rentCollection.find(filter).into(new ArrayList<>());
+    }
 
     public List<Rental> getRentalHistoryByClientId(String clientId) {
    return null;
@@ -59,7 +58,7 @@ public class RentalRepository implements IRentalRepository {
        List<Rental> list = findAll();
        List<Rental> result = new ArrayList<>();
        for (Rental r : list) {
-           if (Objects.equals(r.getClient().getClientId(), id)) {
+           if (Objects.equals(r.getClient().getClientId(), id) && r.getEndTime() == null) {
 
               result.add(r);
            }
@@ -163,11 +162,11 @@ public class RentalRepository implements IRentalRepository {
     }
 
     @Override
-    public void update(Rental rental) {
+    public void update(ClientSession session, Rental rental) {
         Bson filter = eq("_id", rental.getEntityId().getUuid());
         Bson updateValue = Updates.set("end_time", rental.getEndTime());
         Bson updateCost = Updates.set("totalCost", rental.getTotalCost());
-        rentCollection.updateOne(filter, Updates.combine(updateValue, updateCost));
+        rentCollection.updateOne(session, filter, Updates.combine(updateValue, updateCost));
 
     }
 

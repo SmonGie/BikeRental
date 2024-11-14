@@ -41,6 +41,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                     .build());
 
     private MongoDatabase rentABike;
+    protected MongoClient mongoClient;
 
     private void initDbConnection() {
         try {
@@ -55,7 +56,7 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                     ))
                     .build();
 
-            MongoClient mongoClient = MongoClients.create(settings);
+            this.mongoClient = MongoClients.create(settings);
             rentABike = mongoClient.getDatabase("rentabike");
             System.out.println("Connected to database: " + rentABike.getCollection("rentabike"));
         } catch (Exception e) {
@@ -69,5 +70,13 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
 
     public MongoDatabase getDatabase() {
         return rentABike;
+    }
+
+    @Override
+    public void close() throws Exception {
+        if (mongoClient != null) {
+            mongoClient.close();
+            System.out.println("MongoClient connection closed.");
+        }
     }
 }

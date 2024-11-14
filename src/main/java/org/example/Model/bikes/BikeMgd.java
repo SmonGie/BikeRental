@@ -51,14 +51,8 @@ public abstract class BikeMgd extends AbstractEntityMgd {
 
     private synchronized String generateNewBikeId() {
         lastAssignedId++;
-        System.out.print(lastAssignedId);
         return Integer.toString(lastAssignedId);
     }
-
-    public boolean isAvailable() {
-        return isAvailable;
-    }
-
     public String getBikeId() {
         return bikeId;
     }

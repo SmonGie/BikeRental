@@ -1,8 +1,6 @@
 package org.example.Repositories;
 
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
@@ -18,13 +16,14 @@ import java.util.UUID;
 
 public class BikeRepository implements IBikeRepository {
 
+    private MongoClient mongoClient;
     MongoCollection<BikeMgd> bikeCollection;
     MongoDatabase database;
     String collectionName;
 
 
-    public BikeRepository(MongoDatabase database) {
-
+    public BikeRepository(MongoDatabase database, MongoClient mongoClient) {
+        this.mongoClient = mongoClient;
         this.database = database;
         this.collectionName = "bikes";
         this.bikeCollection = database.getCollection(collectionName, BikeMgd.class);
@@ -72,19 +71,19 @@ public class BikeRepository implements IBikeRepository {
     }
 
     @Override
-    public void update(BikeMgd bike, String field, String value) {
+    public void update(ClientSession session, BikeMgd bike, String field, String value) {
 
         Bson filter = Filters.eq("_id", bike.getEntityId().getUuid());
         Bson update = Updates.set(field, value);
-        bikeCollection.updateOne(filter, update);
+        bikeCollection.updateOne(session, filter, update);
 
     }
 
     @Override
-    public void update(BikeMgd bike, String field, Boolean value) {
+    public void update(ClientSession session,BikeMgd bike, String field, Boolean value) {
         Bson filter = Filters.eq("_id", bike.getEntityId().getUuid());
         Bson update = Updates.set(field, value);
-        bikeCollection.updateOne(filter, update);
+        bikeCollection.updateOne(session, filter, update);
     }
 
 

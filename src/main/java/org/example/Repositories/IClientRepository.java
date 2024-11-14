@@ -1,5 +1,6 @@
 package org.example.Repositories;
 
+import com.mongodb.client.ClientSession;
 import org.example.Model.clients.Client;
 import org.example.Model.clients.ClientAddressMgd;
 
@@ -16,10 +17,10 @@ public interface IClientRepository {
 
     void delete(ClientAddressMgd client);
 
-    void update(ClientAddressMgd client, String field, String value);
+    void update(ClientSession session, ClientAddressMgd client, String field, String value);
 
-    void update(ClientAddressMgd client, String field, Boolean value);
+    void update(ClientSession session, ClientAddressMgd client, String field, Boolean value);
 
-    void update(ClientAddressMgd client, String field, int value);
+    void update(ClientSession session, ClientAddressMgd client, String field, int value);
 
 }

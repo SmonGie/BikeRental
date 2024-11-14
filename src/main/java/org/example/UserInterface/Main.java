@@ -1,5 +1,7 @@
 package org.example.UserInterface;
 
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
@@ -10,15 +12,24 @@ public class Main {
     public static void main(String[] args) {
 
         MongoRepository repo = new MongoRepository();
-        MongoDatabase sigma = repo.getDatabase();
-        ClientRepository clientRepository = new ClientRepository(sigma);
-        BikeRepository bikeRepository = new BikeRepository(sigma);
-        RentalRepository rentalRepository = new RentalRepository(sigma);
+        ClientRepository clientRepository = new ClientRepository(repo.getDatabase(), repo.getMongoClient());
+        BikeRepository bikeRepository = new BikeRepository(repo.getDatabase(), repo.getMongoClient());
+        RentalRepository rentalRepository = new RentalRepository(repo.getDatabase(), repo.getMongoClient());
 
-        UserInterface ui = new UserInterface(clientRepository, bikeRepository, rentalRepository);
+        UserInterface ui = new UserInterface(clientRepository, bikeRepository, rentalRepository, repo.getMongoClient());
 
         ui.start();
-        sigma.drop();
+        try {
+            repo.getDatabase().drop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                repo.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
 

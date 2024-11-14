@@ -1,10 +1,7 @@
 package org.example.Repositories;
 
 
-import com.mongodb.client.MongoClient;
-import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
-import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.*;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.bson.conversions.Bson;
@@ -20,13 +17,13 @@ import java.util.logging.Filter;
 
 public class ClientRepository implements IClientRepository {
 
-
+    private MongoClient mongoClient;
     MongoDatabase database;
     MongoCollection<ClientAddressMgd> collection;
     String collectionName;
 
-    public ClientRepository(MongoDatabase database) {
-
+    public ClientRepository(MongoDatabase database, MongoClient mongoClient) {
+        this.mongoClient = mongoClient;
         this.database = database;
         this.collectionName = "clients";
         this.collection = database.getCollection(collectionName, ClientAddressMgd.class);
@@ -65,29 +62,29 @@ public class ClientRepository implements IClientRepository {
     }
 
     @Override
-    public void update(ClientAddressMgd client, String field, String value) {
+    public void update(ClientSession session, ClientAddressMgd client, String field, String value) {
 
         Bson filter = Filters.eq("_id", client.getEntityId().getUuid());
         Bson update = Updates.set(field,value);
-        collection.updateOne(filter, update);
+        collection.updateOne(session, filter, update);
 
     }
 
     @Override
-    public void update(ClientAddressMgd client, String field, Boolean value) {
+    public void update(ClientSession session, ClientAddressMgd client, String field, Boolean value) {
 
         Bson filter = Filters.eq("_id", client.getEntityId().getUuid());
         Bson update = Updates.set(field,value);
-        collection.updateOne(filter, update);
+        collection.updateOne(session, filter, update);
 
     }
 
     @Override
-    public void update(ClientAddressMgd client, String field, int value) {
+    public void update(ClientSession session, ClientAddressMgd client, String field, int value) {
 
         Bson filter = Filters.eq("_id", client.getEntityId().getUuid());
         Bson update = Updates.set(field,value);
-        collection.updateOne(filter, update);
+        collection.updateOne(session, filter, update);
 
     }
 

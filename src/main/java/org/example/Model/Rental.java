@@ -79,7 +79,6 @@ public class Rental extends AbstractEntityMgd {
 
         // Uwzględnienie zniżki klienta
         totalCost = cost - (cost * client.applyDiscount() / 100);
-        System.out.println("totalny koszt to " +totalCost);
     }
 
 

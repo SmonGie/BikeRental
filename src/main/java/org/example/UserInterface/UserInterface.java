@@ -1,7 +1,8 @@
 package org.example.UserInterface;
 
-
-import com.mongodb.internal.session.SessionContext;
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
 import org.example.Model.Rental;
 import org.example.Model.bikes.*;
 import org.example.Model.clients.Client;
@@ -10,6 +11,7 @@ import org.example.Model.clients.ClientAddressMgd;
 import org.example.Model.clients.ClientType;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
+import org.example.Repositories.MongoRepository;
 import org.example.Repositories.RentalRepository;
 
 import java.time.LocalDateTime;
@@ -20,32 +22,31 @@ public class UserInterface {
     private final ClientRepository clientRepository;
     private final BikeRepository bikeRepository;
     private final RentalRepository rentalRepository;
-
+    private final MongoClient mongoClient;
     private final Scanner scanner;
 
-
-    public UserInterface(ClientRepository clientRepository, BikeRepository bikeRepository, RentalRepository rentalRepository) {
+    public UserInterface(ClientRepository clientRepository, BikeRepository bikeRepository, RentalRepository rentalRepository, MongoClient mongoClient) {
         this.clientRepository = clientRepository;
         this.bikeRepository = bikeRepository;
         this.rentalRepository = rentalRepository;
+        this.mongoClient = mongoClient;
         this.scanner = new Scanner(System.in);
     }
 
 
     public void start() {
+        Address a = new Address("lodz", "janowa", "3");
+        Client c = new Client("Jedrzej", "Wisniewski", "123123123", 54, a);
 
-//        Address a = new Address("lodz", "janowa", "3");
-//        Client c = new Client("Jedrzej", "Wisniewski", "123123123", 54, a);
-//
-//        ClientAddressMgd startClient = new ClientAddressMgd(c, a);
-//        clientRepository.save(startClient);
-//
-//        MountainBike mtb2 = new MountainBike(true,"lolek X-Cal",120);
-//        ElectricBike ebike = new ElectricBike(true,"Giant E+",500);
-//        MountainBikeMgd mountainBikeMgd = new MountainBikeMgd(mtb2);
-//        ElectricBikeMgd electricBikeMgd = new ElectricBikeMgd(ebike);
-//        bikeRepository.save(mountainBikeMgd);
-//        bikeRepository.save(electricBikeMgd);
+        ClientAddressMgd startClient = new ClientAddressMgd(c, a);
+        clientRepository.save(startClient);
+
+        MountainBike mtb2 = new MountainBike(true,"lolek X-Cal",120);
+        ElectricBike ebike = new ElectricBike(true,"Giant E+",500);
+        MountainBikeMgd mountainBikeMgd = new MountainBikeMgd(mtb2);
+        ElectricBikeMgd electricBikeMgd = new ElectricBikeMgd(ebike);
+        bikeRepository.save(mountainBikeMgd);
+        bikeRepository.save(electricBikeMgd);
 
 
         while (true) {
@@ -240,17 +241,6 @@ public class UserInterface {
             for (ClientAddressMgd client : clients) {
                 System.out.println("\n-----------------------------------------------------------\n");
                 System.out.println(client.getInfo());
-
-//            List<Rental> currentRentals = rentalRepository.getCurrentRentals(client.getEntityId().getUuid().toString());
-//
-//            if (!currentRentals.isEmpty()) {
-//                System.out.println("Aktualne wypożyczenia:");
-//                for (Rental rental : currentRentals) {
-//                    System.out.println(" - Rower: " + rental.getBike().getModelName() + ", ID: " + rental.getId());
-//                }
-//            } else {
-//                System.out.println("Brak aktywnych wypożyczeń.");
-//            }
             }
             System.out.println("\n-----------------------------------------------------------\n");
         }
@@ -301,26 +291,29 @@ public class UserInterface {
         String clientId = scanner.nextLine();
         System.out.print("Podaj ID roweru do wypożyczenia: ");
         String bikeId = scanner.nextLine();
-
-        // Załadowanie klienta i roweru z MongoDB
         ClientAddressMgd client = clientRepository.findById(clientId);
         BikeMgd bike = bikeRepository.findById(bikeId);
-
         if (client != null && bike != null && bike.isIsAvailable()) {
-            // Sprawdzenie liczby wypożyczeń
             if (client.getRentalCount() >= 2) {
                 System.out.println("Klient może mieć maksymalnie 2 wypożyczenia.");
                 return;
             }
-
-            bike.setIsAvailable(false);
-            client.setRentalCount(client.getRentalCount() + 1);
-
-            Rental rental = new Rental(client, bike, LocalDateTime.now());
-            clientRepository.update(client, "rental_count", client.getRentalCount());
-            bikeRepository.update(bike, "is_available", bike.isIsAvailable());
-            rentalRepository.save(rental);
-
+            ClientSession clientSession = mongoClient.startSession();
+            try  {
+                clientSession.startTransaction();
+                bike.setIsAvailable(false);
+                client.setRentalCount(client.getRentalCount() + 1);
+                Rental rental = new Rental(client, bike, LocalDateTime.now());
+                clientRepository.update(clientSession, client, "rental_count", client.getRentalCount());
+                bikeRepository.update(clientSession, bike, "is_available", bike.isIsAvailable());
+                rentalRepository.save(rental);
+                clientSession.commitTransaction();
+            } catch (Exception e) {
+                clientSession.abortTransaction();
+                e.printStackTrace();
+            } finally {
+                clientSession.close();
+            }
             System.out.println("Rower " + bike.getModelName() + " wypożyczony przez " + client.getFirstName());
         } else {
             System.out.println("Nieprawidłowy klient lub rower niedostępny.");
@@ -357,20 +350,27 @@ public class UserInterface {
         Rental selectedRental = currentRentals.get(rentalIndex);
         ClientAddressMgd client = selectedRental.getClient();
         BikeMgd bike = selectedRental.getBike();
+        System.out.println(bike.getInfo());
 
-        // Załóżmy, że klient ma metodę do obliczania zniżki na podstawie typu
         ClientType clientType = client.getClientType();
         int discount = clientType.applyDiscount();
+        ClientSession clientSession = mongoClient.startSession();
+        try {
+            clientSession.startTransaction();
+            selectedRental.setEndTime(LocalDateTime.now());
+            selectedRental.calculateTotalCost();
+            bike.setIsAvailable(true);
 
-        // Zakończenie wypożyczenia
-        selectedRental.setEndTime(LocalDateTime.now());
-        selectedRental.calculateTotalCost();
-
-        // Zapisz zaktualizowane obiekty w MongoDB
-        rentalRepository.update(selectedRental);
-        clientRepository.update(client, "rental_count", client.getRentalCount() - 1);
-        bikeRepository.update(bike, "is_available", !bike.isIsAvailable());
-
+            // Zapisz zaktualizowane obiekty w MongoDB
+            rentalRepository.update(clientSession, selectedRental);
+            clientRepository.update(clientSession, client, "rental_count", client.getRentalCount() - 1);
+            bikeRepository.update(clientSession, bike, "is_available", true);
+            clientSession.commitTransaction();
+        } catch (Exception e) {
+            clientSession.abortTransaction();
+        } finally {
+            clientSession.close();
+        }
         double totalCost = selectedRental.getTotalCost();
         System.out.println("Wypożyczenie zakończone");
         System.out.println("Typ klienta: " + clientType + ", Zniżka: " + discount + "%");

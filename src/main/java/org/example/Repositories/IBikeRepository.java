@@ -1,5 +1,6 @@
 package org.example.Repositories;
 
+import com.mongodb.client.ClientSession;
 import org.example.Model.bikes.Bike;
 import org.example.Model.bikes.BikeMgd;
 
@@ -15,7 +16,7 @@ public interface IBikeRepository {
 
     void delete(BikeMgd bike);
 
-    void update(BikeMgd bike, String field, String value);
-    void update(BikeMgd bike, String field, Boolean value);
+    void update(ClientSession session, BikeMgd bike, String field, String value);
+    void update(ClientSession session, BikeMgd bike, String field, Boolean value);
 
 }
