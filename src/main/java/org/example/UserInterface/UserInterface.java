@@ -257,14 +257,13 @@ public class UserInterface {
 
         int choice = readIntegerInput();
 
-        System.out.print("Model roweru: ");
-        String model = scanner.nextLine();
-
         boolean available = true;
 
         switch (choice) {
             case 1:
                 //MountainBike
+                System.out.print("Model roweru: ");
+                String model = scanner.nextLine();
                 System.out.print("Szerokość opony (w cm): ");
                 int tireWidth = readIntegerInput();
                 MountainBike mountainBike = new MountainBike(available, model, tireWidth);
@@ -274,9 +273,11 @@ public class UserInterface {
                 break;
             case 2:
                 //ElectricBike
+                System.out.print("Model roweru: ");
+                String model2 = scanner.nextLine();
                 System.out.print("Pojemność baterii (w Wh): ");
                 int batteryCapacity = readIntegerInput();
-                ElectricBike electricBike = new ElectricBike(available, model, batteryCapacity);
+                ElectricBike electricBike = new ElectricBike(available, model2, batteryCapacity);
                 ElectricBikeMgd newElectric = new ElectricBikeMgd(electricBike);
                 bikeRepository.save(newElectric);
                 System.out.println("Rower elektryczny został dodany.");
