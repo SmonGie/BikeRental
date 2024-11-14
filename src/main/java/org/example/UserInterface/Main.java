@@ -25,6 +25,7 @@ public class Main {
             e.printStackTrace();
         } finally {
             try {
+
                 repo.close();
             } catch (Exception e) {
                 e.printStackTrace();
