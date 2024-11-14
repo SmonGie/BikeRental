@@ -58,7 +58,7 @@ public class ClientAddressMgd extends AbstractEntityMgd {
     }
 
     public ClientAddressMgd(Client client, Address address) {
-        super(new UniqueIdMgd(UUID.randomUUID())); // lub inny sposób generowania ID
+        super(new UniqueIdMgd(UUID.randomUUID()));
         this.firstName = client.getFirstName();
         this.lastName = client.getLastName();
         this.phoneNumber = client.getPhoneNumber();
@@ -146,7 +146,7 @@ public class ClientAddressMgd extends AbstractEntityMgd {
     }
 
     public double applyDiscount() {
-        return clientType.applyDiscount();  // Call the ClientType's discount method
+        return clientType.applyDiscount();
     }
 
     public String getClientId() {
