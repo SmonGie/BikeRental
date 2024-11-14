@@ -6,6 +6,10 @@ import com.mongodb.MongoCredential;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoClients;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.CreateCollectionOptions;
+import com.mongodb.client.model.ValidationAction;
+import com.mongodb.client.model.ValidationOptions;
+import org.bson.Document;
 import org.bson.UuidRepresentation;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.bson.codecs.configuration.CodecRegistry;
@@ -56,9 +60,46 @@ public abstract class AbstractMongoRepository implements AutoCloseable {
                     ))
                     .build();
 
+
+            ValidationOptions validationOptions = new ValidationOptions().validator(
+                            Document.parse("""
+                {
+                    $jsonSchema: {
+                        bsonType: "object",
+                        required: [ "client_id", "first_name", "last_name", "rental_count" ],
+                        properties: {
+                            rental_count: {
+                                bsonType: "int",
+                                maximum: 2,
+                                description: "Maksymalna liczba wynajmów na klienta to 2"
+                            },
+                            first_name: {
+                                bsonType: "string",
+                                minLength: 1,
+                                maxLength: 10,
+                                description: "Imię nie może być puste"
+                            },
+                            last_name: {
+                                bsonType: "string",
+                                minLength: 1,
+                                description: "Nazwisko nie może być puste"
+                            }
+                        }
+                    }
+                }
+                """))
+                    .validationAction(ValidationAction.ERROR);
+
+            CreateCollectionOptions createCollectionOptions = new CreateCollectionOptions()
+                    .validationOptions(validationOptions);
+
+
             this.mongoClient = MongoClients.create(settings);
             rentABike = mongoClient.getDatabase("rentabike");
-            System.out.println("Connected to database: " + rentABike.getCollection("rentabike"));
+            rentABike.createCollection("bikes");
+            rentABike.createCollection("clients", createCollectionOptions);
+            rentABike.createCollection("rents");
+            System.out.println("Connected to database: " + rentABike.getName());
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -10,6 +10,8 @@ public class MongoRepository extends AbstractMongoRepository {
         super();  // Wywołanie konstruktora klasy nadrzędnej
         initialize();  // Inicjalizacja połączenia z bazą
         this.mongoClient = super.mongoClient;
+
+
     }
 
     public MongoClient getMongoClient() {
