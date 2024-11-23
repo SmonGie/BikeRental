@@ -1,5 +1,6 @@
 package org.example.UserInterface;
 
+import org.example.Model.RedisManager;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
 import org.example.Repositories.MongoRepository;
@@ -12,6 +13,12 @@ public class Main {
         ClientRepository clientRepository = new ClientRepository(repo.getDatabase(), repo.getMongoClient());
         BikeRepository bikeRepository = new BikeRepository(repo.getDatabase(), repo.getMongoClient());
         RentalRepository rentalRepository = new RentalRepository(repo.getDatabase(), repo.getMongoClient());
+
+        RedisManager redisManager = new RedisManager();
+        redisManager.initConnection();
+
+        if (redisManager.getPooledConnection() == null)
+        {System.out.println("Nie udalo sie polaczyc z baza danych Redis.");}
 
         UserInterface ui = new UserInterface(clientRepository, bikeRepository, rentalRepository, repo.getMongoClient());
 

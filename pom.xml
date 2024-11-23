@@ -31,7 +31,11 @@
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-crypt</artifactId>
             <version>1.8.0</version>
-
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse</groupId>
+            <artifactId>yasson</artifactId>
+            <version>3.0.2</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
