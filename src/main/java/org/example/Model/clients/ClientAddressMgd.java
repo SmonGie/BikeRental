@@ -57,6 +57,7 @@ public class ClientAddressMgd extends AbstractEntityMgd {
         this.clientId = clientId;
     }
 
+
     public ClientAddressMgd(Client client, Address address) {
         super(new UniqueIdMgd(UUID.randomUUID()));
         this.firstName = client.getFirstName();
@@ -71,6 +72,20 @@ public class ClientAddressMgd extends AbstractEntityMgd {
         this.clientId = client.getClientId();
     }
 
+
+    public ClientAddressMgd(ClientAddressRedis client) {
+        super(new UniqueIdMgd(client.getEntityId()));
+        this.firstName = client.getFirstName();
+        this.lastName = client.getLastName();
+        this.phoneNumber = client.getPhoneNumber();
+        this.age = client.getAge();
+        this.rentalCount = 0;
+        this.clientType = client.getClientType();
+        this.city = client.getCity();
+        this.street = client.getStreet();
+        this.streetNumber = client.getStreetNumber();
+        this.clientId = client.getClientId();
+    }
 
 
     public String getFirstName() {

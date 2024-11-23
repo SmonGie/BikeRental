@@ -5,6 +5,7 @@ import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
 import org.example.Repositories.MongoRepository;
 import org.example.Repositories.RentalRepository;
+import redis.clients.jedis.JedisPooled;
 
 public class Main {
     public static void main(String[] args) {
@@ -16,11 +17,11 @@ public class Main {
 
         RedisManager redisManager = new RedisManager();
         redisManager.initConnection();
-
-        if (redisManager.getPooledConnection() == null)
+        JedisPooled pooled = redisManager.getPooledConnection();
+        if (pooled == null)
         {System.out.println("Nie udalo sie polaczyc z baza danych Redis.");}
 
-        UserInterface ui = new UserInterface(clientRepository, bikeRepository, rentalRepository, repo.getMongoClient());
+        UserInterface ui = new UserInterface(clientRepository, bikeRepository, rentalRepository, repo.getMongoClient(), pooled);
 
         ui.start();
         try {

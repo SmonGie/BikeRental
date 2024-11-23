@@ -2,15 +2,16 @@ package org.example.UserInterface;
 
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import jakarta.json.bind.Jsonb;
+import jakarta.json.bind.JsonbBuilder;
 import org.example.Model.Rental;
 import org.example.Model.bikes.*;
-import org.example.Model.clients.Client;
-import org.example.Model.clients.Address;
-import org.example.Model.clients.ClientAddressMgd;
-import org.example.Model.clients.ClientType;
+import org.example.Model.clients.*;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
 import org.example.Repositories.RentalRepository;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.JedisPooled;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,17 +23,23 @@ public class UserInterface {
     private final RentalRepository rentalRepository;
     private final MongoClient mongoClient;
     private final Scanner scanner;
+    private final JedisPooled pooled;
 
-    public UserInterface(ClientRepository clientRepository, BikeRepository bikeRepository, RentalRepository rentalRepository, MongoClient mongoClient) {
+    public UserInterface(ClientRepository clientRepository, BikeRepository bikeRepository, RentalRepository rentalRepository, MongoClient mongoClient, JedisPooled pooled) {
         this.clientRepository = clientRepository;
         this.bikeRepository = bikeRepository;
         this.rentalRepository = rentalRepository;
         this.mongoClient = mongoClient;
         this.scanner = new Scanner(System.in);
+        this.pooled = pooled;
     }
 
 
+
     public void start() {
+
+
+
         Address a = new Address("lodz", "janowa", "3");
         Client c = new Client("Jedrzej", "Wisniewski", "123123123", 54, a);
 
@@ -45,6 +52,18 @@ public class UserInterface {
         ElectricBikeMgd electricBikeMgd = new ElectricBikeMgd(ebike);
         bikeRepository.save(mountainBikeMgd);
         bikeRepository.save(electricBikeMgd);
+
+
+//        Jsonb jsonb = JsonbBuilder.create();
+//        ClientAddressRedis redisStart = new ClientAddressRedis(startClient);
+//        String jsonClient = jsonb.toJson(redisStart);
+//        pooled.jsonSet(redisStart.getClientId(), jsonClient);
+//        System.out.println(jsonClient);
+//        System.out.println("elo");
+//        System.out.println(pooled.jsonGet(redisStart.getClientId()));
+//        ClientAddressRedis cleintFromJson = jsonb.fromJson(jsonClient, ClientAddressRedis.class);
+//        System.out.println(cleintFromJson.getEntityId());
+//        System.out.println(cleintFromJson.getInfo());
 
 
         while (true) {
