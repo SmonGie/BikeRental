@@ -1,5 +1,6 @@
 package org.example.UserInterface;
 
+import com.google.gson.Gson;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import jakarta.json.bind.Jsonb;
@@ -9,8 +10,9 @@ import org.example.Model.bikes.*;
 import org.example.Model.clients.*;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
+import org.example.Repositories.IBikeRepository;
 import org.example.Repositories.RentalRepository;
-import redis.clients.jedis.JedisPool;
+
 import redis.clients.jedis.JedisPooled;
 
 import java.time.LocalDateTime;
@@ -19,13 +21,13 @@ import java.util.Scanner;
 
 public class UserInterface {
     private final ClientRepository clientRepository;
-    private final BikeRepository bikeRepository;
+    private final IBikeRepository bikeRepository;
     private final RentalRepository rentalRepository;
     private final MongoClient mongoClient;
     private final Scanner scanner;
     private final JedisPooled pooled;
 
-    public UserInterface(ClientRepository clientRepository, BikeRepository bikeRepository, RentalRepository rentalRepository, MongoClient mongoClient, JedisPooled pooled) {
+    public UserInterface(ClientRepository clientRepository, IBikeRepository bikeRepository, RentalRepository rentalRepository, MongoClient mongoClient, JedisPooled pooled) {
         this.clientRepository = clientRepository;
         this.bikeRepository = bikeRepository;
         this.rentalRepository = rentalRepository;
@@ -54,18 +56,24 @@ public class UserInterface {
         bikeRepository.save(electricBikeMgd);
 
 
-//        Jsonb jsonb = JsonbBuilder.create();
-//        ClientAddressRedis redisStart = new ClientAddressRedis(startClient);
-//        String jsonClient = jsonb.toJson(redisStart);
-//        pooled.jsonSet(redisStart.getClientId(), jsonClient);
-//        System.out.println(jsonClient);
-//        System.out.println("elo");
-//        System.out.println(pooled.jsonGet(redisStart.getClientId()));
-//        ClientAddressRedis cleintFromJson = jsonb.fromJson(jsonClient, ClientAddressRedis.class);
-//        System.out.println(cleintFromJson.getEntityId());
-//        System.out.println(cleintFromJson.getInfo());
+        final Gson gson = new Gson();
+        System.out.println("---------------------------------------------");
+        String redisKey = "client1:"+startClient.getClientId();
+        pooled.set(redisKey, gson.toJson(startClient));
 
+        String receiver = pooled.get(redisKey);
+        ClientAddressMgd fromredis = gson.fromJson(receiver, ClientAddressMgd.class);
 
+        System.out.println(fromredis.getClientId());
+        System.out.println(fromredis.getInfo());
+        System.out.println("---------------------- teraz bedzie bike! -----------------------");
+//        pooled.jsonSet("bike:"+mountainBikeMgd.getBikeId(), gson.toJson(mountainBikeMgd));
+//        System.out.println(gson.toJson(mountainBikeMgd));
+//        System.out.println(pooled.jsonGet("bike:"+mountainBikeMgd.getBikeId()));
+//        MountainBikeMgd bikefromJson = gson.fromJson((String) pooled.jsonGet("bike:"+mountainBikeMgd.getBikeId()),MountainBikeMgd.class);
+//        System.out.println(bikefromJson.getEntityId());
+//        System.out.println(bikefromJson.getInfo());
+        System.out.println("---------------------------------------------");
         while (true) {
             System.out.println("Wybierz opcję:");
             System.out.println("1. Zarządzanie klientami");

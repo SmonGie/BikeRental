@@ -30,7 +30,7 @@ public class RedisManager {
             pooled = new JedisPooled(redisUri);
             System.out.println("Połączono z Redis");
         } catch (URISyntaxException e) {
-            System.err.println("Invalid redisUri");
+            System.err.println("Nie udało się połączyć z redis");
             throw new RuntimeException(e);
         }
     }

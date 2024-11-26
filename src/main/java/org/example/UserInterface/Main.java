@@ -1,10 +1,7 @@
 package org.example.UserInterface;
 
 import org.example.Model.RedisManager;
-import org.example.Repositories.BikeRepository;
-import org.example.Repositories.ClientRepository;
-import org.example.Repositories.MongoRepository;
-import org.example.Repositories.RentalRepository;
+import org.example.Repositories.*;
 import redis.clients.jedis.JedisPooled;
 
 public class Main {
@@ -12,14 +9,19 @@ public class Main {
 
         MongoRepository repo = new MongoRepository();
         ClientRepository clientRepository = new ClientRepository(repo.getDatabase(), repo.getMongoClient());
-        BikeRepository bikeRepository = new BikeRepository(repo.getDatabase(), repo.getMongoClient());
+        IBikeRepository bikeRepository = new BikeRepository(repo.getDatabase(), repo.getMongoClient());
         RentalRepository rentalRepository = new RentalRepository(repo.getDatabase(), repo.getMongoClient());
+
+
 
         RedisManager redisManager = new RedisManager();
         redisManager.initConnection();
         JedisPooled pooled = redisManager.getPooledConnection();
         if (pooled == null)
         {System.out.println("Nie udalo sie polaczyc z baza danych Redis.");}
+        else {  bikeRepository = new BikeRedisRepository(bikeRepository, pooled);
+        }
+
 
         UserInterface ui = new UserInterface(clientRepository, bikeRepository, rentalRepository, repo.getMongoClient(), pooled);
 
