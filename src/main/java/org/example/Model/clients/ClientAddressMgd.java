@@ -4,7 +4,7 @@ import org.bson.codecs.pojo.annotations.BsonCreator;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.example.Model.AbstractEntityMgd;
-import org.example.Repositories.UniqueIdMgd;
+import org.example.Misc.UniqueIdMgd;
 
 import java.util.UUID;
 

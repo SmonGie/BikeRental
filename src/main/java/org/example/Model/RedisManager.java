@@ -37,7 +37,7 @@ public class RedisManager {
 
     public  JedisPooled getPooledConnection() {
         if (pooled == null) {
-            throw new IllegalStateException("Connection is not initialized");
+            throw new IllegalStateException(" error ");
         }
         return pooled;
     }

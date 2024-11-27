@@ -1,4 +1,4 @@
-package org.example.Repositories;
+package org.example.Misc;
 
 import java.util.UUID;
 

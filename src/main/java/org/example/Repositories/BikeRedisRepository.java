@@ -1,7 +1,9 @@
 package org.example.Repositories;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.mongodb.client.ClientSession;
+import org.example.Misc.BikeTypeAdapter;
 import org.example.Model.bikes.BikeMgd;
 
 import redis.clients.jedis.JedisPooled;
@@ -19,7 +21,9 @@ public class BikeRedisRepository implements IBikeRepository {
 
         this.bikeRepository = bikeRepository;
         this.redisClient = redisClient;
-        this.gson = new Gson();
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(BikeMgd.class, new BikeTypeAdapter());
+        this.gson = gsonBuilder.create();
 
     }
 
@@ -29,22 +33,25 @@ public class BikeRedisRepository implements IBikeRepository {
 
             String cachedData = redisClient.get("bike:" + id);
             if (cachedData != null) {
-                System.out.println("Pobrano z cache: bike:" + id);
+//                System.out.println("Pobrano z cache: bike:" + id + ". Ale szybko!");
                 return gson.fromJson(cachedData, BikeMgd.class);
             }
         } catch (JedisConnectionException e) {
-            System.err.println("Redis niedostępny, używanie MongoDB jako fallback");
+            System.err.println("Nie udało się pobrać danych z cache, dane pobierane są z MongoDB");
         }
 
         // pobierz z MongoDB
         BikeMgd bike = bikeRepository.findById(id);
 
+
+
         // Spróbuj zapisać do cache, jeśli Redis działa
         if (bike != null) {
             try {
-                redisClient.set("bike:" + id, gson.toJson(bike));
+                redisClient.setex("bike:" + id, 120 ,gson.toJson(bike));
+//                System.out.println("Zapisano dane w cache!");
             } catch (JedisConnectionException e) {
-                System.err.println("Nie udało się zapisać do Redis");
+                System.err.println("Nie udało się zapisać danych w cache.");
             }
         }
 
@@ -61,7 +68,7 @@ public class BikeRedisRepository implements IBikeRepository {
 
         bikeRepository.save(bike);
         try {
-            redisClient.set("bike:" + bike.getBikeId(), gson.toJson(bike));
+            redisClient.setex("bike:" + bike.getBikeId(), 180 ,gson.toJson(bike));
         } catch (JedisConnectionException e) {
             System.err.println("Nie udało się zapisać do Redis: " + e.getMessage());
         }
@@ -71,11 +78,20 @@ public class BikeRedisRepository implements IBikeRepository {
     @Override
     public void delete(BikeMgd bike) {
 
-        bikeRepository.delete(bike); // Usuń z MongoDB
+        bikeRepository.delete(bike);
+
+        deleteCacheOnly(bike);
+
+    }
+
+
+
+    public void deleteCacheOnly(BikeMgd bike) {
+
         try {
             redisClient.del("bike:" + bike.getBikeId());
         } catch (JedisConnectionException e) {
-            System.err.println("Nie udało się usunąć z Redis: " + e.getMessage());
+            System.err.println("Nie udało się nawiązać połączenia z cache, obiekt nie został usunięty");
         }
 
     }
@@ -83,13 +99,11 @@ public class BikeRedisRepository implements IBikeRepository {
     @Override
     public void update(ClientSession session, BikeMgd bike, String field, String value) {
 
-
         bikeRepository.update(session, bike, field, value);
         try {
             redisClient.del("bike:" + bike.getBikeId());
-            redisClient.set("bike:" + bike.getBikeId(), gson.toJson(bike));
         } catch (JedisConnectionException e) {
-            System.err.println("Nie udało się unieważnić cache: " + e.getMessage());
+            System.err.println("Nie udało się nawiązać połączenia z cache, obiekt nie został uaktualniony." );
         }
 
     }
@@ -97,13 +111,11 @@ public class BikeRedisRepository implements IBikeRepository {
     @Override
     public void update(ClientSession session, BikeMgd bike, String field, Boolean value) {
 
-
         bikeRepository.update(session, bike, field, value);
         try {
             redisClient.del("bike:" + bike.getBikeId());
-            redisClient.set("bike:" + bike.getBikeId(), gson.toJson(bike));
         } catch (JedisConnectionException e) {
-            System.err.println("Nie udało się unieważnić cache: " + e.getMessage());
+            System.err.println("Nie udało się nawiązać połączenia z cache, nie został uaktualniony");
         }
 
 

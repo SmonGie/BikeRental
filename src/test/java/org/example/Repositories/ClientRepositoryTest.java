@@ -53,7 +53,7 @@ class ClientRepositoryTest {
         assertEquals(0, clientRepository.collection.countDocuments());
         clientRepository.save(clientMgd);
         assertEquals(1, clientRepository.collection.countDocuments());
-        assertEquals(clientMgd.getEntityId().getUuid(),clientRepository.findAll().getFirst().getEntityId().getUuid());
+        assertEquals(clientMgd.getEntityId().getUuid(),clientRepository.findAll().get(0).getEntityId().getUuid());
 
     }
 
@@ -88,7 +88,7 @@ class ClientRepositoryTest {
 
         List<ClientAddressMgd> testList = clientRepository.findAll();
         assertEquals(3,testList.size());
-        assertEquals(testList.getFirst().getFirstName(),clientMgd.getFirstName());
+        assertEquals(testList.get(0).getFirstName(),clientMgd.getFirstName());
         assertEquals(testList.get(1).getLastName(),clientMgd2.getLastName());
         assertEquals(testList.get(2).getFirstName(),clientMgd3.getFirstName());
     }

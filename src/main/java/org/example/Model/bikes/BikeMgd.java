@@ -6,12 +6,12 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.example.Model.AbstractEntityMgd;
-import org.example.Repositories.UniqueIdMgd;
+import org.example.Misc.UniqueIdMgd;
 
 import java.util.UUID;
 
 @BsonDiscriminator(key = "_clazz", value = "bike")
-public abstract class BikeMgd extends AbstractEntityMgd {
+public class BikeMgd extends AbstractEntityMgd {
     protected static int lastAssignedId = 0;
     @BsonProperty("bike_id")
     protected String bikeId;

@@ -9,7 +9,7 @@ import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.codecs.pojo.annotations.BsonProperty;
 import org.example.Model.bikes.BikeMgd;
 import org.example.Model.clients.ClientAddressMgd;
-import org.example.Repositories.UniqueIdMgd;
+import org.example.Misc.UniqueIdMgd;
 
 
 public class Rental extends AbstractEntityMgd {

@@ -70,8 +70,8 @@ class BikeRepositoryTest {
         assertEquals(3, bikeRepository.bikeCollection.countDocuments());
         List<BikeMgd> testList = bikeRepository.findAll();
         assertEquals(3,testList.size());
-        assertEquals(testList.getFirst().getModelName(),bikeMgd1.getModelName());
-        assertEquals(testList.getFirst().getEntityId().getUuid(),bikeMgd1.getEntityId().getUuid());
+        assertEquals(testList.get(0).getModelName(),bikeMgd1.getModelName());
+        assertEquals(testList.get(0).getEntityId().getUuid(),bikeMgd1.getEntityId().getUuid());
         assertEquals(testList.get(1).getModelName(),bikeMgd2.getModelName());
         assertEquals(testList.get(1).getEntityId().getUuid(),bikeMgd2.getEntityId().getUuid());
         assertEquals(testList.get(2).getModelName(),bikeMgd3.getModelName());
@@ -92,7 +92,7 @@ class BikeRepositoryTest {
         assertEquals(2, bikeRepository.bikeCollection.countDocuments());
         List<BikeMgd> testList = bikeRepository.findAllAvailable();
         assertEquals(1,testList.size());
-        assertEquals(mountainBikeMgd.getEntityId().getUuid(),testList.getFirst().getEntityId().getUuid());
+        assertEquals(mountainBikeMgd.getEntityId().getUuid(),testList.get(0).getEntityId().getUuid());
     }
 
     @Test
@@ -103,7 +103,7 @@ class BikeRepositoryTest {
         assertEquals(0, bikeRepository.bikeCollection.countDocuments());
         bikeRepository.save(bikeMgd);
         assertEquals(1, bikeRepository.bikeCollection.countDocuments());
-        assertEquals(bikeMgd.getEntityId().getUuid(), bikeRepository.findAll().getFirst().getEntityId().getUuid());
+        assertEquals(bikeMgd.getEntityId().getUuid(), bikeRepository.findAll().get(0).getEntityId().getUuid());
     }
 
     @Test
@@ -119,7 +119,7 @@ class BikeRepositoryTest {
         bikeRepository.delete(mountainBikeMgd);
         String bikeId = mtb2.getBikeId();
         assertNull(bikeRepository.findById(bikeId));
-        assertEquals(electricBikeMgd.getEntityId().getUuid(), bikeRepository.findAll().getFirst().getEntityId().getUuid());
+        assertEquals(electricBikeMgd.getEntityId().getUuid(), bikeRepository.findAll().get(0).getEntityId().getUuid());
     }
 
     @Test

@@ -7,6 +7,7 @@ import com.mongodb.client.model.Projections;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.example.Misc.UniqueIdMgd;
 import org.example.Model.Rental;
 import org.example.Model.bikes.BikeMgd;
 import org.example.Model.bikes.ElectricBikeMgd;

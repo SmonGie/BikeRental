@@ -3,12 +3,9 @@ package org.example.UserInterface;
 import com.google.gson.Gson;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
-import jakarta.json.bind.Jsonb;
-import jakarta.json.bind.JsonbBuilder;
 import org.example.Model.Rental;
 import org.example.Model.bikes.*;
 import org.example.Model.clients.*;
-import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
 import org.example.Repositories.IBikeRepository;
 import org.example.Repositories.RentalRepository;
@@ -40,8 +37,6 @@ public class UserInterface {
 
     public void start() {
 
-
-
         Address a = new Address("lodz", "janowa", "3");
         Client c = new Client("Jedrzej", "Wisniewski", "123123123", 54, a);
 
@@ -56,16 +51,16 @@ public class UserInterface {
         bikeRepository.save(electricBikeMgd);
 
 
-        final Gson gson = new Gson();
+//        final Gson gson = new Gson();
         System.out.println("---------------------------------------------");
-        String redisKey = "client1:"+startClient.getClientId();
-        pooled.set(redisKey, gson.toJson(startClient));
-
-        String receiver = pooled.get(redisKey);
-        ClientAddressMgd fromredis = gson.fromJson(receiver, ClientAddressMgd.class);
-
-        System.out.println(fromredis.getClientId());
-        System.out.println(fromredis.getInfo());
+//        String redisKey = "client1:"+startClient.getClientId();
+//        pooled.set(redisKey, gson.toJson(startClient));
+//
+//        String receiver = pooled.get(redisKey);
+//        ClientAddressMgd fromredis = gson.fromJson(receiver, ClientAddressMgd.class);
+//
+//        System.out.println(fromredis.getClientId());
+//        System.out.println(fromredis.getInfo());
         System.out.println("---------------------- teraz bedzie bike! -----------------------");
 //        pooled.jsonSet("bike:"+mountainBikeMgd.getBikeId(), gson.toJson(mountainBikeMgd));
 //        System.out.println(gson.toJson(mountainBikeMgd));
@@ -74,6 +69,8 @@ public class UserInterface {
 //        System.out.println(bikefromJson.getEntityId());
 //        System.out.println(bikefromJson.getInfo());
         System.out.println("---------------------------------------------");
+
+
         while (true) {
             System.out.println("Wybierz opcję:");
             System.out.println("1. Zarządzanie klientami");
@@ -96,6 +93,10 @@ public class UserInterface {
                 case 0:
                     System.out.println("Do widzenia!");
                     return;
+                case 7:
+                    pooled.flushDB();
+                    System.out.println("Wyczyszczono cache");
+                    break;
                 default:
                     System.out.println("Nieprawidłowy wybór. Spróbuj ponownie.");
             }
@@ -153,7 +154,8 @@ public class UserInterface {
             System.out.println("\nZarządzanie rowerami:");
             System.out.println("1. Dodaj rower");
             System.out.println("2. Usuń rower");
-            System.out.println("3. Przeglądaj rowery");
+            System.out.println("3. Przeglądaj wszystkie rowery");
+            System.out.println("4. Przyjrzyj się rowerowi.");
             System.out.println("0. Powrót do menu głównego");
 
             int choice = readIntegerInput();
@@ -168,6 +170,10 @@ public class UserInterface {
                 case 3:
                     listBikes();
                     break;
+                case 4:
+                    listOneBike();
+                    break;
+
                 case 0:
                     return;
                 default:
@@ -483,6 +489,26 @@ public class UserInterface {
 
 
     }
+
+    private void listOneBike() {
+
+        System.out.print("Podaj ID roweru do usunięcia: ");
+        String bikeId = scanner.nextLine();
+
+        BikeMgd b = bikeRepository.findById(bikeId);
+        if (b == null) {
+            System.out.println("Nie znaleziono roweru o podanym ID");
+            return;
+        }
+
+        System.out.println("\n-----------------------------------------------------------\n");
+        System.out.println(b.getInfo());
+        System.out.println("\n-----------------------------------------------------------\n");
+        }
+
+
+
+
 
     private String getValidNameInput() {
         while (true) {

@@ -1,4 +1,4 @@
-package org.example.Repositories;
+package org.example.Misc;
 
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecProvider;

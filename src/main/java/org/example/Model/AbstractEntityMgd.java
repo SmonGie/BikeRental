@@ -1,7 +1,7 @@
 package org.example.Model;
 
 import org.bson.codecs.pojo.annotations.BsonProperty;
-import org.example.Repositories.UniqueIdMgd;
+import org.example.Misc.UniqueIdMgd;
 
 import java.io.Serializable;
 

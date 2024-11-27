@@ -12,8 +12,6 @@ public class Main {
         IBikeRepository bikeRepository = new BikeRepository(repo.getDatabase(), repo.getMongoClient());
         RentalRepository rentalRepository = new RentalRepository(repo.getDatabase(), repo.getMongoClient());
 
-
-
         RedisManager redisManager = new RedisManager();
         redisManager.initConnection();
         JedisPooled pooled = redisManager.getPooledConnection();

@@ -193,7 +193,7 @@ class RentalRepositoryOneNodeMissingTest {
 
         List<Rental> foundRentals = rentalRepository.findAll();
         assertFalse(foundRentals.isEmpty());
-        Rental updatedRental = foundRentals.getFirst();
+        Rental updatedRental = foundRentals.get(0);
         System.out.println(updatedRental.getInfo());
         long diffInMillis = ChronoUnit.MILLIS.between(endTime, updatedRental.getEndTime());
         assertTrue(Math.abs(diffInMillis) < 2);
