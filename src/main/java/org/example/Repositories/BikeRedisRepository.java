@@ -69,6 +69,7 @@ public class BikeRedisRepository implements IBikeRepository {
         bikeRepository.save(bike);
         try {
             redisClient.setex("bike:" + bike.getBikeId(), 180 ,gson.toJson(bike));
+            System.out.println("Zapisano do cache!");
         } catch (JedisConnectionException e) {
             System.err.println("Nie udało się zapisać do Redis: " + e.getMessage());
         }

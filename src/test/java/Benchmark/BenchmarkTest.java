@@ -8,6 +8,7 @@ import org.example.Repositories.BikeRepository;
 import org.example.Repositories.IBikeRepository;
 import org.example.Repositories.MongoRepository;
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.infra.Blackhole;
 import redis.clients.jedis.JedisPooled;
 
 import java.util.concurrent.TimeUnit;
@@ -21,9 +22,12 @@ public class BenchmarkTest {
     private ClientSession session;
     private  JedisPooled pooled;
     private  BikeMgd bikeMgd1, bikeMgd2;
+    String bikeMgd2Id;
+    String bikeMgd1Id;
 
 
     @Setup(Level.Trial)
+
     public void setupBenchmark() {
 
         repo = new MongoRepository();
@@ -45,33 +49,33 @@ public class BenchmarkTest {
         bikeMgd2 = new ElectricBikeMgd(ebike);
         RedisRepository.save(bikeMgd1);
         RedisRepository.save(bikeMgd2);
+         bikeMgd2Id = bikeMgd2.getBikeId();
+         bikeMgd1Id = bikeMgd1.getBikeId();
 
     }
 
 
     @Benchmark
-    @Warmup(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
-    @Measurement(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
+    @Fork(value = 1, warmups = 1)
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.MILLISECONDS)
-    public void CacheHit() {
+    public void CacheHit(Blackhole blackhole) {
 
-//        BikeMgd fromCache = RedisRepository.findById(bikeMgd1.getBikeId());
-//        System.out.println(fromCache.getBikeId());
+        blackhole.consume( RedisRepository.findById(bikeMgd1Id));
 
     }
 
 
 
     @Benchmark
-    @Warmup(iterations = 1, time = 1, timeUnit = TimeUnit.SECONDS)
-    @Measurement(iterations = 1, time = 5, timeUnit = TimeUnit.SECONDS)
+    @Fork(value = 1, warmups = 1)
     @BenchmarkMode(Mode.AverageTime)
     @OutputTimeUnit(TimeUnit.MILLISECONDS)
-    public void CacheMiss() {
+    public void CacheMiss(Blackhole blackhole) {
 
-//        BikeMgd fromCache = RedisRepository.findById(bikeMgd1.getBikeId());
-//      System.out.println(fromCache.getBikeId());
+        bikeRedisRepository.deleteCacheOnly(bikeMgd2);
+
+        blackhole.consume(RedisRepository.findById(bikeMgd2Id));
 
     }
 
