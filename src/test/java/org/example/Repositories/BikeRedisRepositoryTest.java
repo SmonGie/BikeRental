@@ -15,6 +15,7 @@ class BikeRedisRepositoryTest {
 
     MongoRepository repo;
     IBikeRepository bikeRepository, RedisRepository;
+    BikeRedisRepository bikeRedisRepository;
     private ClientSession session;
     JedisPooled pooled;
 
@@ -30,6 +31,9 @@ class BikeRedisRepositoryTest {
         pooled = redisManager.getPooledConnection();
 
         RedisRepository = new BikeRedisRepository(bikeRepository, pooled);
+        bikeRedisRepository = new BikeRedisRepository(bikeRepository, pooled);
+
+        repo.getDatabase().getCollection("bikes").drop();
         session = repo.getMongoClient().startSession();
 
         pooled.flushDB();
@@ -152,6 +156,31 @@ class BikeRedisRepositoryTest {
 
     }
 
+
+    @Test
+    void deleteCacheOnly() {
+
+        MountainBike mtb65 = new MountainBike(true, "X-Cal", 120);
+        MountainBike mtb2 = new MountainBike(true, "EXtreme X-Cal", 1200);
+        ElectricBike ebike = new ElectricBike(true, "Giant E+", 500);
+        MountainBikeMgd bikeMgd1 = new MountainBikeMgd(mtb2);
+        ElectricBikeMgd bikeMgd2 = new ElectricBikeMgd(ebike);
+        MountainBikeMgd bikeMgd3 = new MountainBikeMgd(mtb65);
+
+
+        RedisRepository.save(bikeMgd1);
+        RedisRepository.save(bikeMgd2);
+        RedisRepository.save(bikeMgd3);
+
+        assertEquals(3, pooled.dbSize());
+        assertEquals(3, repo.getDatabase().getCollection("bikes").countDocuments());
+
+        bikeRedisRepository.deleteCacheOnly(bikeMgd2);
+
+        assertEquals(2, pooled.dbSize());
+        assertEquals(3, repo.getDatabase().getCollection("bikes").countDocuments());
+
+    }
 
 
 }

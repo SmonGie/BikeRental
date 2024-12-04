@@ -8,18 +8,18 @@ public class Main {
     public static void main(String[] args) {
 
         MongoRepository repo = new MongoRepository();
-        ClientRepository clientRepository = new ClientRepository(repo.getDatabase(), repo.getMongoClient());
+        IClientRepository clientRepository = new ClientRepository(repo.getDatabase(), repo.getMongoClient());
         IBikeRepository bikeRepository = new BikeRepository(repo.getDatabase(), repo.getMongoClient());
         RentalRepository rentalRepository = new RentalRepository(repo.getDatabase(), repo.getMongoClient());
 
         RedisManager redisManager = new RedisManager();
         redisManager.initConnection();
         JedisPooled pooled = redisManager.getPooledConnection();
-        if (pooled == null)
-        {System.out.println("Nie udalo sie polaczyc z baza danych Redis.");}
-        else {  bikeRepository = new BikeRedisRepository(bikeRepository, pooled);
-        }
+        if (pooled != null)
 
+        {  bikeRepository = new BikeRedisRepository(bikeRepository, pooled);
+                clientRepository = new ClientRedisRepository(clientRepository, pooled);
+        }
 
         UserInterface ui = new UserInterface(clientRepository, bikeRepository, rentalRepository, repo.getMongoClient(), pooled);
 

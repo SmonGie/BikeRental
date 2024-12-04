@@ -32,6 +32,7 @@ public class BikeRedisRepository implements IBikeRepository {
         try {
 
             String cachedData = redisClient.get("bike:" + id);
+
             if (cachedData != null) {
 //                System.out.println("Pobrano z cache: bike:" + id + ". Ale szybko!");
                 return gson.fromJson(cachedData, BikeMgd.class);
@@ -44,11 +45,10 @@ public class BikeRedisRepository implements IBikeRepository {
         BikeMgd bike = bikeRepository.findById(id);
 
 
-
         // Spróbuj zapisać do cache, jeśli Redis działa
         if (bike != null) {
             try {
-                redisClient.setex("bike:" + id, 120 ,gson.toJson(bike));
+                redisClient.setex("bike:" + id, 120, gson.toJson(bike));
 //                System.out.println("Zapisano dane w cache!");
             } catch (JedisConnectionException e) {
                 System.err.println("Nie udało się zapisać danych w cache.");
@@ -68,7 +68,9 @@ public class BikeRedisRepository implements IBikeRepository {
 
         bikeRepository.save(bike);
         try {
-            redisClient.setex("bike:" + bike.getBikeId(), 180 ,gson.toJson(bike));
+            redisClient.setex("bike:" + bike.getBikeId(), 180, gson.toJson(bike));
+//            redisClient.jsonSet("bike:" + bike.getBikeId(), bike);
+//            redisClient.expire("bike:" + bike.getBikeId(), 120);
             System.out.println("Zapisano do cache!");
         } catch (JedisConnectionException e) {
             System.err.println("Nie udało się zapisać do Redis: " + e.getMessage());
@@ -84,7 +86,6 @@ public class BikeRedisRepository implements IBikeRepository {
         deleteCacheOnly(bike);
 
     }
-
 
 
     public void deleteCacheOnly(BikeMgd bike) {
@@ -104,7 +105,7 @@ public class BikeRedisRepository implements IBikeRepository {
         try {
             redisClient.del("bike:" + bike.getBikeId());
         } catch (JedisConnectionException e) {
-            System.err.println("Nie udało się nawiązać połączenia z cache, obiekt nie został uaktualniony." );
+            System.err.println("Nie udało się nawiązać połączenia z cache, obiekt nie został uaktualniony.");
         }
 
     }

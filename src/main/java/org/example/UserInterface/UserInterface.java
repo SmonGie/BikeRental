@@ -1,13 +1,13 @@
 package org.example.UserInterface;
 
-import com.google.gson.Gson;
+
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import org.example.Model.Rental;
 import org.example.Model.bikes.*;
 import org.example.Model.clients.*;
-import org.example.Repositories.ClientRepository;
 import org.example.Repositories.IBikeRepository;
+import org.example.Repositories.IClientRepository;
 import org.example.Repositories.RentalRepository;
 
 import redis.clients.jedis.JedisPooled;
@@ -17,14 +17,14 @@ import java.util.List;
 import java.util.Scanner;
 
 public class UserInterface {
-    private final ClientRepository clientRepository;
+    private final IClientRepository clientRepository;
     private final IBikeRepository bikeRepository;
     private final RentalRepository rentalRepository;
     private final MongoClient mongoClient;
     private final Scanner scanner;
     private final JedisPooled pooled;
 
-    public UserInterface(ClientRepository clientRepository, IBikeRepository bikeRepository, RentalRepository rentalRepository, MongoClient mongoClient, JedisPooled pooled) {
+    public UserInterface(IClientRepository clientRepository, IBikeRepository bikeRepository, RentalRepository rentalRepository, MongoClient mongoClient, JedisPooled pooled) {
         this.clientRepository = clientRepository;
         this.bikeRepository = bikeRepository;
         this.rentalRepository = rentalRepository;
@@ -32,7 +32,6 @@ public class UserInterface {
         this.scanner = new Scanner(System.in);
         this.pooled = pooled;
     }
-
 
 
     public void start() {
@@ -43,32 +42,12 @@ public class UserInterface {
         ClientAddressMgd startClient = new ClientAddressMgd(c, a);
         clientRepository.save(startClient);
 
-        MountainBike mtb2 = new MountainBike(true,"lolek X-Cal",120);
-        ElectricBike ebike = new ElectricBike(true,"Giant E+",500);
+        MountainBike mtb2 = new MountainBike(true, "lolek X-Cal", 120);
+        ElectricBike ebike = new ElectricBike(true, "Giant E+", 500);
         MountainBikeMgd mountainBikeMgd = new MountainBikeMgd(mtb2);
         ElectricBikeMgd electricBikeMgd = new ElectricBikeMgd(ebike);
         bikeRepository.save(mountainBikeMgd);
         bikeRepository.save(electricBikeMgd);
-
-
-//        final Gson gson = new Gson();
-        System.out.println("---------------------------------------------");
-//        String redisKey = "client1:"+startClient.getClientId();
-//        pooled.set(redisKey, gson.toJson(startClient));
-//
-//        String receiver = pooled.get(redisKey);
-//        ClientAddressMgd fromredis = gson.fromJson(receiver, ClientAddressMgd.class);
-//
-//        System.out.println(fromredis.getClientId());
-//        System.out.println(fromredis.getInfo());
-        System.out.println("---------------------- teraz bedzie bike! -----------------------");
-//        pooled.jsonSet("bike:"+mountainBikeMgd.getBikeId(), gson.toJson(mountainBikeMgd));
-//        System.out.println(gson.toJson(mountainBikeMgd));
-//        System.out.println(pooled.jsonGet("bike:"+mountainBikeMgd.getBikeId()));
-//        MountainBikeMgd bikefromJson = gson.fromJson((String) pooled.jsonGet("bike:"+mountainBikeMgd.getBikeId()),MountainBikeMgd.class);
-//        System.out.println(bikefromJson.getEntityId());
-//        System.out.println(bikefromJson.getInfo());
-        System.out.println("---------------------------------------------");
 
 
         while (true) {
@@ -155,7 +134,7 @@ public class UserInterface {
             System.out.println("1. Dodaj rower");
             System.out.println("2. Usuń rower");
             System.out.println("3. Przeglądaj wszystkie rowery");
-            System.out.println("4. Przyjrzyj się rowerowi.");
+            System.out.println("4. Przyjrzyj się rowerowi");
             System.out.println("0. Powrót do menu głównego");
 
             int choice = readIntegerInput();
@@ -277,8 +256,6 @@ public class UserInterface {
         }
 
 
-
-
     }
 
     private void addBike() {
@@ -333,7 +310,7 @@ public class UserInterface {
 //                return;
 //            }
             ClientSession clientSession = mongoClient.startSession();
-            try  {
+            try {
                 clientSession.startTransaction();
                 bike.setIsAvailable(false);
                 client.setRentalCount(client.getRentalCount() + 1);
@@ -446,7 +423,7 @@ public class UserInterface {
                     ",\n Klient: " + rental.getClient().getFirstName() + " " + rental.getClient().getLastName() +
                     ",\n Rower: " + rental.getBike().getModelName() +
                     ",\n Czas wypożyczenia: " + rental.getStartTime() +
-                    ",\n Czas zakończenia: " + rental.getEndTime() );
+                    ",\n Czas zakończenia: " + rental.getEndTime());
         }
         System.out.println("\n-----------------------------------------------------------\n");
     }
@@ -504,10 +481,7 @@ public class UserInterface {
         System.out.println("\n-----------------------------------------------------------\n");
         System.out.println(b.getInfo());
         System.out.println("\n-----------------------------------------------------------\n");
-        }
-
-
-
+    }
 
 
     private String getValidNameInput() {
