@@ -106,6 +106,7 @@ public class UserInterface {
             System.out.println("1. Dodaj klienta");
             System.out.println("2. Usuń klienta");
             System.out.println("3. Przeglądaj klientów");
+            System.out.println("4. Przyjrzyj się klientowi");
             System.out.println("0. Powrót do menu głównego");
 
             int choice = readIntegerInput();
@@ -119,6 +120,9 @@ public class UserInterface {
                     break;
                 case 3:
                     listClients();
+                    break;
+                case 4:
+                    listOneClient();
                     break;
                 case 0:
                     return;
@@ -469,7 +473,7 @@ public class UserInterface {
 
     private void listOneBike() {
 
-        System.out.print("Podaj ID roweru do usunięcia: ");
+        System.out.print("Podaj ID roweru, którego szukamy: ");
         String bikeId = scanner.nextLine();
 
         BikeMgd b = bikeRepository.findById(bikeId);
@@ -480,6 +484,22 @@ public class UserInterface {
 
         System.out.println("\n-----------------------------------------------------------\n");
         System.out.println(b.getInfo());
+        System.out.println("\n-----------------------------------------------------------\n");
+    }
+
+    private void listOneClient() {
+
+        System.out.print("Podaj ID klienta, którego szukamy: ");
+        String clientId = scanner.nextLine();
+
+        ClientAddressMgd c = clientRepository.findById(clientId);
+        if (c == null) {
+            System.out.println("Nie znaleziono klienta o podanym ID");
+            return;
+        }
+
+        System.out.println("\n-----------------------------------------------------------\n");
+        System.out.println(c.getInfo());
         System.out.println("\n-----------------------------------------------------------\n");
     }
 
