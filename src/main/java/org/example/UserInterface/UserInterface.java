@@ -34,6 +34,7 @@ public class UserInterface {
 
     public void start() {
 
+        //sigma cassandra
 
         Address a = new Address("lodz", "janowa", "3");
         Client c = new Client("Jedrzej", "Wisniewski", "123123123", 54, a);
