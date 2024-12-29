@@ -1,26 +1,49 @@
 package org.example.Model;
 
 
+import com.datastax.oss.driver.api.mapper.annotations.CqlName;
+import com.datastax.oss.driver.api.mapper.annotations.Entity;
+import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
+import java.util.UUID;
+
+@Entity(defaultKeyspace = "rent_a_bike")
+@CqlName("bikes")
 public class Bike {
-    Long Id;
+    @PartitionKey
+    @CqlName("id")
+    private UUID id;
+
+    @CqlName("model_name")
     private String modelName;
+    @CqlName("is_available")
     private boolean isAvailable;
 
-
-    private Long version;
+    private String bikeId;
+    protected static int lastAssignedId = 0;
 
     public Bike(String modelName, boolean isAvailable) {
+        this.id = UUID.randomUUID();
         this.modelName = modelName;
         this.isAvailable = isAvailable;
+        this.bikeId = generateNewBikeId();
     }
 
     public Bike() {
 
     }
 
-    public Long getId() {
-        return Id;
+    public UUID getId() {
+        return id;
+    }
+
+    public String getBikeId() {
+        return bikeId;
+    }
+
+    private synchronized String generateNewBikeId() {
+        lastAssignedId++;
+        return Integer.toString(lastAssignedId);
     }
 
     public String getModelName() {

@@ -2,31 +2,22 @@ package org.example.Model;
 
 import java.time.LocalDateTime;
 import java.time.Duration;
+import java.util.UUID;
 
-
-import jakarta.persistence.*;
 import org.example.Model.clients.Client;
 
 
 
 public class Rental {
-
-
+    private UUID id;
     private Long Id;
 
-
-
     private Client client;
-
-
 
     private Bike bike;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private double totalCost;
-
-    @Version
-    private Long version;
 
     public Rental(Client client, Bike bike, LocalDateTime startTime) {
 

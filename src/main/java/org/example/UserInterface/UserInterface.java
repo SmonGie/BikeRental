@@ -112,9 +112,9 @@ public class UserInterface {
                 case 2:
                     removeClient();
                     break;
-                case 3:
-                    listClients();
-                    break;
+//                case 3:
+//                    listClients();
+//                    break;
                 case 0:
                     return;
                 default:
@@ -230,22 +230,22 @@ public class UserInterface {
         }
     }
 
-    private void listClients() {
-        List<Client> clients = clientRepository.findAll();
-        System.out.println("Lista klientów:");
-        for (Client client : clients) {
-            System.out.println(client.getInfo());
-            if (client.getRentalCount() != 0) {
-                List<Rental> currentRentals = rentalRepository.getCurrentRentals(client.getId());
-                System.out.println("Aktualne wypożyczenia:");
-                for (Rental rental : currentRentals) {
-                    System.out.println(" - Rower: " + rental.getBike().getModelName() + ", ID: " + rental.getId());
-                }
-            } else {
-                System.out.println("Brak aktywnych wypożyczeń.");
-            }
-        }
-    }
+//    private void listClients() {
+//        List<Client> clients = clientRepository.findAll();
+//        System.out.println("Lista klientów:");
+//        for (Client client : clients) {
+//            System.out.println(client.getInfo());
+//            if (client.getRentalCount() != 0) {
+//                List<Rental> currentRentals = rentalRepository.getCurrentRentals(client.getClientId());
+//                System.out.println("Aktualne wypożyczenia:");
+//                for (Rental rental : currentRentals) {
+//                    System.out.println(" - Rower: " + rental.getBike().getModelName() + ", ID: " + rental.getId());
+//                }
+//            } else {
+//                System.out.println("Brak aktywnych wypożyczeń.");
+//            }
+//        }
+//    }
 
     private void addBike() {
         System.out.println("Wybierz typ roweru:");

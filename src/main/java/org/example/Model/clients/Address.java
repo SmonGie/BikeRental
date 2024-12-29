@@ -1,8 +1,5 @@
 package org.example.Model.clients;
 
-import jakarta.persistence.Embeddable;
-
-@Embeddable
 public class Address{
     private String city, street, number;
     public Address(String city, String street, String number){
