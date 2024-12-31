@@ -17,10 +17,10 @@ public abstract class DatabaseRepository implements AutoCloseable {
                 .addContactPoint(new InetSocketAddress("cassandra1", 9042))
                 .addContactPoint(new InetSocketAddress("cassandra2", 9043))
                 .withLocalDatacenter("dc1")
-                .withAuthCredentials("cassandra", "cassandrapassword")
+                .withAuthCredentials("cassandra", "cassandra")
                 .withKeyspace(CqlIdentifier.fromCql("bikeRental")) //zakomentuj za 1 razem a pozniej odkomentuj
                 .build();
-        CreateKeyspace keyspace = createKeyspace(CqlIdentifier.fromCql("bikRental"))
+        CreateKeyspace keyspace = createKeyspace(CqlIdentifier.fromCql("bikeRental"))
                 .ifNotExists()
                 .withSimpleStrategy(2)
                 .withDurableWrites(true);

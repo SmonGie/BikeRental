@@ -42,8 +42,8 @@ services:
       - CASSANDRA_DATACENTER=dc1
       - CASSANDRA_PASSWORD_SEEDER=yes
       - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
-      - CASSANDRA_USER = cassandra
-      - CASSANDRA_PASSWORD = cassandra
+      - CASSANDRA_USER=cassandra
+      - CASSANDRA_PASSWORD=cassandra
       - MAX_HEAP_SIZE=2G
       - HEAP_NEWSIZE=200M
 

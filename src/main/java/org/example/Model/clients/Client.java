@@ -117,6 +117,10 @@ public class Client {
         return clientType.applyDiscount();
     }
 
+    public void setUuid(UUID uuid) {
+        this.id = uuid;
+    }
+
     public boolean isActive() {
         return active;
     }
