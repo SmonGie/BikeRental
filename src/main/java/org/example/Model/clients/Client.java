@@ -3,20 +3,19 @@ package org.example.Model.clients;
 import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
+import com.datastax.oss.driver.api.mapper.annotations.Transient;
 import org.example.Model.Rental;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Entity(defaultKeyspace = "rent_a_bike")
+@Entity(defaultKeyspace = "bikeRental")
 @CqlName("clients")
 public class Client {
-
     @PartitionKey
-    @CqlName("id")
+    @CqlName("uuid")
     private UUID id;
-
     @CqlName("first_name")
     private String firstName;
     @CqlName("last_name")
@@ -27,16 +26,13 @@ public class Client {
     private int age;
     @CqlName("rental_count")
     private int rentalCount;
-    private String clientId;
-    private static int lastAssignedId = 0;
-
-    private boolean active = true;
 
     @CqlName("client_address")
     private Address address;
 
+    @Transient
     private ClientType clientType;
-
+    @CqlName("current_rentals")
     private List<Rental> currentRentals = new ArrayList<>();
 
 
@@ -48,11 +44,22 @@ public class Client {
         this.age = age;
         this.address = address;
         rentalCount = 0;
-        lastAssignedId += 1;
         this.clientType = ClientType.determineClientType(age);
-        this.clientId = Integer.toString(lastAssignedId);
 
     }
+
+    public Client(UUID id, String firstName, String lastName, String phoneNumber, int age, Address address) {
+        this.id = UUID.randomUUID();
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phoneNumber = phoneNumber;
+        this.age = age;
+        this.address = address;
+        rentalCount = 0;
+        this.clientType = ClientType.determineClientType(age);
+
+    }
+
 
     public Client() {
 
@@ -80,11 +87,12 @@ public class Client {
         this.clientType = clientType;
     }
 
-    public String GetId(){
-        return clientId;
-    }
     public UUID getUuid() {
         return id;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.id = uuid;
     }
     public String getFirstName() {
         return firstName;
@@ -110,23 +118,8 @@ public class Client {
                 "\n " + clientType.getInfo() +
                 "\n " + address.getInfo();
     }
-    public String getClientId() {
-        return clientId;
-    }
     public int applyDiscount(){
         return clientType.applyDiscount();
-    }
-
-    public void setUuid(UUID uuid) {
-        this.id = uuid;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     public int getRentalCount() {

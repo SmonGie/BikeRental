@@ -4,7 +4,7 @@ package org.example.Model;
 import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
 
-@Entity(defaultKeyspace = "rent_a_bike")
+@Entity(defaultKeyspace = "bikeRental")
 @CqlName("bikes")
 public class ElectricBike extends Bike {
 

@@ -9,8 +9,6 @@ import org.example.Model.clients.Client;
 
 
 public class Rental {
-    private UUID id;
-    private Long Id;
 
     private Client client;
 
@@ -39,10 +37,6 @@ public class Rental {
 
     public void setClient(Client client) {
         this.client = client;
-    }
-
-    public Long getId() {
-        return Id;
     }
 
     public Bike getBike() {
@@ -92,8 +86,7 @@ public class Rental {
     }
 
     public String getInfo() {
-        return "Numer wypożyczenia: " + Id +
-                "\nKlient: " + client.getInfo() +
+        return "\nKlient: " + client.getInfo() +
                 "\nRower ID: " + bike.getId() +
                 "\nData rozpoczęcia: " + startTime +
                 "\nData zakończenia: " + (endTime != null ? endTime : "Wypożyczenie nadal trwa") +

@@ -2,6 +2,8 @@ package org.example.Repositories;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.config.DefaultDriverOption;
+import com.datastax.oss.driver.api.core.config.DriverConfigLoader;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.querybuilder.schema.CreateKeyspace;
 
@@ -19,7 +21,12 @@ public abstract class DatabaseRepository implements AutoCloseable {
                 .withLocalDatacenter("dc1")
                 .withAuthCredentials("cassandra", "cassandra")
                 .withKeyspace(CqlIdentifier.fromCql("bikeRental")) //zakomentuj za 1 razem a pozniej odkomentuj
-                .build();
+                .withConfigLoader(DriverConfigLoader.programmaticBuilder()
+                        .withInt(DefaultDriverOption.REQUEST_TIMEOUT, 5000)
+                        .build())
+                .build()
+        ;
+
         CreateKeyspace keyspace = createKeyspace(CqlIdentifier.fromCql("bikeRental"))
                 .ifNotExists()
                 .withSimpleStrategy(2)

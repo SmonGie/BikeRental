@@ -1,31 +1,29 @@
 package org.example.UserInterface;
 
+import org.example.Mappers.ClientMapperBuilder;
+import org.example.Dao.ClientDao;
+import org.example.Mappers.ClientMapper;
 import org.example.Model.Bike;
 import org.example.Model.ElectricBike;
 import org.example.Model.MountainBike;
+import org.example.Model.Rental;
 import org.example.Model.clients.Address;
 import org.example.Model.clients.Client;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
+import org.example.Repositories.RentalRepository;
 
-import java.util.UUID;
 
 public class Main {
     public static void main(String[] args) {
-        BikeRepository bikeRepository = new BikeRepository();
+        //BikeRepository bikeRepository = new BikeRepository();
         ClientRepository clientRepository = new ClientRepository();
-        ElectricBike electricBike = new ElectricBike("E-Bike", true, 500);
-        MountainBike mountainBike = new MountainBike("Mountain X", true, 30);
-        bikeRepository.insertBike(mountainBike);
-        bikeRepository.insertBike(electricBike);
-        Address address = new Address("Sieradz", "10", "3");
-        Client client = new Client("Jan", "Kowalski", "123456789", 30, address);
-        clientRepository.insertClient(client);
-
-        UUID bikeId = electricBike.getId();
-        Bike foundBike = bikeRepository.findById(bikeId);
-        System.out.println(foundBike.getInfo());
-
+        ClientMapper clientMapper = new ClientMapperBuilder(clientRepository.getSession()).build();
+        ClientDao clientDao = clientMapper.ClientDao();
+      //  RentalRepository rentalRepository = new RentalRepository();
+        Address address = new Address("Sieradz","Boko5","5");
+        Client client = new Client("Szymon","Giergiel","4343",5,address);
+        clientDao.create(client);
 
     }
 }

@@ -14,8 +14,8 @@ public interface ClientDao {
     Client findById(UUID id);
 
     @Insert
-    void save(Client client);
+    void create(Client client);
 
     @Delete
-    void delete(Client client);
+    void remove(Client client);
 }

@@ -7,7 +7,7 @@ import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 
 import java.util.UUID;
 
-@Entity(defaultKeyspace = "rent_a_bike")
+@Entity(defaultKeyspace = "bikeRental")
 @CqlName("bikes")
 public class Bike {
     @PartitionKey
