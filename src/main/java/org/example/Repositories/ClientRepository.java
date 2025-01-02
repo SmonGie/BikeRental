@@ -34,7 +34,6 @@ public class ClientRepository extends DatabaseRepository {
                 .withColumn(CqlIdentifier.fromCql("age"), DataTypes.INT)
                 .withColumn(CqlIdentifier.fromCql("rental_count"), DataTypes.INT)
                 .withColumn(CqlIdentifier.fromCql("client_address"), DataTypes.TEXT)
-                .withColumn(CqlIdentifier.fromCql("active"), DataTypes.BOOLEAN)
                 .build();
         getSession().execute(createClientsTable);
     }
