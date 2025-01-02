@@ -111,8 +111,12 @@ public class RentalRepository extends DatabaseRepository {
         BoundStatement boundStatementByBike = preparedUpdateRentalByBike.bind(rental.getEndTime().atZone
                 (ZoneOffset.UTC).toInstant(), rental.getTotalCost(), rental.getBike().getId(), rental.getStartTime().atZone(ZoneOffset.UTC).toInstant());
 
-        getSession().execute(boundStatementByClient);
-        getSession().execute(boundStatementByBike);
+        BatchStatement batchStatement = BatchStatement.builder(BatchType.LOGGED)
+                .addStatement(boundStatementByClient)
+                .addStatement(boundStatementByBike)
+                .build();
+
+        getSession().execute(batchStatement);
     }
 
     public void deleteDataByClients() {

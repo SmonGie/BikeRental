@@ -47,6 +47,11 @@ class RentalRepositoryTest {
                 retrievedRental.getStartTime().truncatedTo(ChronoUnit.MILLIS));
         assertNull(retrievedRental.getEndTime());
         assertEquals(0.0, retrievedRental.getTotalCost());
+        rental.setEndTime(LocalDateTime.now().truncatedTo(ChronoUnit.MILLIS));
+        rentalRepository.endRent(rental);
+        List<Rental> retrievedRentalsAfterEndingRent = rentalRepository.findByClientId(rental.getClient().getId());
+        Rental retrievedRentalAfterEndingRent = retrievedRentalsAfterEndingRent.getFirst();
+        assertNotNull(retrievedRentalAfterEndingRent.getEndTime());
     }
 
     @Test
