@@ -22,11 +22,20 @@ public class Bike {
     private String bikeId;
     protected static int lastAssignedId = 0;
 
+    private String discriminator;
+
     public Bike(String modelName, boolean isAvailable) {
         this.id = UUID.randomUUID();
         this.modelName = modelName;
         this.isAvailable = isAvailable;
         this.bikeId = generateNewBikeId();
+    }
+
+    public Bike(String modelName, boolean isAvailable, String discriminator) {
+        this.id = UUID.randomUUID();
+        this.modelName = modelName;
+        this.isAvailable = isAvailable;
+        this.discriminator = discriminator;
     }
 
     public Bike() {
@@ -43,6 +52,14 @@ public class Bike {
 
     public String getBikeId() {
         return bikeId;
+    }
+
+    public void setDiscriminator(String discriminator) {
+        this.discriminator = discriminator;
+    }
+
+    public String getDiscriminator() {
+        return discriminator;
     }
 
     private synchronized String generateNewBikeId() {

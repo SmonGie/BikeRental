@@ -26,9 +26,8 @@ public class Client {
     private int age;
     @CqlName("rental_count")
     private int rentalCount;
-
     @CqlName("client_address")
-    private Address address;
+    private String address;
 
     @Transient
     private ClientType clientType;
@@ -42,7 +41,7 @@ public class Client {
         this.lastName = lastName;
         this.phoneNumber = phoneNumber;
         this.age = age;
-        this.address = address;
+        this.address = address.getInfo();
         rentalCount = 0;
         this.clientType = ClientType.determineClientType(age);
 
@@ -93,9 +92,14 @@ public class Client {
     public int getAge() {
         return age;
     }
-    public Address getAddress() {
+    public String getAddress() {
         return address;
     }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
     public String getInfo()
     {
         return " Klient: " + firstName + " " + lastName +
@@ -103,7 +107,7 @@ public class Client {
                 "\n wiek: " + age +
                 "\n Id: " + id +
                 "\n " + clientType.getInfo() +
-                "\n " + address.getInfo();
+                "\n " + address;
     }
     public int applyDiscount(){
         return clientType.applyDiscount();

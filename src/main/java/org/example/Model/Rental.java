@@ -14,8 +14,10 @@ public class Rental {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private double totalCost;
+    private UUID id;
 
     public Rental(Client client, Bike bike, LocalDateTime startTime) {
+        this.id = UUID.randomUUID();
         this.client = client;
         this.bike = bike;
         this.startTime = startTime;
@@ -36,6 +38,14 @@ public class Rental {
         this.client = client;
     }
 
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
     public Bike getBike() {
         return bike;
     }
@@ -53,11 +63,9 @@ public class Rental {
         Duration rentalDuration = Duration.between(startTime, endTime);
         long days = rentalDuration.toDays();
 
-        // Stawka 25 zł za dzień
         float costPerDay = 25.0f;
         float cost = days * costPerDay;
 
-        // Uwzględnienie zniżki klienta
         totalCost = cost - (cost * client.applyDiscount() / 100);
     }
 

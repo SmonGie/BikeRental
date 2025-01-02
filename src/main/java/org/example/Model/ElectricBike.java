@@ -11,9 +11,13 @@ public class ElectricBike extends Bike {
     @CqlName("battery_capacity")
     private int batteryCapacity;
 
+    @CqlName("discriminator")
+    private String discriminator;
+
     public ElectricBike(String modelName, boolean isAvailable, int batteryCapacity) {
         super(modelName, isAvailable);
         this.batteryCapacity = batteryCapacity;
+        this.discriminator = "electric";
     }
 
     public ElectricBike() {
@@ -35,5 +39,15 @@ public class ElectricBike extends Bike {
     @Override
     public String getInfo() {
         return super.getInfo() + " Pojemność baterii: " + batteryCapacity + " Wh";
+    }
+
+    @Override
+    public String getDiscriminator() {
+        return discriminator;
+    }
+
+    @Override
+    public void setDiscriminator(String discriminator) {
+        this.discriminator = discriminator;
     }
 }

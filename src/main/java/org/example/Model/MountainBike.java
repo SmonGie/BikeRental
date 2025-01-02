@@ -11,9 +11,13 @@ public class MountainBike extends Bike {
     @CqlName("tire_width")
     private int tireWidth;
 
+    @CqlName("discriminator")
+    private String discriminator;
+
     public MountainBike(String modelName, boolean isAvailable, int tireWidth) {
         super(modelName, isAvailable);
         this.tireWidth = tireWidth;
+        this.discriminator = "mountain";
     }
 
     public MountainBike() {
@@ -35,5 +39,15 @@ public class MountainBike extends Bike {
     @Override
     public String getInfo() {
         return super.getInfo() + " Szerokość opony: " + +tireWidth + " cm";
+    }
+
+    @Override
+    public String getDiscriminator() {
+        return discriminator;
+    }
+
+    @Override
+    public void setDiscriminator(String discriminator) {
+        this.discriminator = discriminator;
     }
 }

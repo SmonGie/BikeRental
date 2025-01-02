@@ -1,21 +1,13 @@
 package org.example.Repositories;
 
+import static org.junit.jupiter.api.Assertions.*;
 import org.example.Dao.BikeDao;
-import org.example.Dao.ClientDao;
 import org.example.Mappers.BikeMapper;
 import org.example.Mappers.BikeMapperBuilder;
-import org.example.Mappers.ClientMapper;
-import org.example.Mappers.ClientMapperBuilder;
-import org.example.Model.Bike;
 import org.example.Model.ElectricBike;
 import org.example.Model.MountainBike;
-import org.example.Model.clients.Address;
-import org.example.Model.clients.Client;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 public class BikeRepositoryTest {
     private static BikeRepository bikeRepository;
@@ -44,14 +36,14 @@ public class BikeRepositoryTest {
         assertEquals(bike.getBatteryCapacity(), retrievedBike.getBatteryCapacity());
     }
 
-//    @Test
-//    public void testInsertMountainBike() {
-//        bikeDao.create(mbike);
-//
-//        MountainBike retrievedBike = (MountainBike) bikeDao.findById(mbike.getId());
-//
-//        assertNotNull(retrievedBike);
-//        assertEquals(mbike.getModelName(), retrievedBike.getModelName());
-//        assertEquals(mbike.isIsAvailable(), retrievedBike.isIsAvailable());
-//    }
+    @Test
+    public void testInsertMountainBike() {
+        bikeDao.create(mbike);
+
+        MountainBike retrievedBike = (MountainBike) bikeDao.findById(mbike.getId());
+
+        assertNotNull(retrievedBike);
+        assertEquals(mbike.getModelName(), retrievedBike.getModelName());
+        assertEquals(mbike.isIsAvailable(), retrievedBike.isIsAvailable());
+    }
 }

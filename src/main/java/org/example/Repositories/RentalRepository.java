@@ -12,7 +12,6 @@ import com.datastax.oss.driver.api.querybuilder.update.Update;
 import org.example.Model.Rental;
 
 import java.time.ZoneOffset;
-import java.util.UUID;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.literal;
 
@@ -53,6 +52,7 @@ public class RentalRepository extends DatabaseRepository {
     public void insert(Rental rental) {
         Insert insertRentalsByClients = QueryBuilder.insertInto(CqlIdentifier.fromCql("rentals_by_clients"))
                 .value(CqlIdentifier.fromCql("client_id"), literal(rental.getClient().getId()))
+                .value(CqlIdentifier.fromCql("rental_id"), literal(rental.getId()))
                 .value(CqlIdentifier.fromCql("start_time"), literal(rental.getStartTime().toInstant(ZoneOffset.UTC)))
                 .value(CqlIdentifier.fromCql("end_time"), literal(0))
                 .value(CqlIdentifier.fromCql("bike_id"), literal(rental.getBike().getId()))
@@ -60,6 +60,7 @@ public class RentalRepository extends DatabaseRepository {
 
         Insert insertRentalsByBikes = QueryBuilder.insertInto(CqlIdentifier.fromCql("rentals_by_bikes"))
                 .value(CqlIdentifier.fromCql("client_id"), literal(rental.getClient().getId()))
+                .value(CqlIdentifier.fromCql("rental_id"), literal(rental.getId()))
                 .value(CqlIdentifier.fromCql("start_time"), literal(rental.getStartTime().toInstant(ZoneOffset.UTC)))
                 .value(CqlIdentifier.fromCql("end_time"), literal(0))
                 .value(CqlIdentifier.fromCql("bike_id"), literal(rental.getBike().getId()))
@@ -84,18 +85,20 @@ public class RentalRepository extends DatabaseRepository {
         Update updateRentalByClient = QueryBuilder.update("rentals_by_clients")
                 .setColumn("end_time", QueryBuilder.bindMarker())
                 .setColumn("total_cost", QueryBuilder.bindMarker())
-                .whereColumn("rental_id").isEqualTo(QueryBuilder.bindMarker());
+                .whereColumn("client_id").isEqualTo(QueryBuilder.bindMarker())
+                .whereColumn("start_time").isEqualTo(QueryBuilder.bindMarker());
 
         Update updateRentalByBike = QueryBuilder.update("rentals_by_bikes")
                 .setColumn("end_time", QueryBuilder.bindMarker())
                 .setColumn("total_cost", QueryBuilder.bindMarker())
-                .whereColumn("rental_id").isEqualTo(QueryBuilder.bindMarker());
+                .whereColumn("bike_id").isEqualTo(QueryBuilder.bindMarker())
+                .whereColumn("start_time").isEqualTo(QueryBuilder.bindMarker());
 
         PreparedStatement preparedUpdateRentalByClient = getSession().prepare(updateRentalByClient.build());
         PreparedStatement preparedUpdateRentalByBike = getSession().prepare(updateRentalByBike.build());
 
-        BoundStatement boundStatementByClient = preparedUpdateRentalByClient.bind(rental.getEndTime(), rental.getTotalCost(), rental.getClient().getId());
-        BoundStatement boundStatementByBike = preparedUpdateRentalByBike.bind(rental.getEndTime(), rental.getTotalCost(), rental.getBike().getId());
+        BoundStatement boundStatementByClient = preparedUpdateRentalByClient.bind(rental.getEndTime().atZone(ZoneOffset.UTC).toInstant(), rental.getTotalCost(), rental.getClient().getId(), rental.getStartTime().atZone(ZoneOffset.UTC).toInstant());
+        BoundStatement boundStatementByBike = preparedUpdateRentalByBike.bind(rental.getEndTime().atZone(ZoneOffset.UTC).toInstant(), rental.getTotalCost(), rental.getBike().getId(), rental.getStartTime().atZone(ZoneOffset.UTC).toInstant());
 
         getSession().execute(boundStatementByClient);
         getSession().execute(boundStatementByBike);

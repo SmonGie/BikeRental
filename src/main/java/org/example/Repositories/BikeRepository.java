@@ -30,6 +30,7 @@ public class BikeRepository extends DatabaseRepository{
                 .withColumn(CqlIdentifier.fromCql("is_available"), DataTypes.BOOLEAN)
                 .withColumn(CqlIdentifier.fromCql("battery_capacity"), DataTypes.INT)
                 .withColumn(CqlIdentifier.fromCql("tire_width"), DataTypes.INT)
+                .withColumn(CqlIdentifier.fromCql("discriminator"), DataTypes.TEXT)
                 .build();
 
         getSession().execute(createBikesTable);

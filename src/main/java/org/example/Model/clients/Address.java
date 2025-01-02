@@ -30,9 +30,8 @@ public class Address{
     public void setNumber(String number){
         this.number = number;
     }
-    public String getInfo(){
 
-        return "Miasto: " + getCity() +
-                "\n Ulica i numer: " + getStreet() + " "+ getNumber();
+    public String getInfo(){
+        return "Miasto: " + getCity() + " Ulica i numer: " + getStreet() + " "+ getNumber();
     }
 }

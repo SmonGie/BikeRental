@@ -1,5 +1,6 @@
 package org.example.UserInterface;
 
+import jnr.constants.platform.Local;
 import org.example.Dao.BikeDao;
 import org.example.Mappers.BikeMapper;
 import org.example.Mappers.BikeMapperBuilder;
@@ -36,6 +37,8 @@ public class Main {
         LocalDateTime date = LocalDateTime.now();
         Rental rental = new Rental(client,bike,date);
         rentalRepository.insert(rental);
+        rental.setEndTime(LocalDateTime.now());
+        rentalRepository.endRent(rental);
 
     }
 }

@@ -1,6 +1,5 @@
 package org.example.Repositories;
 
-import com.datastax.oss.driver.api.core.CqlSession;
 import org.example.Dao.ClientDao;
 import org.example.Mappers.ClientMapper;
 import org.example.Mappers.ClientMapperBuilder;
@@ -9,8 +8,6 @@ import org.example.Model.clients.Client;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -59,9 +56,6 @@ class ClientRepositoryTest {
         retrievedClient.setLastName("Nowak");
         retrievedClient.setPhoneNumber("987654321");
         retrievedClient.setAge(40);
-//        retrievedClient.getAddress().setCity("Łódź");
-//        retrievedClient.getAddress().setStreet("Piotrkowska");
-//        retrievedClient.getAddress().setNumber("15");
 
         clientDao.update(retrievedClient);
 
@@ -71,9 +65,8 @@ class ClientRepositoryTest {
         assertEquals("Nowak", updatedClient.getLastName());
         assertEquals("987654321", updatedClient.getPhoneNumber());
         assertEquals(40, updatedClient.getAge());
-//        assertEquals("Łódź", updatedClient.getAddress().getCity());
-//        assertEquals("Piotrkowska", updatedClient.getAddress().getStreet());
-//        assertEquals("15", updatedClient.getAddress().getNumber());
+        assertNotNull(updatedClient.getAddress());
+
     }
 
 }

@@ -26,24 +26,30 @@ public class BikeGetByIdProvider {
     }
 
     public void create(Bike bike) {
-        if (bike instanceof ElectricBike electricBike) {
-            session.execute(
-                    session.prepare(electricBikeEntityHelper.insert().build()).bind()
-                            .setUuid(CqlIdentifier.fromCql("id"), electricBike.getId())
-                            .setString(CqlIdentifier.fromCql("model_name"), electricBike.getModelName())
-                            .setBoolean(CqlIdentifier.fromCql("is_available"), electricBike.isIsAvailable())
-                            .setInt(CqlIdentifier.fromCql("battery_capacity"), electricBike.getBatteryCapacity())
-            );
-        } else if (bike instanceof MountainBike mountainBike) {
-            session.execute(
-                    session.prepare(mountainBikeEntityHelper.insert().build()).bind()
-                            .setUuid(CqlIdentifier.fromCql("id"), mountainBike.getId())
-                            .setString(CqlIdentifier.fromCql("model_name"), mountainBike.getModelName())
-                            .setBoolean(CqlIdentifier.fromCql("is_available"), mountainBike.isIsAvailable())
-                            .setInt(CqlIdentifier.fromCql("tire_width"), mountainBike.getTireWidth())
-            );
-        } else {
-            throw new IllegalArgumentException("Unsupported bike type: " + bike.getClass().getSimpleName());
+        switch (bike.getDiscriminator()) {
+            case "electric" -> {
+                ElectricBike electricBike = (ElectricBike) bike;
+                session.execute(
+                        session.prepare(electricBikeEntityHelper.insert().build()).bind()
+                                .setUuid(CqlIdentifier.fromCql("id"), electricBike.getId())
+                                .setString(CqlIdentifier.fromCql("model_name"), electricBike.getModelName())
+                                .setBoolean(CqlIdentifier.fromCql("is_available"), electricBike.isIsAvailable())
+                                .setInt(CqlIdentifier.fromCql("battery_capacity"), electricBike.getBatteryCapacity())
+                                .setString(CqlIdentifier.fromCql("discriminator"), electricBike.getDiscriminator())
+                );
+            }
+            case "mountain" -> {
+                MountainBike mountainBike = (MountainBike) bike;
+                session.execute(
+                        session.prepare(mountainBikeEntityHelper.insert().build()).bind()
+                                .setUuid(CqlIdentifier.fromCql("id"), mountainBike.getId())
+                                .setString(CqlIdentifier.fromCql("model_name"), mountainBike.getModelName())
+                                .setBoolean(CqlIdentifier.fromCql("is_available"), mountainBike.isIsAvailable())
+                                .setInt(CqlIdentifier.fromCql("tire_width"), mountainBike.getTireWidth())
+                                .setString(CqlIdentifier.fromCql("discriminator"), mountainBike.getDiscriminator())
+                );
+            }
+            default -> throw new IllegalArgumentException("Unsupported bike type: " + bike.getDiscriminator());
         }
     }
 
@@ -55,16 +61,13 @@ public class BikeGetByIdProvider {
             throw new IllegalStateException("Bike not found with id: " + id);
         }
 
-        boolean hasBatteryCapacity = row.getColumnDefinitions().contains("battery_capacity");
-        boolean hasTireWidth = row.getColumnDefinitions().contains("tire_width");
+        String discriminator = row.getString("discriminator");
 
-        if (hasBatteryCapacity) {
-            return getElectricBike(row);
-        } else if (hasTireWidth) {
-            return getMountainBike(row);
-        }
-
-        throw new IllegalStateException("Unknown bike type for id: " + id);
+        return switch (discriminator) {
+            case "electric" -> getElectricBike(row);
+            case "mountain" -> getMountainBike(row);
+            default -> throw new IllegalStateException("Unknown discriminator for bike with id: " + id);
+        };
     }
 
 
@@ -78,7 +81,9 @@ public class BikeGetByIdProvider {
             throw new IllegalStateException("Missing data for ElectricBike: " + row);
         }
 
-        return new ElectricBike(modelName, isAvailable, batteryCapacity);
+        ElectricBike electricBike = new ElectricBike(modelName, isAvailable, batteryCapacity);
+        electricBike.setId(id);
+        return electricBike;
     }
 
 
@@ -92,6 +97,8 @@ public class BikeGetByIdProvider {
             throw new IllegalStateException("Missing data for MountainBike: " + row);
         }
 
-        return new MountainBike(modelName, isAvailable, tireWidth);
+        MountainBike mountainBike = new MountainBike(modelName, isAvailable, tireWidth);
+        mountainBike.setId(id);
+        return mountainBike;
     }
 }
