@@ -37,9 +37,13 @@ public class Main {
         LocalDateTime date = LocalDateTime.now();
         Rental rental = new Rental(client,bike,date);
         rentalRepository.insert(rental);
+        client.setRentalCount(client.getRentalCount()+1);
+        clientDao.update(client);
+        Client retrieved = clientDao.findById(client.getId());
+        System.out.println(retrieved.getRentalCount());
         rental.setEndTime(LocalDateTime.now());
         rentalRepository.endRent(rental);
-
+        System.out.println(rental.getInfo());
     }
 }
 

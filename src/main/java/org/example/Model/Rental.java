@@ -1,9 +1,11 @@
 package org.example.Model;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.UUID;
 
+import jnr.constants.platform.Local;
 import org.example.Model.clients.Client;
 
 
@@ -15,6 +17,17 @@ public class Rental {
     private LocalDateTime endTime;
     private double totalCost;
     private UUID id;
+    private UUID bikeId;
+    private UUID clientId;
+
+    public Rental(UUID id, UUID bikeId, UUID clientId, LocalDateTime startTime, LocalDateTime endTime, double totalCost) {
+        this.id = id;
+        this.bikeId = bikeId;
+        this.clientId = clientId;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.totalCost = totalCost;
+    }
 
     public Rental(Client client, Bike bike, LocalDateTime startTime) {
         this.id = UUID.randomUUID();
@@ -91,8 +104,8 @@ public class Rental {
     }
 
     public String getInfo() {
-        return "\nKlient: " + client.getInfo() +
-                "\nRower ID: " + bike.getId() +
+        return client.getInfo() +
+                "\nRower: " + bike.getInfo() +
                 "\nData rozpoczęcia: " + startTime +
                 "\nData zakończenia: " + (endTime != null ? endTime : "Wypożyczenie nadal trwa") +
                 "\nCena całkowita: " + totalCost + " zł";

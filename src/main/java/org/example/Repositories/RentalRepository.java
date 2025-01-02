@@ -8,10 +8,16 @@ import com.datastax.oss.driver.api.core.type.DataTypes;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
 import com.datastax.oss.driver.api.querybuilder.insert.Insert;
+import com.datastax.oss.driver.api.querybuilder.select.Select;
 import com.datastax.oss.driver.api.querybuilder.update.Update;
 import org.example.Model.Rental;
 
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 import static com.datastax.oss.driver.api.querybuilder.QueryBuilder.literal;
 
@@ -54,7 +60,7 @@ public class RentalRepository extends DatabaseRepository {
                 .value(CqlIdentifier.fromCql("client_id"), literal(rental.getClient().getId()))
                 .value(CqlIdentifier.fromCql("rental_id"), literal(rental.getId()))
                 .value(CqlIdentifier.fromCql("start_time"), literal(rental.getStartTime().toInstant(ZoneOffset.UTC)))
-                .value(CqlIdentifier.fromCql("end_time"), literal(0))
+                .value(CqlIdentifier.fromCql("end_time"), literal(null))
                 .value(CqlIdentifier.fromCql("bike_id"), literal(rental.getBike().getId()))
                 .value(CqlIdentifier.fromCql("total_cost"), literal(rental.getTotalCost()));
 
@@ -62,7 +68,7 @@ public class RentalRepository extends DatabaseRepository {
                 .value(CqlIdentifier.fromCql("client_id"), literal(rental.getClient().getId()))
                 .value(CqlIdentifier.fromCql("rental_id"), literal(rental.getId()))
                 .value(CqlIdentifier.fromCql("start_time"), literal(rental.getStartTime().toInstant(ZoneOffset.UTC)))
-                .value(CqlIdentifier.fromCql("end_time"), literal(0))
+                .value(CqlIdentifier.fromCql("end_time"), literal(null))
                 .value(CqlIdentifier.fromCql("bike_id"), literal(rental.getBike().getId()))
                 .value(CqlIdentifier.fromCql("total_cost"), literal(rental.getTotalCost()));
 
@@ -97,8 +103,10 @@ public class RentalRepository extends DatabaseRepository {
         PreparedStatement preparedUpdateRentalByClient = getSession().prepare(updateRentalByClient.build());
         PreparedStatement preparedUpdateRentalByBike = getSession().prepare(updateRentalByBike.build());
 
-        BoundStatement boundStatementByClient = preparedUpdateRentalByClient.bind(rental.getEndTime().atZone(ZoneOffset.UTC).toInstant(), rental.getTotalCost(), rental.getClient().getId(), rental.getStartTime().atZone(ZoneOffset.UTC).toInstant());
-        BoundStatement boundStatementByBike = preparedUpdateRentalByBike.bind(rental.getEndTime().atZone(ZoneOffset.UTC).toInstant(), rental.getTotalCost(), rental.getBike().getId(), rental.getStartTime().atZone(ZoneOffset.UTC).toInstant());
+        BoundStatement boundStatementByClient = preparedUpdateRentalByClient.bind(rental.getEndTime().atZone
+                (ZoneOffset.UTC).toInstant(), rental.getTotalCost(), rental.getClient().getId(), rental.getStartTime().atZone(ZoneOffset.UTC).toInstant());
+        BoundStatement boundStatementByBike = preparedUpdateRentalByBike.bind(rental.getEndTime().atZone
+                (ZoneOffset.UTC).toInstant(), rental.getTotalCost(), rental.getBike().getId(), rental.getStartTime().atZone(ZoneOffset.UTC).toInstant());
 
         getSession().execute(boundStatementByClient);
         getSession().execute(boundStatementByBike);
@@ -112,6 +120,55 @@ public class RentalRepository extends DatabaseRepository {
     public void deleteDataByBikes() {
         SimpleStatement dropTable = SchemaBuilder.dropTable(CqlIdentifier.fromCql("rentals_by_bikes")).ifExists().build();
         getSession().execute(dropTable);
+    }
+
+    public List<Rental> findByBikeId(UUID bikeId) {
+        Select select = QueryBuilder.selectFrom("rentals_by_bikes")
+                .all()
+                .whereColumn("bike_id").isEqualTo(literal(bikeId));
+
+        ResultSet resultSet = getSession().execute(select.build());
+        List<Row> rows = resultSet.all();
+
+        List<Rental> rentals = new ArrayList<>();
+        for (Row row : rows) {
+            Rental rental = mapRowToRental(row);
+            rentals.add(rental);
+        }
+
+        return rentals;
+    }
+
+    public List<Rental> findByClientId(UUID clientId) {
+        Select select = QueryBuilder.selectFrom("rentals_by_clients")
+                .all()
+                .whereColumn("client_id").isEqualTo(literal(clientId));
+
+        ResultSet resultSet = getSession().execute(select.build());
+        List<Row> rows = resultSet.all();
+
+        List<Rental> rentals = new ArrayList<>();
+        for (Row row : rows) {
+            Rental rental = mapRowToRental(row);
+            rentals.add(rental);
+        }
+
+        return rentals;
+    }
+
+    private Rental mapRowToRental(Row row) {
+        UUID rentalId = row.getUuid("rental_id");
+        UUID bikeId = row.getUuid("bike_id");
+        UUID clientId = row.getUuid("client_id");
+        Instant startTimeInstant = row.getInstant("start_time");
+        Instant endTimeInstant = row.getInstant("end_time");
+
+        LocalDateTime startTime = startTimeInstant != null ? LocalDateTime.ofInstant(startTimeInstant, ZoneOffset.UTC) : null;
+        LocalDateTime endTime = endTimeInstant != null ? LocalDateTime.ofInstant(endTimeInstant, ZoneOffset.UTC) : null;
+
+        double totalCost = row.getDouble("total_cost");
+
+        return new Rental(rentalId, bikeId, clientId, startTime, endTime, totalCost);
     }
 
     @Override
