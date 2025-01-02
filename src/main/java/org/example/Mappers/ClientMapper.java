@@ -9,8 +9,8 @@ import org.example.Dao.ClientDao;
 @Mapper
 public interface ClientMapper {
     @DaoFactory
-    ClientDao ClientDao(@DaoKeyspace String keyspace, @DaoTable String table);
+    ClientDao clientDao(@DaoKeyspace String keyspace, @DaoTable String table);
 
     @DaoFactory
-    ClientDao ClientDao();
+    ClientDao clientDao();
 }

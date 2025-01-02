@@ -19,6 +19,11 @@ public class ElectricBike extends Bike {
     public ElectricBike() {
     }
 
+    @Override
+    public String getModelName() {
+        return super.getModelName();
+    }
+
     public int getBatteryCapacity() {
         return batteryCapacity;
     }

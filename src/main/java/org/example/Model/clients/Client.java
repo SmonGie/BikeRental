@@ -48,19 +48,6 @@ public class Client {
 
     }
 
-    public Client(UUID id, String firstName, String lastName, String phoneNumber, int age, Address address) {
-        this.id = UUID.randomUUID();
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.phoneNumber = phoneNumber;
-        this.age = age;
-        this.address = address;
-        rentalCount = 0;
-        this.clientType = ClientType.determineClientType(age);
-
-    }
-
-
     public Client() {
 
     }
@@ -87,12 +74,12 @@ public class Client {
         this.clientType = clientType;
     }
 
-    public UUID getUuid() {
+    public UUID getId() {
         return id;
     }
 
-    public void setUuid(UUID uuid) {
-        this.id = uuid;
+    public void setId(UUID id) {
+        this.id = id;
     }
     public String getFirstName() {
         return firstName;

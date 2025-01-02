@@ -1,7 +1,9 @@
 package org.example.Repositories;
 
+import com.datastax.oss.driver.api.core.CqlSession;
 import org.example.Dao.ClientDao;
 import org.example.Mappers.ClientMapper;
+import org.example.Mappers.ClientMapperBuilder;
 import org.example.Model.clients.Address;
 import org.example.Model.clients.Client;
 import org.junit.jupiter.api.AfterEach;
@@ -13,28 +15,30 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ClientRepositoryTest {
-    private static Client client;
-
     private static ClientRepository clientRepository;
+    private static ClientDao clientDao;
+    private static Client client;
 
     @BeforeEach
     public void setup() {
         clientRepository = new ClientRepository();
+        ClientMapper clientMapper = new ClientMapperBuilder(clientRepository.getSession()).build();
+        clientDao = clientMapper.clientDao("bikeRental", "clients");
         Address address = new Address("Sieradz", "10", "3");
         client = new Client("Jan", "Kowalski", "123456789", 30, address);
     }
     @AfterEach
     public void cleanup() {
         if (client != null) {
-            clientRepository.deleteClient(client.getUuid());
+            clientDao.remove(client);
         }
     }
 
     @Test
     public void testInsertClient() {
-        clientRepository.insertClient(client);
+        clientDao.create(client);
 
-        Client retrievedClient = clientRepository.findById(client.getUuid());
+        Client retrievedClient = clientDao.findById(client.getId());
 
         assertNotNull(retrievedClient);
         assertEquals(client.getFirstName(), retrievedClient.getFirstName());
@@ -43,4 +47,33 @@ class ClientRepositoryTest {
         assertEquals(client.getAge(), retrievedClient.getAge());
         //assertEquals(client.getAddress().getCity(), retrievedClient.getAddress().getCity());
     }
+
+    @Test
+    public void testUpdateClient() {
+        clientDao.create(client);
+
+        Client retrievedClient = clientDao.findById(client.getId());
+        assertNotNull(retrievedClient);
+
+        retrievedClient.setFirstName("Adam");
+        retrievedClient.setLastName("Nowak");
+        retrievedClient.setPhoneNumber("987654321");
+        retrievedClient.setAge(40);
+//        retrievedClient.getAddress().setCity("Łódź");
+//        retrievedClient.getAddress().setStreet("Piotrkowska");
+//        retrievedClient.getAddress().setNumber("15");
+
+        clientDao.update(retrievedClient);
+
+        Client updatedClient = clientDao.findById(client.getId());
+        assertNotNull(updatedClient);
+        assertEquals("Adam", updatedClient.getFirstName());
+        assertEquals("Nowak", updatedClient.getLastName());
+        assertEquals("987654321", updatedClient.getPhoneNumber());
+        assertEquals(40, updatedClient.getAge());
+//        assertEquals("Łódź", updatedClient.getAddress().getCity());
+//        assertEquals("Piotrkowska", updatedClient.getAddress().getStreet());
+//        assertEquals("15", updatedClient.getAddress().getNumber());
+    }
+
 }

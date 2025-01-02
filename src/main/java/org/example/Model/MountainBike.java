@@ -8,7 +8,7 @@ import com.datastax.oss.driver.api.mapper.annotations.Entity;
 @CqlName("bikes")
 public class MountainBike extends Bike {
 
-    @CqlName("tireWidth")
+    @CqlName("tire_width")
     private int tireWidth;
 
     public MountainBike(String modelName, boolean isAvailable, int tireWidth) {
@@ -17,6 +17,11 @@ public class MountainBike extends Bike {
     }
 
     public MountainBike() {
+    }
+
+    @Override
+    public String getModelName() {
+        return super.getModelName();
     }
 
     public int getTireWidth() {

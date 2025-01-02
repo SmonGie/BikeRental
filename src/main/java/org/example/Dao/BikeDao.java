@@ -1,9 +1,6 @@
 package org.example.Dao;
 
-import com.datastax.oss.driver.api.mapper.annotations.Dao;
-import com.datastax.oss.driver.api.mapper.annotations.Delete;
-import com.datastax.oss.driver.api.mapper.annotations.QueryProvider;
-import com.datastax.oss.driver.api.mapper.annotations.StatementAttributes;
+import com.datastax.oss.driver.api.mapper.annotations.*;
 import org.example.Model.Bike;
 import org.example.Model.ElectricBike;
 import org.example.Model.MountainBike;
@@ -25,4 +22,7 @@ public interface BikeDao {
 
     @Delete
     void remove(Bike bike);
+
+    @Update
+    void update(Bike bike);
 }

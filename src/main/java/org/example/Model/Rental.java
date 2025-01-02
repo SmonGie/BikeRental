@@ -9,16 +9,13 @@ import org.example.Model.clients.Client;
 
 
 public class Rental {
-
     private Client client;
-
     private Bike bike;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private double totalCost;
 
     public Rental(Client client, Bike bike, LocalDateTime startTime) {
-
         this.client = client;
         this.bike = bike;
         this.startTime = startTime;

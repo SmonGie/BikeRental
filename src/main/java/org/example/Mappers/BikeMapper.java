@@ -9,8 +9,8 @@ import org.example.Dao.BikeDao;
 @Mapper
 public interface BikeMapper {
     @DaoFactory
-    BikeDao BikeDao(@DaoKeyspace String keyspace, @DaoTable String table);
+    BikeDao bikeDao(@DaoKeyspace String keyspace, @DaoTable String table);
 
     @DaoFactory
-    BikeDao BikeDao();
+    BikeDao bikeDao();
 }

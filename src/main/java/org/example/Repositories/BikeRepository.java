@@ -26,10 +26,10 @@ public class BikeRepository extends DatabaseRepository{
         SimpleStatement createBikesTable = SchemaBuilder.createTable(CqlIdentifier.fromCql("bikes"))
                 .ifNotExists()
                 .withPartitionKey(CqlIdentifier.fromCql("id"), DataTypes.UUID)
-                .withColumn(CqlIdentifier.fromCql("modelName"), DataTypes.TEXT)
-                .withColumn(CqlIdentifier.fromCql("isAvailable"), DataTypes.BOOLEAN)
+                .withColumn(CqlIdentifier.fromCql("model_name"), DataTypes.TEXT)
+                .withColumn(CqlIdentifier.fromCql("is_available"), DataTypes.BOOLEAN)
                 .withColumn(CqlIdentifier.fromCql("battery_capacity"), DataTypes.INT)
-                .withColumn(CqlIdentifier.fromCql("tireWidth"), DataTypes.INT)
+                .withColumn(CqlIdentifier.fromCql("tire_width"), DataTypes.INT)
                 .build();
 
         getSession().execute(createBikesTable);

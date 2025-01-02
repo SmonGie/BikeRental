@@ -50,14 +50,20 @@ public class BikeGetByIdProvider {
     public Bike findById(UUID id) {
         Row row = session.execute(QueryBuilder.selectFrom("bikes").all()
                 .whereColumn("id").isEqualTo(QueryBuilder.literal(id)).build()).one();
+
         if (row == null) {
             throw new IllegalStateException("Bike not found with id: " + id);
         }
-        if (row.getColumnDefinitions().contains("battery_capacity")) {
+
+        boolean hasBatteryCapacity = row.getColumnDefinitions().contains("battery_capacity");
+        boolean hasTireWidth = row.getColumnDefinitions().contains("tire_width");
+
+        if (hasBatteryCapacity) {
             return getElectricBike(row);
-        } else if (row.getColumnDefinitions().contains("tire_width")) {
+        } else if (hasTireWidth) {
             return getMountainBike(row);
         }
+
         throw new IllegalStateException("Unknown bike type for id: " + id);
     }
 
