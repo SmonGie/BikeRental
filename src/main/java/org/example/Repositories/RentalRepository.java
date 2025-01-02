@@ -5,6 +5,7 @@ import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.cql.*;
 import com.datastax.oss.driver.api.core.metadata.schema.ClusteringOrder;
 import com.datastax.oss.driver.api.core.type.DataTypes;
+import com.datastax.oss.driver.api.mapper.annotations.StatementAttributes;
 import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
 import com.datastax.oss.driver.api.querybuilder.insert.Insert;
@@ -55,6 +56,7 @@ public class RentalRepository extends DatabaseRepository {
         getSession().execute(createRentalsByBikes);
     }
 
+    @StatementAttributes(consistencyLevel = "QUORUM")
     public void insert(Rental rental) {
         Insert insertRentalsByClients = QueryBuilder.insertInto(CqlIdentifier.fromCql("rentals_by_clients"))
                 .value(CqlIdentifier.fromCql("client_id"), literal(rental.getClient().getId()))
@@ -81,6 +83,7 @@ public class RentalRepository extends DatabaseRepository {
         getSession().execute(batchStatement);
     }
 
+    @StatementAttributes(consistencyLevel = "QUORUM")
     public void endRent(Rental rental) {
         if (rental.getEndTime() == null) {
             throw new IllegalStateException("Wypożyczenie nie zostało zakończone.");
@@ -122,6 +125,7 @@ public class RentalRepository extends DatabaseRepository {
         getSession().execute(dropTable);
     }
 
+    @StatementAttributes(consistencyLevel = "QUORUM")
     public List<Rental> findByBikeId(UUID bikeId) {
         Select select = QueryBuilder.selectFrom("rentals_by_bikes")
                 .all()
@@ -139,6 +143,7 @@ public class RentalRepository extends DatabaseRepository {
         return rentals;
     }
 
+    @StatementAttributes(consistencyLevel = "QUORUM")
     public List<Rental> findByClientId(UUID clientId) {
         Select select = QueryBuilder.selectFrom("rentals_by_clients")
                 .all()

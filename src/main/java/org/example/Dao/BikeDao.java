@@ -23,6 +23,7 @@ public interface BikeDao {
     @Delete
     void remove(Bike bike);
 
+    @StatementAttributes(consistencyLevel = "QUORUM")
     @Update
     void update(Bike bike);
 }

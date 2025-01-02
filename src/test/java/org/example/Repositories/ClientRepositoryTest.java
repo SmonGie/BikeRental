@@ -31,6 +31,7 @@ class ClientRepositoryTest {
         }
     }
 
+
     @Test
     public void testInsertClient() {
         clientDao.create(client);
@@ -42,7 +43,6 @@ class ClientRepositoryTest {
         assertEquals(client.getLastName(), retrievedClient.getLastName());
         assertEquals(client.getPhoneNumber(), retrievedClient.getPhoneNumber());
         assertEquals(client.getAge(), retrievedClient.getAge());
-        //assertEquals(client.getAddress().getCity(), retrievedClient.getAddress().getCity());
     }
 
     @Test
