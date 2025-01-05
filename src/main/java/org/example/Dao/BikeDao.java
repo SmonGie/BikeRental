@@ -4,8 +4,10 @@ import com.datastax.oss.driver.api.mapper.annotations.*;
 import org.example.Model.Bike;
 import org.example.Model.ElectricBike;
 import org.example.Model.MountainBike;
+import org.example.Model.clients.Client;
 import org.example.Providers.BikeGetByIdProvider;
 
+import java.util.List;
 import java.util.UUID;
 
 @Dao
@@ -26,4 +28,10 @@ public interface BikeDao {
     @StatementAttributes(consistencyLevel = "QUORUM")
     @Update
     void update(Bike bike);
+
+    @StatementAttributes(consistencyLevel = "QUORUM")
+    @QueryProvider(providerClass = BikeGetByIdProvider.class,
+            entityHelpers = {ElectricBike.class, MountainBike.class})
+    @Query( "SELECT *")
+    List<Bike> findAll();
 }
