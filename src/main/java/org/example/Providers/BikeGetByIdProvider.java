@@ -2,6 +2,7 @@ package org.example.Providers;
 
 import com.datastax.oss.driver.api.core.CqlIdentifier;
 import com.datastax.oss.driver.api.core.CqlSession;
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.mapper.MapperContext;
 import com.datastax.oss.driver.api.mapper.entity.EntityHelper;
@@ -10,6 +11,8 @@ import org.example.Model.Bike;
 import org.example.Model.ElectricBike;
 import org.example.Model.MountainBike;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class BikeGetByIdProvider {
@@ -51,6 +54,31 @@ public class BikeGetByIdProvider {
             }
             default -> throw new IllegalArgumentException("Unsupported bike type: " + bike.getDiscriminator());
         }
+    }
+
+    public List<Bike> findAll() {
+        ResultSet resultSet = session.execute(QueryBuilder.selectFrom("bikes").all().build());
+        List<Bike> bikes = new ArrayList<>();
+
+        for (Row row : resultSet) {
+            String discriminator = row.getString("discriminator");
+
+            Bike bike;
+            switch (discriminator) {
+                case "electric":
+                    bike = getElectricBike(row);
+                    break;
+                case "mountain":
+                    bike = getMountainBike(row);
+                    break;
+                default:
+                    throw new IllegalStateException("Unknown discriminator for bike: " + discriminator);
+            }
+
+            bikes.add(bike);
+        }
+
+        return bikes;
     }
 
     public Bike findById(UUID id) {

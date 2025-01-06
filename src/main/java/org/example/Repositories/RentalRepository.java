@@ -56,7 +56,7 @@ public class RentalRepository extends DatabaseRepository {
         getSession().execute(createRentalsByBikes);
     }
 
-//    @StatementAttributes(consistencyLevel = "QUORUM")
+    @StatementAttributes(consistencyLevel = "QUORUM")
     public void insert(Rental rental) {
         Insert insertRentalsByClients = QueryBuilder.insertInto(CqlIdentifier.fromCql("rentals_by_clients"))
                 .value(CqlIdentifier.fromCql("client_id"), literal(rental.getClient().getId()))
@@ -83,13 +83,11 @@ public class RentalRepository extends DatabaseRepository {
         getSession().execute(batchStatement);
     }
 
-//    @StatementAttributes(consistencyLevel = "QUORUM")
+    @StatementAttributes(consistencyLevel = "QUORUM")
     public void endRent(Rental rental) {
         if (rental.getEndTime() == null) {
             throw new IllegalStateException("Wypożyczenie nie zostało zakończone.");
         }
-
-        rental.calculateTotalCost();
 
         Update updateRentalByClient = QueryBuilder.update("rentals_by_clients")
                 .setColumn("end_time", QueryBuilder.bindMarker())
@@ -147,7 +145,7 @@ public class RentalRepository extends DatabaseRepository {
         return rentals;
     }
 
-//    @StatementAttributes(consistencyLevel = "QUORUM")
+    @StatementAttributes(consistencyLevel = "QUORUM")
     public List<Rental> findByClientId(UUID clientId) {
         Select select = QueryBuilder.selectFrom("rentals_by_clients")
                 .all()
@@ -178,6 +176,35 @@ public class RentalRepository extends DatabaseRepository {
         double totalCost = row.getDouble("total_cost");
 
         return new Rental(rentalId, bikeId, clientId, startTime, endTime, totalCost);
+    }
+
+    @StatementAttributes(consistencyLevel = "QUORUM")
+    public List<Rental> findAll() {
+        Select selectClients = QueryBuilder.selectFrom("rentals_by_clients")
+                .all();
+
+        ResultSet resultSetClients = getSession().execute(selectClients.build());
+        List<Row> rowsClients = resultSetClients.all();
+
+        Select selectBikes = QueryBuilder.selectFrom("rentals_by_bikes")
+                .all();
+
+        ResultSet resultSetBikes = getSession().execute(selectBikes.build());
+        List<Row> rowsBikes = resultSetBikes.all();
+
+        List<Rental> rentals = new ArrayList<>();
+
+        for (Row row : rowsClients) {
+            Rental rental = mapRowToRental(row);
+            rentals.add(rental);
+        }
+
+        for (Row row : rowsBikes) {
+            Rental rental = mapRowToRental(row);
+            rentals.add(rental);
+        }
+
+        return rentals;
     }
 
     @Override

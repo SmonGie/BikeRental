@@ -106,7 +106,6 @@ public class Client {
                 "\n numer telefonu: " + phoneNumber +
                 "\n wiek: " + age +
                 "\n Id: " + id +
-                "\n " + clientType.getInfo() +
                 "\n " + address;
     }
     public int applyDiscount(){

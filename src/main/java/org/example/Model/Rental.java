@@ -17,6 +17,23 @@ public class Rental {
     private LocalDateTime endTime;
     private double totalCost;
     private UUID id;
+
+    public UUID getBikeId() {
+        return bikeId;
+    }
+
+    public void setBikeId(UUID bikeId) {
+        this.bikeId = bikeId;
+    }
+
+    public UUID getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(UUID clientId) {
+        this.clientId = clientId;
+    }
+
     private UUID bikeId;
     private UUID clientId;
 
@@ -68,7 +85,7 @@ public class Rental {
     }
 
 
-    public void calculateTotalCost() {
+    public void calculateTotalCost(Client client) {
         if (endTime == null) {
             throw new IllegalStateException("Wypożyczenie jeszcze sie nie zakończyło.");
         }

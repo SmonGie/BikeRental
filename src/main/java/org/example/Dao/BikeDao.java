@@ -1,5 +1,6 @@
 package org.example.Dao;
 
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.mapper.annotations.*;
 import org.example.Model.Bike;
 import org.example.Model.ElectricBike;
@@ -32,6 +33,5 @@ public interface BikeDao {
     @StatementAttributes(consistencyLevel = "QUORUM")
     @QueryProvider(providerClass = BikeGetByIdProvider.class,
             entityHelpers = {ElectricBike.class, MountainBike.class})
-    @Query( "SELECT *")
     List<Bike> findAll();
 }

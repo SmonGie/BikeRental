@@ -1,5 +1,6 @@
 package org.example.Dao;
 
+import com.datastax.oss.driver.api.core.cql.ResultSet;
 import com.datastax.oss.driver.api.mapper.annotations.*;
 import org.example.Model.clients.Client;
 
@@ -24,7 +25,8 @@ public interface ClientDao {
     void update(Client client);
 
     @StatementAttributes(consistencyLevel = "QUORUM")
-    @Query( "SELECT *")
-    List<Client> findAll();
+    @Query("SELECT * FROM clients")
+    ResultSet findAll();
+
 }
 
