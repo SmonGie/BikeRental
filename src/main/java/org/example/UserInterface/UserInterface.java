@@ -20,7 +20,6 @@ import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
 import org.example.Repositories.RentalRepository;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,14 +56,10 @@ public class UserInterface {
 
         clientDao.create(c);
 
-//        clientRepository.save(c);
-
         MountainBike mtb2 = new MountainBike("lolek X-Cal", true, 120);
         MountainBike mtb = new MountainBike("Trek X-Cal", true, 120);
         ElectricBike ebike = new ElectricBike("Giant E+", true, 500);
-//        bikeRepository.save(mtb);
-//        bikeRepository.save(mtb2);
-//        bikeRepository.save(ebike);
+
         bikeDao.create(mtb2);
         bikeDao.create(mtb);
         bikeDao.create(ebike);
@@ -239,9 +234,9 @@ public class UserInterface {
 
     private void removeClient() {
         System.out.print("Podaj ID klienta do usunięcia: ");
-        Long clientId = scanner.nextLong();
+        long clientId = scanner.nextLong();
         scanner.nextLine();
-        UUID uuid = UUID.fromString(clientId.toString());
+        UUID uuid = UUID.fromString(Long.toString(clientId));
         Client c = clientDao.findById(uuid);
         if (c == null) {
             System.out.println("Nie znaleziono klienta o podanym ID.");
@@ -475,8 +470,8 @@ public class UserInterface {
 
     private void removeBike() {
         System.out.print("Podaj ID roweru do usunięcia: ");
-        Long bikeId = scanner.nextLong();
-        UUID uuid = UUID.fromString(bikeId.toString());
+        long bikeId = scanner.nextLong();
+        UUID uuid = UUID.fromString(Long.toString(bikeId));
 
         List<Rental> currentRentals = rentalRepository.findByBikeId(uuid);
         if (!currentRentals.isEmpty()) {

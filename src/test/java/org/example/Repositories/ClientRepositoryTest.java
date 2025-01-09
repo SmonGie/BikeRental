@@ -12,13 +12,12 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
 class ClientRepositoryTest {
-    private static ClientRepository clientRepository;
+    private static final ClientRepository clientRepository = new ClientRepository();
     private static ClientDao clientDao;
     private static Client client;
 
     @BeforeEach
     public void setup() {
-        clientRepository = new ClientRepository();
         ClientMapper clientMapper = new ClientMapperBuilder(clientRepository.getSession()).build();
         clientDao = clientMapper.clientDao("bikeRental", "clients");
         Address address = new Address("Sieradz", "10", "3");
@@ -26,7 +25,7 @@ class ClientRepositoryTest {
     }
     @AfterEach
     public void cleanup() {
-        if (client != null) {
+        if (clientDao != null && client != null) {
             clientDao.remove(client);
         }
     }

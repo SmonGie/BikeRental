@@ -1,20 +1,9 @@
 package org.example.Repositories;
 
-
 import com.datastax.oss.driver.api.core.CqlIdentifier;
-import com.datastax.oss.driver.api.core.cql.Row;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.core.type.DataTypes;
-import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
-import com.datastax.oss.driver.api.querybuilder.insert.InsertInto;
-import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
-import org.example.Model.clients.Address;
-import org.example.Model.clients.Client;
-import org.example.Model.clients.ClientType;
-
-import java.util.List;
-import java.util.UUID;
 
 
 public class ClientRepository extends DatabaseRepository {

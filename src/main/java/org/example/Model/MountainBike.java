@@ -1,6 +1,5 @@
 package org.example.Model;
 
-
 import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
 
@@ -38,7 +37,7 @@ public class MountainBike extends Bike {
 
     @Override
     public String getInfo() {
-        return super.getInfo() + " Szerokość opony: " + +tireWidth + " cm";
+        return super.getInfo() + " Szerokość opony: " + tireWidth + " cm";
     }
 
     @Override

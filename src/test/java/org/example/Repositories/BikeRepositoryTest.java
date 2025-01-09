@@ -11,28 +11,33 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class BikeRepositoryTest {
-    private static BikeRepository bikeRepository;
+    private static final BikeRepository bikeRepository = new BikeRepository();
     private static BikeDao bikeDao;
     private static ElectricBike bike;
     private static MountainBike mbike;
-    private static MountainBike mmbike;
+    private static MountainBike updatedMountainBike;
 
     @BeforeEach
     public void setup() {
-        bikeRepository = new BikeRepository();
         BikeMapper bikeMapper = new BikeMapperBuilder(bikeRepository.getSession()).build();
         bikeDao = bikeMapper.bikeDao("bikeRental", "bikes");
         bike = new ElectricBike("blyskawica",true,3000);
         mbike = new MountainBike("blyskawica",true,5);
-        mmbike = new MountainBike("blyskawica",true,5);
+        updatedMountainBike = new MountainBike("blyskawica",true,5);
     }
 
     @AfterEach
     public void cleanup() {
-        if (bike != null) {
-            bikeDao.remove(bike);
-            bikeDao.remove(mbike);
-            bikeDao.remove(mmbike);
+        if (bikeDao != null) {
+            if (bike != null) {
+                bikeDao.remove(bike);
+            }
+            if (mbike != null) {
+                bikeDao.remove(mbike);
+            }
+            if (updatedMountainBike != null) {
+                bikeDao.remove(updatedMountainBike);
+            }
         }
     }
 
@@ -61,11 +66,11 @@ public class BikeRepositoryTest {
 
     @Test
     public void testUpdateMountainBike() {
-        bikeDao.create(mmbike);
-        mmbike.setModelName("truskawa");
-        bikeDao.update(mmbike);
-        MountainBike retrievedBike = (MountainBike) bikeDao.findById(mmbike.getId());
+        bikeDao.create(updatedMountainBike);
+        updatedMountainBike.setModelName("truskawa");
+        bikeDao.update(updatedMountainBike);
+        MountainBike retrievedBike = (MountainBike) bikeDao.findById(updatedMountainBike.getId());
 
-        assertEquals(mmbike.getModelName(), retrievedBike.getModelName());
+        assertEquals(updatedMountainBike.getModelName(), retrievedBike.getModelName());
     }
 }

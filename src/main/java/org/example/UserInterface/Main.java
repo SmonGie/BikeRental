@@ -1,24 +1,8 @@
 package org.example.UserInterface;
 
-import jnr.constants.platform.Local;
-import org.example.Dao.BikeDao;
-import org.example.Mappers.BikeMapper;
-import org.example.Mappers.BikeMapperBuilder;
-import org.example.Mappers.ClientMapperBuilder;
-import org.example.Dao.ClientDao;
-import org.example.Mappers.ClientMapper;
-import org.example.Model.Bike;
-import org.example.Model.ElectricBike;
-import org.example.Model.MountainBike;
-import org.example.Model.Rental;
-import org.example.Model.clients.Address;
-import org.example.Model.clients.Client;
 import org.example.Repositories.BikeRepository;
 import org.example.Repositories.ClientRepository;
 import org.example.Repositories.RentalRepository;
-
-import java.time.LocalDateTime;
-
 
 public class Main {
     public static void main(String[] args) {

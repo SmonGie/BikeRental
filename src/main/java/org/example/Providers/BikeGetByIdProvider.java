@@ -63,17 +63,12 @@ public class BikeGetByIdProvider {
         for (Row row : resultSet) {
             String discriminator = row.getString("discriminator");
 
-            Bike bike;
-            switch (discriminator) {
-                case "electric":
-                    bike = getElectricBike(row);
-                    break;
-                case "mountain":
-                    bike = getMountainBike(row);
-                    break;
-                default:
-                    throw new IllegalStateException("Unknown discriminator for bike: " + discriminator);
-            }
+            assert discriminator != null;
+            Bike bike = switch (discriminator) {
+                case "electric" -> getElectricBike(row);
+                case "mountain" -> getMountainBike(row);
+                default -> throw new IllegalStateException("Unknown discriminator for bike: " + discriminator);
+            };
 
             bikes.add(bike);
         }
@@ -91,6 +86,7 @@ public class BikeGetByIdProvider {
 
         String discriminator = row.getString("discriminator");
 
+        assert discriminator != null;
         return switch (discriminator) {
             case "electric" -> getElectricBike(row);
             case "mountain" -> getMountainBike(row);
@@ -102,10 +98,10 @@ public class BikeGetByIdProvider {
     private ElectricBike getElectricBike(Row row) {
         UUID id = row.getUuid("id");
         String modelName = row.getString("model_name");
-        Boolean isAvailable = row.getBoolean("is_available");
-        Integer batteryCapacity = row.getInt("battery_capacity");
+        boolean isAvailable = row.getBoolean("is_available");
+        int batteryCapacity = row.getInt("battery_capacity");
 
-        if (id == null || modelName == null || isAvailable == null || batteryCapacity == null) {
+        if (id == null || modelName == null) {
             throw new IllegalStateException("Missing data for ElectricBike: " + row);
         }
 
@@ -118,10 +114,10 @@ public class BikeGetByIdProvider {
     private MountainBike getMountainBike(Row row) {
         UUID id = row.getUuid("id");
         String modelName = row.getString("model_name");
-        Boolean isAvailable = row.getBoolean("is_available");
-        Integer tireWidth = row.getInt("tire_width");
+        boolean isAvailable = row.getBoolean("is_available");
+        int tireWidth = row.getInt("tire_width");
 
-        if (id == null || modelName == null || isAvailable == null || tireWidth == null) {
+        if (id == null || modelName == null) {
             throw new IllegalStateException("Missing data for MountainBike: " + row);
         }
 

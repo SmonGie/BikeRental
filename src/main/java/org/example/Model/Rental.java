@@ -1,11 +1,8 @@
 package org.example.Model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Duration;
 import java.util.UUID;
-
-import jnr.constants.platform.Local;
 import org.example.Model.clients.Client;
 
 
@@ -102,6 +99,10 @@ public class Rental {
 
     public double getTotalCost() {
         return totalCost;
+    }
+
+    public void setTotalCost(double totalCost) {
+        this.totalCost = totalCost;
     }
 
     public LocalDateTime getStartTime() {

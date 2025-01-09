@@ -84,6 +84,30 @@ public class RentalRepository extends DatabaseRepository {
     }
 
     @StatementAttributes(consistencyLevel = "QUORUM")
+    public void remove(Rental rental) {
+        if (rental == null) {
+            throw new IllegalArgumentException("Rental cannot be null");
+        }
+
+        SimpleStatement deleteFromClients = QueryBuilder.deleteFrom("rentals_by_clients")
+                .whereColumn("client_id").isEqualTo(literal(rental.getClient().getId()))
+                .whereColumn("start_time").isEqualTo(literal(rental.getStartTime().atZone(ZoneOffset.UTC).toInstant()))
+                .build();
+
+        SimpleStatement deleteFromBikes = QueryBuilder.deleteFrom("rentals_by_bikes")
+                .whereColumn("bike_id").isEqualTo(literal(rental.getBike().getId()))
+                .whereColumn("start_time").isEqualTo(literal(rental.getStartTime().atZone(ZoneOffset.UTC).toInstant()))
+                .build();
+
+        BatchStatement batchStatement = BatchStatement.builder(BatchType.LOGGED)
+                .addStatement(deleteFromClients)
+                .addStatement(deleteFromBikes)
+                .build();
+
+        getSession().execute(batchStatement);
+    }
+
+    @StatementAttributes(consistencyLevel = "QUORUM")
     public void endRent(Rental rental) {
         if (rental.getEndTime() == null) {
             throw new IllegalStateException("Wypożyczenie nie zostało zakończone.");
@@ -127,7 +151,7 @@ public class RentalRepository extends DatabaseRepository {
         getSession().execute(dropTable);
     }
 
-//    @StatementAttributes(consistencyLevel = "QUORUM")
+    @StatementAttributes(consistencyLevel = "QUORUM")
     public List<Rental> findByBikeId(UUID bikeId) {
         Select select = QueryBuilder.selectFrom("rentals_by_bikes")
                 .all()
@@ -206,6 +230,50 @@ public class RentalRepository extends DatabaseRepository {
 
         return rentals;
     }
+
+    @StatementAttributes(consistencyLevel = "QUORUM")
+    public void update(Rental rental) {
+        Update updateRentalByClient = QueryBuilder.update("rentals_by_clients")
+                .setColumn("end_time", QueryBuilder.bindMarker())
+                .setColumn("total_cost", QueryBuilder.bindMarker())
+                .setColumn("bike_id", QueryBuilder.bindMarker())
+                .whereColumn("client_id").isEqualTo(QueryBuilder.bindMarker())
+                .whereColumn("start_time").isEqualTo(QueryBuilder.bindMarker());
+
+        Update updateRentalByBike = QueryBuilder.update("rentals_by_bikes")
+                .setColumn("end_time", QueryBuilder.bindMarker())
+                .setColumn("total_cost", QueryBuilder.bindMarker())
+                .setColumn("client_id", QueryBuilder.bindMarker())
+                .whereColumn("bike_id").isEqualTo(QueryBuilder.bindMarker())
+                .whereColumn("start_time").isEqualTo(QueryBuilder.bindMarker());
+
+        PreparedStatement preparedUpdateRentalByClient = getSession().prepare(updateRentalByClient.build());
+        PreparedStatement preparedUpdateRentalByBike = getSession().prepare(updateRentalByBike.build());
+
+        BoundStatement boundStatementByClient = preparedUpdateRentalByClient.bind(
+                rental.getEndTime() != null ? rental.getEndTime().atZone(ZoneOffset.UTC).toInstant() : null,
+                rental.getTotalCost(),
+                rental.getBikeId(),
+                rental.getClientId(),
+                rental.getStartTime().atZone(ZoneOffset.UTC).toInstant()
+        );
+
+        BoundStatement boundStatementByBike = preparedUpdateRentalByBike.bind(
+                rental.getEndTime() != null ? rental.getEndTime().atZone(ZoneOffset.UTC).toInstant() : null,
+                rental.getTotalCost(),
+                rental.getClientId(),
+                rental.getBikeId(),
+                rental.getStartTime().atZone(ZoneOffset.UTC).toInstant()
+        );
+
+        BatchStatement batchStatement = BatchStatement.builder(BatchType.LOGGED)
+                .addStatement(boundStatementByClient)
+                .addStatement(boundStatementByBike)
+                .build();
+
+        getSession().execute(batchStatement);
+    }
+
 
     @Override
     public void close() {

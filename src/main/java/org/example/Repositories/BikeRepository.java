@@ -1,19 +1,9 @@
 package org.example.Repositories;
 
-
 import com.datastax.oss.driver.api.core.CqlIdentifier;
-import com.datastax.oss.driver.api.core.cql.BoundStatement;
-import com.datastax.oss.driver.api.core.cql.PreparedStatement;
 import com.datastax.oss.driver.api.core.cql.SimpleStatement;
 import com.datastax.oss.driver.api.core.type.DataTypes;
-import com.datastax.oss.driver.api.querybuilder.QueryBuilder;
 import com.datastax.oss.driver.api.querybuilder.SchemaBuilder;
-import com.datastax.oss.driver.api.querybuilder.insert.RegularInsert;
-import org.example.Model.Bike;
-import org.example.Model.ElectricBike;
-import org.example.Model.MountainBike;
-
-import java.util.UUID;
 
 public class BikeRepository extends DatabaseRepository{
 

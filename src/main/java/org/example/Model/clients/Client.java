@@ -4,10 +4,6 @@ import com.datastax.oss.driver.api.mapper.annotations.CqlName;
 import com.datastax.oss.driver.api.mapper.annotations.Entity;
 import com.datastax.oss.driver.api.mapper.annotations.PartitionKey;
 import com.datastax.oss.driver.api.mapper.annotations.Transient;
-import org.example.Model.Rental;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity(defaultKeyspace = "bikeRental")
@@ -31,9 +27,6 @@ public class Client {
 
     @Transient
     private ClientType clientType;
-    @CqlName("current_rentals")
-    private List<Rental> currentRentals = new ArrayList<>();
-
 
     public Client(String firstName, String lastName, String phoneNumber, int age, Address address) {
         this.id = UUID.randomUUID();
