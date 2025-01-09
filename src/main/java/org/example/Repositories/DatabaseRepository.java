@@ -22,6 +22,7 @@ public abstract class DatabaseRepository implements AutoCloseable {
                 .withAuthCredentials("cassandra", "cassandra")
                 .withKeyspace(CqlIdentifier.fromCql("bikeRental")) //zakomentuj za 1 razem a pozniej odkomentuj
                 .withConfigLoader(DriverConfigLoader.programmaticBuilder()
+                        .withString(DefaultDriverOption.REQUEST_CONSISTENCY, "QUORUM")
                         .withInt(DefaultDriverOption.REQUEST_TIMEOUT, 5000)
                         .build())
                 .build()

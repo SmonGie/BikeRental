@@ -9,22 +9,22 @@ import java.util.UUID;
 
 @Dao
 public interface ClientDao {
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     @Select
     Client findById(UUID id);
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     @Insert
     void create(Client client);
 
     @Delete
     void remove(Client client);
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     @Update
     void update(Client client);
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     @Query("SELECT * FROM clients")
     ResultSet findAll();
 

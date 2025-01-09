@@ -56,7 +56,7 @@ public class RentalRepository extends DatabaseRepository {
         getSession().execute(createRentalsByBikes);
     }
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     public void insert(Rental rental) {
         Insert insertRentalsByClients = QueryBuilder.insertInto(CqlIdentifier.fromCql("rentals_by_clients"))
                 .value(CqlIdentifier.fromCql("client_id"), literal(rental.getClient().getId()))
@@ -83,7 +83,7 @@ public class RentalRepository extends DatabaseRepository {
         getSession().execute(batchStatement);
     }
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     public void remove(Rental rental) {
         if (rental == null) {
             throw new IllegalArgumentException("Rental cannot be null");
@@ -107,7 +107,7 @@ public class RentalRepository extends DatabaseRepository {
         getSession().execute(batchStatement);
     }
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     public void endRent(Rental rental) {
         if (rental.getEndTime() == null) {
             throw new IllegalStateException("Wypożyczenie nie zostało zakończone.");
@@ -151,7 +151,7 @@ public class RentalRepository extends DatabaseRepository {
         getSession().execute(dropTable);
     }
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     public List<Rental> findByBikeId(UUID bikeId) {
         Select select = QueryBuilder.selectFrom("rentals_by_bikes")
                 .all()
@@ -169,7 +169,7 @@ public class RentalRepository extends DatabaseRepository {
         return rentals;
     }
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     public List<Rental> findByClientId(UUID clientId) {
         Select select = QueryBuilder.selectFrom("rentals_by_clients")
                 .all()
@@ -202,7 +202,7 @@ public class RentalRepository extends DatabaseRepository {
         return new Rental(rentalId, bikeId, clientId, startTime, endTime, totalCost);
     }
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     public List<Rental> findAll() {
         Select selectClients = QueryBuilder.selectFrom("rentals_by_clients")
                 .all();
@@ -231,7 +231,7 @@ public class RentalRepository extends DatabaseRepository {
         return rentals;
     }
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     public void update(Rental rental) {
         Update updateRentalByClient = QueryBuilder.update("rentals_by_clients")
                 .setColumn("end_time", QueryBuilder.bindMarker())

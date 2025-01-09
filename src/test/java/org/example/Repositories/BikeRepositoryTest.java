@@ -4,11 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.example.Dao.BikeDao;
 import org.example.Mappers.BikeMapper;
 import org.example.Mappers.BikeMapperBuilder;
+import org.example.Model.Bike;
 import org.example.Model.ElectricBike;
 import org.example.Model.MountainBike;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 public class BikeRepositoryTest {
     private static final BikeRepository bikeRepository = new BikeRepository();
@@ -43,7 +46,12 @@ public class BikeRepositoryTest {
 
     @Test
     public void testInsertElectricBike() {
+
+        int rozmiar = bikeDao.findAll().size();
+
         bikeDao.create(bike);
+
+        assertEquals(rozmiar+1,bikeDao.findAll().size());
 
         ElectricBike retrievedBike = (ElectricBike) bikeDao.findById(bike.getId());
 
@@ -54,8 +62,23 @@ public class BikeRepositoryTest {
     }
 
     @Test
+    public void testDeleteElectricBike() {
+
+        bikeDao.create(bike);
+        int rozmiar = bikeDao.findAll().size();
+        bikeDao.remove(bike);
+        assertEquals(rozmiar-1,bikeDao.findAll().size());
+
+    }
+
+    @Test
     public void testInsertMountainBike() {
+
+        int rozmiar = bikeDao.findAll().size();
+
         bikeDao.create(mbike);
+
+        assertEquals(rozmiar+1,bikeDao.findAll().size());
 
         MountainBike retrievedBike = (MountainBike) bikeDao.findById(mbike.getId());
 
@@ -63,6 +86,17 @@ public class BikeRepositoryTest {
         assertEquals(mbike.getModelName(), retrievedBike.getModelName());
         assertEquals(mbike.isIsAvailable(), retrievedBike.isIsAvailable());
     }
+
+    @Test
+    public void testDeleteMountainBike() {
+
+        bikeDao.create(mbike);
+        int rozmiar = bikeDao.findAll().size();
+        bikeDao.remove(mbike);
+        assertEquals(rozmiar-1,bikeDao.findAll().size());
+
+    }
+
 
     @Test
     public void testUpdateMountainBike() {

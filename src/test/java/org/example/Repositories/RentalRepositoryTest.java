@@ -35,7 +35,12 @@ class RentalRepositoryTest {
 
     @Test
     public void testInsertRentalByClient() {
+
+        int rozmiar = rentalRepository.findAll().size();
+
         rentalRepository.insert(rental);
+
+        assertEquals(rozmiar+2, rentalRepository.findAll().size());
 
         List<Rental> retrievedRentals = rentalRepository.findByClientId(rental.getClient().getId());
 
@@ -57,7 +62,12 @@ class RentalRepositoryTest {
 
     @Test
     public void testInsertRentalByBike() {
+
+        int rozmiar = rentalRepository.findAll().size();
+
         rentalRepository.insert(rental);
+
+        assertEquals(rozmiar+2, rentalRepository.findAll().size());
 
         List<Rental> retrievedRentals = rentalRepository.findByBikeId(rental.getBike().getId());
 
@@ -70,6 +80,18 @@ class RentalRepositoryTest {
                 retrievedRental.getStartTime().truncatedTo(ChronoUnit.MILLIS));
         assertNull(retrievedRental.getEndTime());
         assertEquals(0.0, retrievedRental.getTotalCost());
+    }
+
+    @Test void testDeleteRental() {
+
+
+
+        rentalRepository.insert(rental);
+        int rozmiar = rentalRepository.findAll().size();
+
+        rentalRepository.remove(rental);
+        assertEquals(rozmiar-2, rentalRepository.findAll().size());
+
     }
 
     @Test

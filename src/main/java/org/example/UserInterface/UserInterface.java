@@ -45,9 +45,7 @@ public class UserInterface {
         bikeDao = bikeMapper.bikeDao("bikeRental", "bikes");
         clientDao = clientMapper.clientDao("bikeRental", "clients");
 
-
     }
-
 
     public void start() {
 
@@ -91,9 +89,14 @@ public class UserInterface {
                     break;
                 case 4:
                     bikeRepository.deleteData();
+                    System.out.println("Usunieto bike");
                     clientRepository.deleteData();
+                    System.out.println("Usunieto client");
                     rentalRepository.deleteDataByBikes();
+                    System.out.println("Usunieto rental by bikes");
                     rentalRepository.deleteDataByClients();
+                    System.out.println("Usunieto rental by clients");
+
                     return;
                 case 0:
                     System.out.println("Do widzenia!");

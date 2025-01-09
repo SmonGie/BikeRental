@@ -1,5 +1,6 @@
 package org.example.Repositories;
 
+import com.datastax.oss.driver.api.core.cql.Row;
 import org.example.Dao.ClientDao;
 import org.example.Mappers.ClientMapper;
 import org.example.Mappers.ClientMapperBuilder;
@@ -33,7 +34,20 @@ class ClientRepositoryTest {
 
     @Test
     public void testInsertClient() {
+
+        int rozmiar_bef = 0;
+        for (Row row :  clientDao.findAll()) {
+            rozmiar_bef++;
+        }
+
         clientDao.create(client);
+
+        int rozmiar_aft = 0;
+        for (Row row :  clientDao.findAll()) {
+            rozmiar_aft++;
+        }
+
+        assertEquals(rozmiar_bef+1,rozmiar_aft);
 
         Client retrievedClient = clientDao.findById(client.getId());
 
@@ -42,6 +56,22 @@ class ClientRepositoryTest {
         assertEquals(client.getLastName(), retrievedClient.getLastName());
         assertEquals(client.getPhoneNumber(), retrievedClient.getPhoneNumber());
         assertEquals(client.getAge(), retrievedClient.getAge());
+    }
+
+    @Test
+    public void testDeleteClient() {
+        clientDao.create(client);
+        int rozmiar_bef = 0;
+        for (Row row :  clientDao.findAll()) {
+            rozmiar_bef++;
+        }
+        clientDao.remove(client);
+        int rozmiar_aft = 0;
+        for (Row row :  clientDao.findAll()) {
+            rozmiar_aft++;
+        }
+        assertEquals(rozmiar_bef-1,rozmiar_aft);
+
     }
 
     @Test

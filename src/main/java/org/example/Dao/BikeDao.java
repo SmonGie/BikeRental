@@ -13,12 +13,12 @@ import java.util.UUID;
 
 @Dao
 public interface BikeDao {
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     @QueryProvider(providerClass = BikeGetByIdProvider.class,
             entityHelpers = {ElectricBike.class, MountainBike.class})
     Bike findById(UUID id);
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     @QueryProvider(providerClass = BikeGetByIdProvider.class,
             entityHelpers = {ElectricBike.class, MountainBike.class})
     void create(Bike bike);
@@ -26,11 +26,11 @@ public interface BikeDao {
     @Delete
     void remove(Bike bike);
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     @Update
     void update(Bike bike);
 
-    @StatementAttributes(consistencyLevel = "QUORUM")
+//    @StatementAttributes(consistencyLevel = "QUORUM")
     @QueryProvider(providerClass = BikeGetByIdProvider.class,
             entityHelpers = {ElectricBike.class, MountainBike.class})
     List<Bike> findAll();
