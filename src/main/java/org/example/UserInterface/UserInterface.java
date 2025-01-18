@@ -3,6 +3,7 @@ package org.example.UserInterface;
 
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import org.example.Misc.KafkaPublisher;
 import org.example.Model.Rental;
 import org.example.Model.bikes.*;
 import org.example.Model.clients.*;
@@ -23,6 +24,7 @@ public class UserInterface {
     private final MongoClient mongoClient;
     private final Scanner scanner;
     private final JedisPooled pooled;
+    private final KafkaPublisher kafkaPublisher;
 
     public UserInterface(IClientRepository clientRepository, IBikeRepository bikeRepository, RentalRepository rentalRepository, MongoClient mongoClient, JedisPooled pooled) {
         this.clientRepository = clientRepository;
@@ -31,6 +33,8 @@ public class UserInterface {
         this.mongoClient = mongoClient;
         this.scanner = new Scanner(System.in);
         this.pooled = pooled;
+        this.kafkaPublisher = new KafkaPublisher();
+
     }
 
 
@@ -323,6 +327,8 @@ public class UserInterface {
                 bikeRepository.update(clientSession, bike, "is_available", bike.getIsAvailable());
                 rentalRepository.save(rental);
                 clientSession.commitTransaction();
+                System.out.println("Próba wysłania komunikatu o wypożyczeniu");
+                kafkaPublisher.sendRental(rental);
             } catch (Exception e) {
                 System.out.println("Napotkano problem. Upewnij się, że klient nie ma już 2 trwających wypożyczeń");
                 clientSession.abortTransaction();
@@ -336,6 +342,7 @@ public class UserInterface {
             System.out.println("Nieprawidłowy klient lub rower niedostępny.");
         }
     }
+
 
 
     private void endRental() {
