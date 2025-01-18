@@ -1,5 +1,6 @@
 package org.example.UserInterface;
 
+import org.example.Misc.TopicCreator;
 import org.example.Model.RedisManager;
 import org.example.Repositories.*;
 import redis.clients.jedis.JedisPooled;
@@ -11,6 +12,9 @@ public class Main {
         IClientRepository clientRepository = new ClientRepository(repo.getDatabase(), repo.getMongoClient());
         IBikeRepository bikeRepository = new BikeRepository(repo.getDatabase(), repo.getMongoClient());
         RentalRepository rentalRepository = new RentalRepository(repo.getDatabase(), repo.getMongoClient());
+
+        TopicCreator topicCreator = new TopicCreator();
+        topicCreator.createTopic();
 
         RedisManager redisManager = new RedisManager();
         redisManager.initConnection();
