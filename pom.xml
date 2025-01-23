@@ -92,11 +92,10 @@
 <!--            <version>1.11.4</version>-->
 <!--        </dependency>-->
 
-        <!-- Jackson Datatype for Java 8 Date and Time (LocalDateTime, LocalDate, etc.) -->
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.15.2</version>  <!-- Replace with the appropriate version of Jackson you're using -->
+            <version>2.15.2</version>
         </dependency>
 
         <dependency>
