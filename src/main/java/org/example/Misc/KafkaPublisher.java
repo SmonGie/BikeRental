@@ -22,6 +22,7 @@ public class KafkaPublisher {
         producerConfig.put(ProducerConfig.CLIENT_ID_CONFIG, "RentalPublisher");
         producerConfig.put(ProducerConfig.ACKS_CONFIG, "all");
         producerConfig.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9192,kafka2:9292,kafka3:9392");
+        producerConfig.put(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, true);
 
         this.producer = new KafkaProducer(producerConfig);
 

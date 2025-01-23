@@ -88,6 +88,94 @@ services:
     networks:
       - kafkanet
 
+  mongo_cons_1:
+    build: .
+    image: mongocustom:7.0.2
+    container_name: mongodb_consumer_1
+    hostname: mongodb_consumer_1
+    networks:
+      - mongonet_consumer
+    ports:
+      - "27117:27117"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=adminpassword
+      - MONGO_INITDB_DATABASE=rentabike
+    command: --config /etc/mongod.conf --port 27117
+    healthcheck:
+      test: [ "CMD", "mongosh", "--port", "27117", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 2s
+      retries: 5
+
+  mongo_cons_2:
+      #    build: .
+      image: mongocustom:7.0.2
+      container_name: mongodb_consumer_2
+      hostname: mongodb_consumer_2
+      networks:
+        - mongonet_consumer
+      ports:
+        - "27118:27118"
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=admin
+        - MONGO_INITDB_ROOT_PASSWORD=adminpassword
+        - MONGO_INITDB_DATABASE=rentabike
+      command: --config /etc/mongod.conf --port 27118
+      healthcheck:
+        test: [ "CMD", "mongosh", "--port", "27118", "--eval", "db.adminCommand('ping')" ]
+        interval: 10s
+        timeout: 2s
+        retries: 5
+
+  mongo_cons_3:
+      #    build: .
+      image: mongocustom:7.0.2
+      container_name: mongodb_consumer_3
+      hostname: mongodb_consumer_3
+      networks:
+        - mongonet_consumer
+      ports:
+        - "27119:27119"
+      environment:
+        - MONGO_INITDB_ROOT_USERNAME=admin
+        - MONGO_INITDB_ROOT_PASSWORD=adminpassword
+        - MONGO_INITDB_DATABASE=rentabike
+      command: --config /etc/mongod.conf --port 27119
+      healthcheck:
+        test: [ "CMD", "mongosh", "--port", "27119", "--eval", "db.adminCommand('ping')" ]
+        interval: 10s
+        timeout: 2s
+        retries: 5
+
+  mongoinit_consumer:
+      #    build: .
+      image: mongocustom:7.0.2
+      container_name: mongodbinit_consumer
+      hostname: mongodbinit_consumer
+      depends_on:
+        mongo_cons_1:
+          condition: service_healthy
+        mongo_cons_2:
+          condition: service_healthy
+        mongo_cons_3:
+          condition: service_healthy
+      networks:
+        - mongonet_consumer
+      command: >
+        mongosh --host mongodb_consumer_1:27117 --username admin --password adminpassword --authenticationDatabase admin --eval "
+          rs.initiate(
+            {
+              _id: 'replica_set_single',
+              members: [
+                { _id: 0, host: 'mongodb_consumer_1:27117' },
+                { _id: 1, host: 'mongodb_consumer_2:27118' },
+                { _id: 2, host: 'mongodb_consumer_3:27119' }
+              ]
+            }
+          );
+        "
+
 volumes:
   kafka1_data:
     driver: local
@@ -95,9 +183,12 @@ volumes:
     driver: local
   kafka3_data:
     driver: local
-
+  mongo-consumer-data:
+    driver: local
 
 networks:
+  mongonet_consumer:
+    driver: bridge
   kafkanet:
     driver: bridge
     ipam:

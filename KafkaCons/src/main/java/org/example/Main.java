@@ -3,8 +3,11 @@ package org.example;
 public class Main {
     public static void main(String[] args) {
 
-        ConsumerClass konsument = new ConsumerClass();
-        konsument.consumeMessages();
+            MongoRepository repo = new MongoRepository();
+            ConsumerClass konsument = new ConsumerClass(repo);
+
+            konsument.consumeMessages();
+
 
     }
 }
