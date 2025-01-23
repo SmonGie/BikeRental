@@ -7,9 +7,7 @@ import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 
 import java.time.Duration;
-import java.util.Collections;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
 import static java.lang.Math.random;
 
@@ -18,36 +16,40 @@ public class ConsumerClass {
     private final Properties consumerConfig = new Properties();
     private final KafkaConsumer<String, String> consumer;
     private final MongoRepository repo;
+    private final List<KafkaConsumer<String, String>> consumerGroup = new ArrayList<>();
 
-
-    public ConsumerClass(MongoRepository repository) {
-
-
-        Random random = new Random();
-        int randomNumber = random.nextInt(100) + 1;
-
-        String ajdi = randomNumber + "";
-
+    public ConsumerClass(MongoRepository repository, int number) {
 
         this.repo = repository;
         this.consumerConfig.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         this.consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         this.consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, "dobra_grupa");
-        this.consumerConfig.put(ConsumerConfig.CLIENT_ID_CONFIG, ajdi);
         this.consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9192,kafka2:9292,kafka3:9392");
-
         consumer = new KafkaConsumer<>(this.consumerConfig);
-        consumer.subscribe(Collections.singleton("wypozyczenia"));
+
+        for (int i = 0; i < number; i++) {
+            KafkaConsumer<String, String> consumer = new KafkaConsumer<>(consumerConfig);
+            consumer.subscribe(Collections.singleton("wypozyczenia"));
+            consumerGroup.add(consumer);
+        }
 
     }
 
-    public void consumeMessages() {
-        try {
+    public List<KafkaConsumer<String, String>> getConsumerGroup() {
+        return consumerGroup;
+    }
+
+    public void consumeMessages(KafkaConsumer<String, String> consumer) {
+        try (consumer) {
+            System.out.println("Consumer started");
+            consumer.poll(0);
+            System.out.println("Moje Id: " + consumer.groupMetadata().memberId() + " Moja grupa " + consumer.groupMetadata().groupId());
 
             while (true) {
-                System.out.println("Oczekuję na wiadomość.");
-                ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(1000));
+//                System.out.println("Oczekuję na wiadomość.");
+                ConsumerRecords<String, String> records = consumer.poll(Duration.ofSeconds(1));
                 for (ConsumerRecord<String, String> record : records) {
+                    System.out.println("Moje Id:" + consumer.groupMetadata().memberId() + " Moja grupa " + consumer.groupMetadata().groupId());
                     System.out.printf("Odebrano wiadomosc: Key=%s, Value=%s, Partition=%d, Offset=%d%n",
                             record.key(), record.value(), record.partition(), record.offset());
                     repo.saveRental(record.value());
