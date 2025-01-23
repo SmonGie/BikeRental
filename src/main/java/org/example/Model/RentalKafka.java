@@ -1,6 +1,5 @@
 package org.example.Model;
 
-
 import org.example.Model.bikes.BikeMgd;
 import org.example.Model.clients.ClientAddressMgd;
 
@@ -9,7 +8,7 @@ import java.util.UUID;
 
 public class RentalKafka {
 
-    private UUID rentalId;
+    private final UUID rentalId;
     private ClientAddressMgd client;
     private BikeMgd bike;
     private LocalDateTime startTime;

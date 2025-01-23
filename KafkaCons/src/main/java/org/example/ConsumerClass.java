@@ -9,8 +9,6 @@ import org.apache.kafka.common.serialization.StringDeserializer;
 import java.time.Duration;
 import java.util.*;
 
-import static java.lang.Math.random;
-
 public class ConsumerClass {
 
     private final Properties consumerConfig = new Properties();
@@ -25,6 +23,7 @@ public class ConsumerClass {
         this.consumerConfig.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class.getName());
         this.consumerConfig.put(ConsumerConfig.GROUP_ID_CONFIG, "dobra_grupa");
         this.consumerConfig.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "kafka1:9192,kafka2:9292,kafka3:9392");
+        this.consumerConfig.put(ConsumerConfig.ISOLATION_LEVEL_CONFIG, "read_committed");
         consumer = new KafkaConsumer<>(this.consumerConfig);
 
         for (int i = 0; i < number; i++) {
